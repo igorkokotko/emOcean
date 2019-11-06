@@ -1,22 +1,26 @@
-// const path = require("path");
-const express = require("express");
-const dotenv = require("dotenv"); // env variables
+const express = require('express')
+const dotenv = require('dotenv')
+const bodyParser = require('body-parser')
 
-dotenv.config({ path: "./config/config.env" });
+const errorHandler = require('./middleware/errorHandler')
 
-// Route
-const auth = require("./routes/auth");
-// run express
-const app = express();
+dotenv.config({ path: './config/config.env' })
 
-// Body parser
-app.use(express.json());
+const auth = require('./routes/auth')
 
-app.use("/api/v1/auth", auth);
+// Run server
+const app = express()
 
-const PORT = process.env.port || 5000;
+app.use(bodyParser.json())
+
+// Authentication route
+app.use('/api/auth', auth)
+
+app.use(errorHandler)
+
+const PORT = process.env.port || 5000
 
 app.listen(
   PORT,
   console.log(`Port is running on ${process.env.NODE_ENV} mode on port ${PORT}`)
-);
+)
