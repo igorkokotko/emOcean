@@ -16,3 +16,7 @@ module.exports = {
   },
   transpileDependencies: [/[\\\/]node_modules[\\\/]quasar[\\\/]/]
 };
+  transpileDependencies: [
+    /[\\\/]node_modules[\\\/]quasar[\\\/]/
+  ]
+}
