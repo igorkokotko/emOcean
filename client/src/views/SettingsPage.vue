@@ -1,15 +1,23 @@
 <template>
-  <p>This is settings page!</p>
+  <div>
+    <p>This is settings page!</p>
+    <settings-menu></settings-menu>
+  </div>
 </template>
 
 <script>
+import SettingsMenu from '@/components/SettingsPage/SettingsMenu.vue'
+
 export default {
-  name: 'SettingsPage'
+  name: 'SettingsPage',
+  components: {
+    SettingsMenu
+  }
 }
 </script>
 
 <style>
-  p {
-    color: red;
-  }
+p {
+  color: red;
+}
 </style>
