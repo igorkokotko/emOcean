@@ -1,5 +1,5 @@
 <template>
-  <p>some text.AAAAAAAAAAAA!</p>
+  <p>This is settings page!</p>
 </template>
 
 <script>
