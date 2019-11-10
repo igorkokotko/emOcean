@@ -1,7 +1,7 @@
 <template>
   <ul>
-    <li>User info</li>
-    <li>Preferences</li>
+    <li><router-link to='/settings/editUserInfo/'>User info</router-link></li>
+    <li><router-link to='/settings/editPreferences'>Preferences</router-link></li>
     <li>Followers</li>
     <li>Followings</li>
     <li>Savings</li>
