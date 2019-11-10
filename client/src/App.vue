@@ -75,7 +75,8 @@
     </q-drawer>
 
     <q-page-container>
-       <settings-page></settings-page>
+      <router-view></router-view>
+       <!-- <settings-page></settings-page> -->
       <HelloWorld />
     </q-page-container>
   </q-layout>
@@ -83,14 +84,14 @@
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
-import SettingsPage from './views/SettingsPage/index.vue'
+// import SettingsPage from './views/SettingsPage/index.vue'
 
 export default {
   name: 'LayoutDefault',
 
   components: {
-    HelloWorld,
-    SettingsPage
+    HelloWorld
+    // SettingsPage
   },
 
   data () {
