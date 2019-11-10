@@ -13,7 +13,7 @@ const routes = [
   {
     path: '/settings',
     name: 'SettingsPage',
-    component: () => import('../views/SettingsPage/index.vue')
+    component: () => import('../views/SettingsPage.vue')
   }
 ]
 
