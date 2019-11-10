@@ -2,13 +2,12 @@
   <ul>
     <li><router-link to='/settings/editUserInfo/'>User info</router-link></li>
     <li><router-link to='/settings/editPreferences'>Preferences</router-link></li>
-    <li>Followers</li>
-    <li>Followings</li>
-    <li>Savings</li>
-    <li>Liked</li>
-    <li>Privacy</li>
-    <li>Change password</li>
-    <li>Delete account</li>
+    <li><router-link to='/settings/editFollowers'>Followers</router-link></li>
+    <li><router-link to='/settings/editSaved'>Saved</router-link></li>
+    <li><router-link to='/settings/editLiked'>Liked</router-link></li>
+    <li><router-link to='/settings/editPrivacy'>Privacy</router-link></li>
+    <li><router-link to='/settings/editPassword'>Change password</router-link></li>
+    <li><router-link to='/settings/deleteAccount'>Delete account</router-link></li>
   </ul>
 </template>
 
