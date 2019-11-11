@@ -75,20 +75,14 @@
     </q-drawer>
 
     <q-page-container>
-      <HelloWorld />
+      <router-view></router-view>
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
   name: 'LayoutDefault',
-
-  components: {
-    HelloWorld
-  },
 
   data () {
     return {
