@@ -1,9 +1,9 @@
 <template>
-  <p>UserInfo</p>
+  <p>ChangePassword</p>
 </template>
 
 <script>
 export default {
-  name: 'EditUserInfo'
+  name: 'ChangePassword'
 }
 </script>

@@ -1,14 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import EditUserInfo from '../components/SettingsPage/SettingsPageTabs/EditUserInfo.vue'
-import EditPreferences from '../components/SettingsPage/SettingsPageTabs/EditPreferences.vue'
-import EditFollowers from '../components/SettingsPage/SettingsPageTabs/EditFollowers.vue'
-import EditLiked from '../components/SettingsPage/SettingsPageTabs/EditLiked.vue'
-import EditPassword from '../components/SettingsPage/SettingsPageTabs/EditPassword.vue'
-import EditPrivacy from '../components/SettingsPage/SettingsPageTabs/EditPrivacy.vue'
-import EditSaved from '../components/SettingsPage/SettingsPageTabs/EditSaved.vue'
-import DeleteAccount from '../components/SettingsPage/SettingsPageTabs/DeleteAccount.vue'
+// import EditUserInfo from '../views'
+// import EditPreferences from '../components/SettingsPage/SettingsPageTabs/EditPreferences.vue'
+// import EditFollowers from '../components/SettingsPage/SettingsPageTabs/EditFollowers.vue'
+// import EditLiked from '../components/SettingsPage/SettingsPageTabs/EditLiked.vue'
+// import EditPassword from '../components/SettingsPage/SettingsPageTabs/EditPassword.vue'
+// import EditPrivacy from '../components/SettingsPage/SettingsPageTabs/EditPrivacy.vue'
+// import EditSaved from '../components/SettingsPage/SettingsPageTabs/EditSaved.vue'
+// import DeleteAccount from '../components/SettingsPage/SettingsPageTabs/DeleteAccount.vue'
 
 Vue.use(VueRouter)
 
@@ -20,40 +20,40 @@ const routes = [
   },
   {
     path: '/settings',
-    name: 'SettingsPage',
-    component: () => import('../views/SettingsPage.vue'),
+    name: 'Settings',
+    component: () => import('../views/Settings/index.vue'),
     children: [
       {
-        path: 'editUserInfo',
-        component: EditUserInfo
+        path: 'editProfile',
+        component: () => import('../views/Settings/Tabs/EditProfile/index.vue')
       },
       {
         path: 'editPreferences',
-        component: EditPreferences
+        component: () => import('../views/Settings/Tabs/EditPreferences/index.vue')
       },
       {
         path: 'editFollowers',
-        component: EditFollowers
+        component: () => import('../views/Settings/Tabs/EditFollowers/index.vue')
       },
       {
         path: 'editLiked',
-        component: EditLiked
+        component: () => import('../views/Settings/Tabs/EditLiked/index.vue')
       },
       {
-        path: 'editPassword',
-        component: EditPassword
+        path: 'changePassword',
+        component: () => import('../views/Settings/Tabs/ChangePassword/index.vue')
       },
       {
         path: 'editPrivacy',
-        component: EditPrivacy
+        component: () => import('../views/Settings/Tabs/EditPrivacy/index.vue')
       },
       {
         path: 'editSaved',
-        component: EditSaved
+        component: () => import('../views/Settings/Tabs/EditSaved/index.vue')
       },
       {
         path: 'deleteAccount',
-        component: DeleteAccount
+        component: () => import('../views/Settings/Tabs/DeleteAccount/index.vue')
       }
     ]
   }

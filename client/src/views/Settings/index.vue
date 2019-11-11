@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import SettingsMenu from '@/components/SettingsPage/SettingsMenu.vue'
+import SettingsMenu from './SettingsMenu.vue'
 
 export default {
   name: 'SettingsPage',
@@ -16,9 +16,3 @@ export default {
   }
 }
 </script>
-
-<style>
-p {
-  color: red;
-}
-</style>

@@ -1,9 +1,9 @@
 <template>
-  <p>EditPassword</p>
+  <p>Edit Profile</p>
 </template>
 
 <script>
 export default {
-  name: 'EditPassword'
+  name: 'EditProfile'
 }
 </script>
