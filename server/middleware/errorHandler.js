@@ -1,13 +1,12 @@
 // TODO Check which errors can be thrown from db or other directions and create
-// with the custom error class
-const CustomError = require('../common/CustomError')
+// own message
+const CustomError = require("../common/CustomError");
 
 const errorHandler = (err, req, res, next) => {
-  const error = { ...err }
-  error.message = err.message
-  res
-    .status(error.status || 500)
-    .json({ error: error.message || 'Unknown Error' })
-}
+  let error = { ...err };
 
-module.exports = errorHandler
+  error.message = err.message;
+  res.status(400).json({ error: error.message });
+};
+
+module.exports = errorHandler;
