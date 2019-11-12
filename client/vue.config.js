@@ -1,7 +1,7 @@
 module.exports = {
   devServer: {
     proxy: {
-      "/api/v1": {
+      "/api/": {
         target: "http://localhost:5000",
         ws: true,
         changeOrigin: true
@@ -16,7 +16,3 @@ module.exports = {
   },
   transpileDependencies: [/[\\\/]node_modules[\\\/]quasar[\\\/]/]
 };
-  transpileDependencies: [
-    /[\\\/]node_modules[\\\/]quasar[\\\/]/
-  ]
-}
