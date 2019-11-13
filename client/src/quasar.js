@@ -6,6 +6,7 @@ import {
   Quasar,
   QLayout,
   QHeader,
+  QFooter,
   QDrawer,
   QPageContainer,
   QPage,
@@ -16,7 +17,11 @@ import {
   QList,
   QItem,
   QItemSection,
-  QItemLabel
+  QItemLabel,
+  QInput,
+  QSpinnerBars,
+  QTooltip,
+  QSelect
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -24,6 +29,7 @@ Vue.use(Quasar, {
   components: {
     QLayout,
     QHeader,
+    QFooter,
     QDrawer,
     QPageContainer,
     QPage,
@@ -34,7 +40,11 @@ Vue.use(Quasar, {
     QList,
     QItem,
     QItemSection,
-    QItemLabel
+    QItemLabel,
+    QInput,
+    QSpinnerBars,
+    QTooltip,
+    QSelect
   },
   directives: {
   },
