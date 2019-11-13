@@ -16,7 +16,10 @@ import {
   QList,
   QItem,
   QItemSection,
-  QItemLabel
+  QItemLabel,
+  QScrollArea,
+  Ripple,
+  QSplitter
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -34,9 +37,12 @@ Vue.use(Quasar, {
     QList,
     QItem,
     QItemSection,
-    QItemLabel
+    QItemLabel,
+    QScrollArea,
+    QSplitter
   },
   directives: {
+    Ripple
   },
   plugins: {
   }
