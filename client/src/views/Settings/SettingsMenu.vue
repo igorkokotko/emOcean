@@ -32,7 +32,7 @@ export default {
     return {
       drawer: false,
       routeItems: [
-        { to: '/settings/editProfile', title: 'User profile', show: true },
+        { to: '/settings/editProfile', title: 'Edit profile', show: true },
         { to: '/settings/editPreferences', title: 'Preferences', show: true },
         { to: '/settings/editFollowers', title: 'Followers', show: true },
         { to: '/settings/editSaved', title: 'Saved', show: true },
