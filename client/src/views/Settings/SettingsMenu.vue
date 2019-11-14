@@ -1,14 +1,19 @@
 <template>
   <ul>
-    <li v-for="(item, index) in routeItems" :key='index'>
-      <router-link :to="item.to">{{item.title}}</router-link>
+    <li
+      v-for="(item, index) in routeItems"
+      :key="index"
+    >
+      <router-link :to="item.to">
+        {{ item.title }}
+      </router-link>
     </li>
   </ul>
 </template>
 
 <script>
 export default {
-  name: 'settings-menu',
+  name: 'SettingsMenu',
   data: function () {
     return {
       routeItems: [

@@ -1,8 +1,8 @@
 <template>
   <div>
     <p>This is settings page!</p>
-    <settings-menu></settings-menu>
-    <router-view></router-view>
+    <settings-menu style="red" class="red" />
+    <router-view />
   </div>
 </template>
 

@@ -1,5 +1,7 @@
 <template>
-  <p>ChangePassword</p>
+  <div>
+    <p>ChangePassword</p>
+  </div>
 </template>
 
 <script>

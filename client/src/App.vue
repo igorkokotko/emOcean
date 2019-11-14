@@ -1,19 +1,22 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated class="glossy">
+    <q-header
+      elevated
+      class="glossy"
+    >
       <q-toolbar>
         <q-btn
           flat
           dense
           round
-          @click="leftDrawerOpen = !leftDrawerOpen"
           aria-label="Menu"
           icon="menu"
+          @click="leftDrawerOpen = !leftDrawerOpen"
         />
       </q-toolbar>
     </q-header>
     <q-page-container>
-      <router-view></router-view>
+      <router-view />
     </q-page-container>
   </q-layout>
 </template>
