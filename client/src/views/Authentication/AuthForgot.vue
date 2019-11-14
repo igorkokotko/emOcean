@@ -47,7 +47,7 @@ export default {
     }
   },
   methods: {
-    forgot: function () {
+    forgot () {
       this.loading = true
       axios
         .post('/api/auth/sendpasswordresetcode', { email: this.email })

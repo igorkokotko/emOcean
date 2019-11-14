@@ -60,7 +60,7 @@ export default {
     }
   },
   methods: {
-    login: function () {
+    login () {
       this.loading = true
       axios
         .post('/api/auth/login', { password: this.password, email: this.email })

@@ -59,14 +59,13 @@ export default {
   },
 
   methods: {
-    resetPass: function () {
+    resetPass () {
       this.loading = true
       axios
         .post('/api/auth/resetpassword', { password: this.password, oobCode: this.oobCode })
         .then(res => {
-          this.message = 'Password reset successfully. You will be redirected to Login page'
-          setTimeout(() => { this.$router.go('/auth/login') }, 3000)
           this.loading = false
+          this.$router.go('/auth/login')
         })
         .catch(err => {
           this.message = err

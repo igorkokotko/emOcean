@@ -77,7 +77,7 @@ export default {
   },
 
   methods: {
-    register: function () {
+    register () {
       this.loading = true
       axios
         .post('/api/auth/register', { email: this.email, password: this.password, nickname: this.nickname })
