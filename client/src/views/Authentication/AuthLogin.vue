@@ -1,8 +1,9 @@
 <template>
-  <div class="q-pa-md">
-    <div class="q-gutter-y-sm column fixed register" style="width: 300px">
+  <div class="row register-container">
+    <div class="offset-xs-12 offset-sm-2 col-sm-4 offset-md-3 col-md-3">Here should be logo and moto</div>
+    <div class="offset-xs-1 col-xs-10 col-sm-4 col-md-3 column">
 
-      <q-input v-model="email" label="Email" :dense="dense" :rules="[val => checkEmailField(val)]"/>
+      <q-input v-model.lazy="email" label="Email" :dense="dense" :rules="[val => checkEmailField(val)]"/>
 
       <q-input v-model.lazy="password" :type="isPwd1 ? 'password' : 'text'" label="Password" :dense="dense" :rules="[val => checkPasswordField(val)]">
         <template v-slot:append>
@@ -14,24 +15,27 @@
         </template>
       </q-input>
 
+      <p id='errormessage'>{{ error }}</p>
+
       <q-btn color="white" text-color="black" @click="login" :disabled="!enableLogin">log in
         <q-spinner-bars
+          class="q-ml-md"
           color="primary"
           size="1em"
           v-show="loading"
         />
       </q-btn>
 
-      <p style="margin-top:20px; margin-bottom:0"><a style='text-decoration: none' href='/forgotpassword'>Forgot password?</a></p>
+      <p class="paragraph"><a href='/forgotpassword'>Forgot password?</a></p>
 
-      <p style="text-align: center; margin-top:20px">OR</p>
+      <p id='or'>OR</p>
 
       <q-btn color="white" text-color="black" @click="handleClickSignIn">
-        <img style="height: 1.5rem" src="../../assets/google-icon.png" />
+        <img id='google-img' src="../../assets/google-icon.png" />
         Sign In
       </q-btn>
 
-      <p style="margin-top:20px">Don't have account yet? <a style='text-decoration: none' href='/register'>Register</a></p>
+      <p class="paragraph">Don't have account yet? <a href='/register'>Register</a></p>
 
     </div>
   </div>
@@ -39,10 +43,10 @@
 
 <script>
 import axios from 'axios'
-import { validateEmail, validatePassword } from '../../utilities/auth.js'
+import { validationMixin } from '../../utilities/validationMixin.js'
 
 export default {
-  name: 'register',
+  mixins: [validationMixin],
   data () {
     return {
       email: '',
@@ -51,42 +55,22 @@ export default {
       isPwd1: true,
       loading: false,
       emailField: false,
-      passwordField: false
+      passwordField: false,
+      error: ''
     }
   },
   methods: {
-    checkEmailField: function (val) {
-      if (validateEmail(val) && validateEmail(val).message === 'empty email') {
-        this.emailField = false
-        return 'Email field cannot be empty'
-      } else if (validateEmail(val) && validateEmail(val).message === 'invalid email') {
-        this.emailField = false
-        return 'Your email is invalid'
-      } else this.emailField = true
-    },
-    checkPasswordField: function (val) {
-      if (validatePassword(val) && validatePassword(val).message === 'empty password') {
-        this.passwordField = false
-        return 'Password field cannot be empty'
-      } else if (validatePassword(val) && validatePassword(val).message === 'wrong length') {
-        this.passwordField = false
-        return 'Your password should contain 8 to 20 characters'
-      } else if (validatePassword(val) && validatePassword(val).message === 'wrong content') {
-        this.passwordField = false
-        return 'At least one uppercase, one lowercase character required, no whitespace allowed'
-      } else this.passwordField = true
-    },
     login: function () {
       this.loading = true
       axios
         .post('/api/auth/login', { password: this.password, email: this.email })
         .then(token => {
-          // token to be added to Vuex
+          // token to be added to Vuex state in the next step
           console.log(token)
           this.loading = false
         })
         .catch(err => {
-          console.log(err)
+          this.error = err
           this.loading = false
         })
     },
@@ -98,37 +82,48 @@ export default {
           console.log('getAuthResponse', GoogleUser.getAuthResponse())
           axios.post('api/auth/loginwithgoogle', GoogleUser.getAuthResponse())
             .then(token => {
-              // token to be added to Vuex
+              // token to be added to Vuex state in the next step
               console.log(token)
             })
         })
-        .catch(error => {
-          console.log(error)
+        .catch(err => {
+          this.error = err
         })
     }
   },
   computed: {
     // enable "log in button" if all fields are filled
-    enableLogin: function () {
-      if (this.emailField && this.passwordField) return true
-      else return false
+    enableLogin () {
+      return !!this.emailField && !!this.passwordField
     }
   }
 }
 </script>
 
 <style scoped>
-.register {
-  right: 50vw;
-  transform: translateX(50%);
+.register-container {
   margin-top: 50px
 }
 
-.q-input {
-  margin: -5px 0
+#errormessage {
+  color: #C10015
 }
 
-.q-spinner {
-  margin-left: 10px
+#google-img {
+  height: 1.5rem
+}
+
+#or {
+  text-align: center;
+  margin-top:20px
+}
+
+.paragraph {
+  margin-top:20px;
+  margin-bottom:0
+}
+
+a {
+  text-decoration: none
 }
 </style>

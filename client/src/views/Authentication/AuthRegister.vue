@@ -1,10 +1,12 @@
 <template>
-  <div class="q-pa-md">
-    <div class="q-gutter-y-sm column fixed register" style="width: 300px">
+  <div style="overflow:auto">
+    <div class="row register-container">
+      <div class="gt-xs offset-sm-2 col-sm-4 offset-md-3 col-md-3">Here should be logo and moto</div>
+      <div class="offset-xs-1 col-xs-10 col-sm-4 col-md-3 column">
 
-      <q-input v-model="email" label="Email" :dense="dense" :rules="[val => checkEmailField(val)]"/>
+      <q-input v-model.lazy="email" label="Email" :dense="dense" :rules="[val => checkEmailField(val)]"/>
 
-      <q-input v-model="nickname" label="Nickname" :dense="dense" :rules="[val => checkNicknameField(val)]"/>
+      <q-input v-model.lazy="nickname" label="Nickname" :dense="dense" :rules="[val => checkNicknameField(val)]"/>
 
       <q-input v-model.lazy="password" :type="isPwd1 ? 'password' : 'text'" label="Password" :dense="dense" :rules="[val => checkPasswordField(val)]">
         <template v-slot:append>
@@ -26,35 +28,37 @@
         </template>
       </q-input>
 
-      <p style="color: #C10015">{{ error }}</p>
+      <p id='errormessage'>{{ error }}</p>
 
       <q-btn color="white" text-color="black" @click='register' :disabled='!enableCreate'>create account
         <q-spinner-bars
+          class="q-ml-md"
           color="primary"
           size="1em"
           v-show="loading"
         />
       </q-btn>
 
-      <p style="text-align: center; margin-top:20px">OR</p>
+      <p id="or">OR</p>
 
       <q-btn color="white" text-color="black" @click="handleClickSignIn">
-        <img style="height: 1.5rem" src="../../assets/google-icon.png" />
+        <img id='google-img' src="../../assets/google-icon.png" />
         Sign In
       </q-btn>
 
-      <p style="margin-top:20px">Already have an account? <a style='text-decoration: none' href='/login'>Log In</a></p>
+      <p style="margin-top:20px">Already have an account? <a href='/login'>Log In</a></p>
 
+    </div>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
-import { validateEmail, validatePassword, validateNickname } from '../../utilities/auth.js'
+import { validationMixin } from '../../utilities/validationMixin.js'
 
 export default {
-  name: 'register',
+  mixins: [validationMixin],
   data () {
     return {
       email: '',
@@ -73,44 +77,6 @@ export default {
   },
 
   methods: {
-    checkEmailField: function (val) {
-      if (validateEmail(val) && validateEmail(val).message === 'empty email') {
-        this.emailField = false
-        return 'Email field cannot be empty'
-      } else if (validateEmail(val) && validateEmail(val).message === 'invalid email') {
-        this.emailField = false
-        return 'Your email is invalid'
-      } else this.emailField = true
-    },
-    checkNicknameField: function (val) {
-      if (validateNickname(val) && validateNickname(val).message === 'empty nickname') {
-        this.nicknameField = false
-        return 'Nickname field cannot be empty'
-      } else if (validateNickname(val) && validateNickname(val).message === 'wrong length') {
-        this.nicknameField = false
-        return 'Your nickname should contain 4 to 20 characters'
-      } else if (validateNickname(val) && validateNickname(val).message === 'space') {
-        this.nicknameField = false
-        return 'Your nickname should not contain whitespaces'
-      } else this.nicknameField = true
-    },
-    checkPasswordField: function (val) {
-      if (validatePassword(val) && validatePassword(val).message === 'empty password') {
-        this.passwordField = false
-        return 'Password field cannot be empty'
-      } else if (validatePassword(val) && validatePassword(val).message === 'wrong length') {
-        this.passwordField = false
-        return 'Your password should contain 8 to 20 characters'
-      } else if (validatePassword(val) && validatePassword(val).message === 'wrong content') {
-        this.passwordField = false
-        return 'At least one uppercase, one lowercase character required, no whitespace allowed'
-      } else this.passwordField = true
-    },
-    checkRepeatPasswordField: function (val) {
-      if (this.password !== this.passwordConfirm) {
-        return 'Your passwords do not match'
-      }
-    },
     register: function () {
       this.loading = true
       axios
@@ -122,7 +88,7 @@ export default {
           this.loading = false
         })
         .catch(err => {
-          console.log(err)
+          this.error = err
           this.loading = false
         })
     },
@@ -134,40 +100,43 @@ export default {
           console.log('getAuthResponse', GoogleUser.getAuthResponse())
           axios.post('api/auth/loginwithgoogle', GoogleUser.getAuthResponse())
             .then(token => {
-              // token to be added to Vuex
+              // token to be added to Vuex state in the next step
               console.log(token)
             })
-            .catch(error => {
-              console.log(error)
-            })
         })
-        .catch(error => {
-          console.log(error)
+        .catch(err => {
+          this.error = err
         })
     }
   },
   computed: {
     // enable "log in button" if all fields are filled
-    enableCreate: function () {
-      if (this.emailField && this.nicknameField && this.passwordField && this.password === this.passwordConfirm) return true
-      else return false
+    enableCreate () {
+      return !!this.emailField && !!this.nicknameField && !!this.passwordField && this.password === this.passwordConfirm
     }
   }
 }
 </script>
 
 <style scoped>
-.register {
-  right: 50vw;
-  transform: translateX(50%);
+.register-container {
   margin-top: 50px
 }
 
-.q-input {
-  margin: -5px 0
+#errormessage {
+  color: #C10015
 }
 
-.q-spinner {
-  margin-left: 10px
+#google-img {
+  height: 1.5rem
+}
+
+#or {
+  text-align: center;
+  margin-top:20px
+}
+
+a {
+  text-decoration: none
 }
 </style>
