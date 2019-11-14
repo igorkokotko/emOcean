@@ -31,7 +31,10 @@ import {
   QTabPanels,
   QTabPanel,
   QScrollArea,
-  QSplitter
+  QSplitter,
+  QCard,
+  QCardSection,
+  QCardActions
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -65,7 +68,10 @@ Vue.use(Quasar, {
     QTabPanels,
     QTabPanel,
     QScrollArea,
-    QSplitter
+    QSplitter,
+    QCard,
+    QCardSection,
+    QCardActions
   },
   directives: {
   },

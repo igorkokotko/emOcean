@@ -1,46 +1,36 @@
 <template>
   <div>
-    <q-splitter
-      v-model="splitterModel"
-      style="height: 250px"
-    >
+    <q-card class="my-card q-ma-sm">
+      <q-splitter
+        v-model="splitterModel"
+        :[attrPosition]="true"
+        style="height: 250px"
+      >
+        <template v-slot:before>
+          <q-tabs v-model="tab"
+            :[attrPosition]="true"
+            class="text-teal"
+          >
+            <q-route-tab
+              v-for="(item, index) in routeItems"
+              :key="index"
+              :to="item.to"
+              name="{item.title}"
+              exact
+            >{{item.title}}</q-route-tab>
+          </q-tabs>
+        </template>
 
-      <template v-slot:before>
-        <q-tabs
-          v-model="tab"
-          vertical
-          class="text-teal"
-        >
-          <q-route-tab
-            v-for="(item, index) in routeItems"
-            :key="index"
-            :to="item.to"
-            name="{item.title}"
-            exact
-          >{{item.title}}</q-route-tab>
-        </q-tabs>
-      </template>
-
-      <template v-slot:after>
-        <q-tab-panels
-          v-model="tab"
-          animated
-          transition-prev="jump-up"
-          transition-next="jump-up"
-        >
-          <q-tab-panel
-          v-for="(item, index) in routeItems"
-          :key="index"
-          name="{item.title}">
-            <!-- <div class="text-h4 q-mb-md">{{item.title}}</div> -->
-            <router-view></router-view>
-          </q-tab-panel>
-        </q-tab-panels>
-      </template>
-
-    </q-splitter>
+        <template v-slot:after>
+          <q-tab-panels v-model="tab" animated transition-prev="jump-up" transition-next="jump-up">
+            <q-tab-panel v-for="(item, index) in routeItems" :key="index" name="{item.title}">
+              <router-view></router-view>
+            </q-tab-panel>
+          </q-tab-panels>
+        </template>
+      </q-splitter>
+    </q-card>
   </div>
-
 </template>
 
 <script>
@@ -48,7 +38,9 @@ export default {
   name: 'settings-menu',
   data: function () {
     return {
-      tab: 'mails',
+      tab: 'mail',
+      windowWidth: 0,
+      attrPosition: '',
       splitterModel: 20,
       routeItems: [
         { to: '/settings/editProfile', title: 'Edit profile', show: true },
@@ -62,25 +54,26 @@ export default {
       ]
     }
   },
+  mounted () {
+    this.$nextTick(function () {
+      window.addEventListener('resize', this.getWindowWidth)
+    })
+  },
   methods: {
-    activate: function () {
-      this.isActive = !this.isActive
+    position () {
+      if (window.innerWidth >= 599) {
+        this.attrPosition = 'vertical'
+      } else {
+        this.attrPosition = 'horizontal'
+      }
+    },
+    getWindowWidth (event) {
+      this.windowWidth = document.documentElement.clientWidth
+      this.position()
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-
-.menu-list .q-item {
-  border-radius: 0 32px 32px 0;
-  margin: 0 15px 0 0;
-}
-.black-color{
-  color: black;
-}
-.q-item a:link {
-  text-decoration: none;
-}
-
 </style>
