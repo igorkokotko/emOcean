@@ -7,7 +7,8 @@
         style="height: 250px"
       >
         <template v-slot:before>
-          <q-tabs v-model="tab"
+          <q-tabs
+            v-model="tab"
             :[attrPosition]="true"
             class="text-teal"
           >
@@ -22,7 +23,11 @@
         </template>
 
         <template v-slot:after>
-          <q-tab-panels v-model="tab" animated transition-prev="jump-up" transition-next="jump-up">
+          <q-tab-panels
+            v-model="tab"
+            animated
+            transition-prev="jump-up"
+            transition-next="jump-up">
             <q-tab-panel v-for="(item, index) in routeItems" :key="index" name="{item.title}">
               <router-view></router-view>
             </q-tab-panel>
@@ -40,8 +45,8 @@ export default {
     return {
       tab: 'mail',
       windowWidth: 0,
-      attrPosition: '',
-      splitterModel: 20,
+      attrPosition: 'vertical',
+      splitterModel: 25,
       routeItems: [
         { to: '/settings/editProfile', title: 'Edit profile', show: true },
         { to: '/settings/editPreferences', title: 'Preferences', show: true },
@@ -76,4 +81,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 </style>
