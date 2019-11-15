@@ -16,7 +16,7 @@
               v-for="(item, index) in routeItems"
               :key="index"
               :to="item.to"
-              name="{item.title}"
+              :name="item.title"
               exact
             >{{item.title}}</q-route-tab>
           </q-tabs>
@@ -28,7 +28,7 @@
             animated
             transition-prev="jump-up"
             transition-next="jump-up">
-            <q-tab-panel v-for="(item, index) in routeItems" :key="index" name="{item.title}">
+            <q-tab-panel v-for="(item, index) in routeItems" :key="index" :name="item.title">
               <router-view></router-view>
             </q-tab-panel>
           </q-tab-panels>
