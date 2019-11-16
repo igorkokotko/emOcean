@@ -1,30 +1,28 @@
 <template>
-  <div style="overflow:auto">
-    <div class="row register-container">
-      <div class="gt-xs offset-sm-2 col-sm-4 offset-md-3 col-md-3">Here should be logo and moto</div>
-      <div class="offset-xs-1 col-xs-10 col-sm-4 col-md-3 column">
-        <p class='paragraph'><strong>Forgot Password?</strong></p>
+  <div class="row forgot-container">
+    <div class="gt-xs offset-sm-2 col-sm-4 offset-md-3 col-md-3">Here should be logo and moto</div>
+    <div class="offset-xs-1 col-xs-10 col-sm-4 col-md-3 column">
+      <p class='paragraph'><strong>Forgot Password?</strong></p>
 
-        <p class='paragraph'>Enter the email address associated with your account</p>
+      <p class='paragraph'>Enter the email address associated with your account</p>
 
-        <p class='paragraph'>We will email you a link to reset your password</p>
+      <p class='paragraph'>We will email you a link to reset your password</p>
 
-        <q-input v-model="email" label="Email" :dense="dense" :rules="[val => checkEmailField(val)]"/>
+      <q-input v-model="email" label="Email" :dense="dense" :rules="[val => checkEmailField(val)]"/>
 
-        <q-btn class="q-mb-md" color="white" text-color="black" @click="forgot" :disabled="!enableForgot">Send
-          <q-spinner-bars
-            class="q-ml-md"
-            color="primary"
-            size="1em"
-            v-show="loading"
-          />
-        </q-btn>
+      <q-btn class="q-mb-md" color="white" text-color="black" @click="forgot" :disabled="!enableForgot">Send
+        <q-spinner-bars
+          class="q-ml-md"
+          color="primary"
+          size="1em"
+          v-show="loading"
+        />
+      </q-btn>
 
-        <a href='/login'><q-btn color="white" text-color="black" style="width:100%">back</q-btn></a>
+      <a href='/login'><q-btn color="white" text-color="black" style="width:100%">back</q-btn></a>
 
-        <p class="q-mt-md">{{ message }}</p>
+      <p class="q-mt-md">{{ message }}</p>
 
-      </div>
     </div>
   </div>
 </template>
@@ -32,9 +30,10 @@
 <script>
 import axios from 'axios'
 import { validationMixin } from '../../utilities/validationMixin.js'
+import { notificationMixin } from '../../utilities/notificationMixin.js'
 
 export default {
-  mixins: [validationMixin],
+  mixins: [validationMixin, notificationMixin],
   data () {
     return {
       email: '',
@@ -49,10 +48,11 @@ export default {
   methods: {
     forgot () {
       this.loading = true
+      const { email } = this
       axios
-        .post('/api/auth/sendpasswordresetcode', { email: this.email })
+        .post('api/auth/sendpasswordresetcode', { email })
         .then(res => {
-          this.message = 'Email with reset link was sent to your email'
+          this.showNotif('A reset link has been sent to your email. Check your inbox!')
           this.loading = false
         })
         .catch(err => {
@@ -62,7 +62,6 @@ export default {
     }
   },
   computed: {
-    // enable "send" if email is OK
     enableForgot () {
       return !!this.emailField
     }
@@ -71,14 +70,15 @@ export default {
 </script>
 
 <style scoped>
-.register-container {
-  margin-top: 50px
+.forgot-container {
+  overflow: auto;
+  margin-top: 50px;
 }
 
 .paragraph {
   text-align: center;
   margin-top: 20px;
-  margin-bottom: 0
+  margin-bottom: 0;
 }
 
 </style>

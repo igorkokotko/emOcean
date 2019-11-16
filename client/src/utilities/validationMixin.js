@@ -2,6 +2,7 @@ const validator = require('validator')
 
 export const validationMixin = {
   methods: {
+    // validation
     checkEmailField (val) {
       if (validator.isEmpty(val)) {
         this.emailField = false
@@ -50,6 +51,16 @@ export const validationMixin = {
       if (this.password !== this.passwordConfirm) {
         return 'Your passwords do not match'
       }
+    },
+    // notifications
+    showNotif (message) {
+      this.$q.notify({
+        color: 'primary',
+        textColor: 'white',
+        message: message,
+        actions: [{ icon: 'close', color: 'white' }],
+        timeout: 3000
+      })
     }
   }
 }

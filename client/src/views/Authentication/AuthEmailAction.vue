@@ -1,38 +1,36 @@
 <template>
-  <div style="overflow:auto">
-    <div class="row register-container">
-      <div class="gt-xs offset-sm-2 col-sm-4 offset-md-3 col-md-3">Here should be logo and moto</div>
-      <div class="offset-xs-1 col-xs-10 col-sm-4 col-md-3 column" v-if="reset">
-        <q-input v-model.lazy="password" :type="isPwd1 ? 'password' : 'text'" label="Password" :dense="dense" :rules="[val => checkPasswordField(val)]">
-          <template v-slot:append>
-            <q-icon
-              :name="isPwd1 ? 'visibility_off' : 'visibility'"
-              class="cursor-pointer"
-              @click="isPwd1 = !isPwd1"
-            />
-          </template>
-        </q-input>
-
-        <q-input v-model.lazy="passwordConfirm" :type="isPwd2 ? 'password' : 'text'" label="Confirm Password" :dense="dense" :rules="[val => checkRepeatPasswordField(val)]">
-          <template v-slot:append>
-            <q-icon
-              :name="isPwd2 ? 'visibility_off' : 'visibility'"
-              class="cursor-pointer"
-              @click="isPwd2 = !isPwd2"
-            />
-          </template>
-        </q-input>
-
-        <q-btn color="white" text-color="black" @click="resetPass" :disabled="!enableCreate">Set password
-          <q-spinner-bars
-            color="primary"
-            size="1em"
-            v-show="loading"
+  <div class="row reset-container">
+    <div class="gt-xs offset-sm-2 col-sm-4 offset-md-3 col-md-3">Here should be logo and moto</div>
+    <div class="offset-xs-1 col-xs-10 col-sm-4 col-md-3 column" v-if="reset">
+      <q-input v-model.lazy="password" :type="isPwd1 ? 'password' : 'text'" label="Password" :dense="dense" :rules="[val => checkPasswordField(val)]">
+        <template v-slot:append>
+          <q-icon
+            :name="isPwd1 ? 'visibility_off' : 'visibility'"
+            class="cursor-pointer"
+            @click="isPwd1 = !isPwd1"
           />
-        </q-btn>
+        </template>
+      </q-input>
 
-        <p>{{ message }}</p>
-      </div>
+      <q-input v-model.lazy="passwordConfirm" :type="isPwd2 ? 'password' : 'text'" label="Confirm Password" :dense="dense" :rules="[val => checkRepeatPasswordField(val)]">
+        <template v-slot:append>
+          <q-icon
+            :name="isPwd2 ? 'visibility_off' : 'visibility'"
+            class="cursor-pointer"
+            @click="isPwd2 = !isPwd2"
+          />
+        </template>
+      </q-input>
+
+      <q-btn color="white" text-color="black" @click="resetPass" :disabled="!enableCreate">Set password
+        <q-spinner-bars
+          color="primary"
+          size="1em"
+          v-show="loading"
+        />
+      </q-btn>
+
+      <p class="q-mt-md">{{ message }}</p>
     </div>
   </div>
 </template>
@@ -61,11 +59,13 @@ export default {
   methods: {
     resetPass () {
       this.loading = true
+      const { password, oobCode } = this
       axios
-        .post('/api/auth/resetpassword', { password: this.password, oobCode: this.oobCode })
+        .post('api/auth/resetpassword', { password, oobCode })
         .then(res => {
           this.loading = false
-          this.$router.go('/auth/login')
+          this.$store.commit('notifyReset', true)
+          this.$router.push('/login')
         })
         .catch(err => {
           this.message = err
@@ -75,7 +75,6 @@ export default {
   },
 
   computed: {
-    // enable "create button" if all fields are filled
     enableCreate () {
       return !!this.passwordField && this.password === this.passwordConfirm
     }
@@ -88,17 +87,17 @@ export default {
     } else {
       this.reset = false
     }
-    // resetPassword
   }
 }
 </script>
 
 <style scoped>
-.register-container {
-  margin-top: 50px
+.reset-container {
+  overflow: auto;
+  margin-top: 50px;
 }
 
 .q-spinner {
-  margin-left: 10px
+  margin-left: 10px;
 }
 </style>

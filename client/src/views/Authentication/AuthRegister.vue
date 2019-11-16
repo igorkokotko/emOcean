@@ -1,9 +1,7 @@
 <template>
-  <div style="overflow:auto">
-    <div class="row register-container">
-      <div class="gt-xs offset-sm-2 col-sm-4 offset-md-3 col-md-3">Here should be logo and moto</div>
-      <div class="offset-xs-1 col-xs-10 col-sm-4 col-md-3 column">
-
+  <div class="row register-container">
+    <div class="gt-xs offset-sm-2 col-sm-4 offset-md-3 col-md-3">Here should be logo and moto</div>
+    <div class="offset-xs-1 col-xs-10 col-sm-4 col-md-3 column">
       <q-input v-model.lazy="email" label="Email" :dense="dense" :rules="[val => checkEmailField(val)]"/>
 
       <q-input v-model.lazy="nickname" label="Nickname" :dense="dense" :rules="[val => checkNicknameField(val)]"/>
@@ -28,7 +26,7 @@
         </template>
       </q-input>
 
-      <p id='errormessage'>{{ error }}</p>
+      <p id='error-message'>{{ error }}</p>
 
       <q-btn color="white" text-color="black" @click='register' :disabled='!enableCreate'>create account
         <q-spinner-bars
@@ -39,16 +37,15 @@
         />
       </q-btn>
 
-      <p id="or">OR</p>
+      <p id="center-paragraph">OR</p>
 
       <q-btn color="white" text-color="black" @click="handleClickSignIn">
         <img id='google-img' src="../../assets/google-icon.png" />
         Sign In
       </q-btn>
 
-      <p style="margin-top:20px">Already have an account? <a href='/login'>Log In</a></p>
+      <p class='paragraph'>Already have an account? <a href='/login'>Log In</a></p>
 
-    </div>
     </div>
   </div>
 </template>
@@ -79,38 +76,39 @@ export default {
   methods: {
     register () {
       this.loading = true
+      const { email, password, nickname } = this
       axios
-        .post('/api/auth/register', { email: this.email, password: this.password, nickname: this.nickname })
+        .post('api/auth/register', { email, password, nickname })
         .then(res => {
-          if (res.message === 'User created') {
-            this.$router.go('/auth/login')
-          }
           this.loading = false
+          this.$store.commit('notifyRegistered', true)
+          this.$router.push('/login')
         })
         .catch(err => {
           this.error = err
           this.loading = false
         })
     },
-    // Signs in, returns token
     handleClickSignIn () {
       this.$gAuth
         .signIn()
         .then(GoogleUser => {
-          console.log('getAuthResponse', GoogleUser.getAuthResponse())
           axios.post('api/auth/loginwithgoogle', GoogleUser.getAuthResponse())
-            .then(token => {
-              // token to be added to Vuex state in the next step
-              console.log(token)
+            .then(res => {
+              this.$store.commit('login', { token: res.data.token, user: res.data.token })
+              this.setAxiosHeaders(res.data.token)
+              this.loading = false
+              this.$router.push('/feed')
             })
         })
         .catch(err => {
-          this.error = err
+          if (err.error !== 'popup_closed_by_user') {
+            this.error = err
+          }
         })
     }
   },
   computed: {
-    // enable "log in button" if all fields are filled
     enableCreate () {
       return !!this.emailField && !!this.nicknameField && !!this.passwordField && this.password === this.passwordConfirm
     }
@@ -120,23 +118,29 @@ export default {
 
 <style scoped>
 .register-container {
-  margin-top: 50px
+  overflow: auto;
+  margin-top: 50px;
 }
 
-#errormessage {
-  color: #C10015
+#error-message {
+  color: #C10015;
 }
 
 #google-img {
-  height: 1.5rem
+  height: 1.5rem;
 }
 
-#or {
+#center-paragraph {
   text-align: center;
-  margin-top:20px
+  margin-top: 20px;
+}
+
+.paragraph {
+  margin-top: 20px;
+  margin-bottom: 0;
 }
 
 a {
-  text-decoration: none
+  text-decoration: none;
 }
 </style>

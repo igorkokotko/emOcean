@@ -21,11 +21,13 @@ import {
   QInput,
   QSpinnerBars,
   QTooltip,
-  QSelect
+  QSelect,
+  Notify
 } from 'quasar'
 
 Vue.use(Quasar, {
-  config: {},
+  config: {
+  },
   components: {
     QLayout,
     QHeader,
@@ -44,10 +46,12 @@ Vue.use(Quasar, {
     QInput,
     QSpinnerBars,
     QTooltip,
-    QSelect
+    QSelect,
+    Notify
   },
   directives: {
   },
   plugins: {
+    Notify
   }
 })
