@@ -2,6 +2,7 @@
   <q-page class="q-pa-lg">
     <q-form
       class="q-gutter-md"
+      @submit="onFormSubmit"
     >
       <q-input
         label="Current password"
@@ -77,6 +78,7 @@ import {
   checkPasswordField,
   checkRepeatPasswordField
 } from '@/utilities/validation.js'
+import authService from '@/services/auth.js'
 
 export default {
   data () {
@@ -100,6 +102,30 @@ export default {
     },
     onForgotPasswordClick () {
       this.$router.push({ path: '/forgotpassword' })
+    },
+    onFormSubmit () {
+      authService.changePassword({
+        oldpassword: this.formModel.currentPassword,
+        newpassword: this.formModel.newPassword
+      })
+        .then((response) => {
+          this.$q.notify({
+            color: 'primary',
+            textColor: 'white',
+            message: 'Your password was changed.',
+            actions: [{ icon: 'close', color: 'white' }],
+            timeout: 3000
+          })
+        })
+        .catch(err => {
+          this.$q.notify({
+            color: 'negative',
+            textColor: 'white',
+            message: err.response.data,
+            actions: [{ icon: 'close', color: 'white' }],
+            timeout: 3000
+          })
+        })
     }
   }
 }
@@ -107,6 +133,6 @@ export default {
 
 <style scoped>
 .q-field--with-bottom {
-  padding-bottom: 0;
+  padding-bottom: 10px;
 }
 </style>

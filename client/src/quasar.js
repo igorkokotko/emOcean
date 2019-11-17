@@ -13,7 +13,6 @@ import {
   QToolbarTitle,
   QBtn,
   QIcon,
-  QForm,
   QInput,
   QSelect,
   QAvatar,
@@ -22,7 +21,7 @@ import {
   QItemSection,
   QItemLabel,
   QForm,
-  QInput
+  Notify
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -44,12 +43,11 @@ Vue.use(Quasar, {
     QList,
     QItem,
     QItemSection,
-    QItemLabel,
-    QForm,
-    QInput
+    QItemLabel
   },
   directives: {
   },
   plugins: {
+    Notify
   }
 })
