@@ -1,8 +1,8 @@
 <template>
   <div>
     <q-avatar
-      size="100px"
-      font-size="size"
+      :size="size"
+      :font-size="size"
       color="primary"
       text-color="white"
       :icon="img.length === 0 ? 'account_circle' : null"
@@ -18,6 +18,10 @@ export default {
     img: {
       type: String,
       default: ''
+    },
+    size: {
+      type: String,
+      default: '100px'
     }
   }
 }
