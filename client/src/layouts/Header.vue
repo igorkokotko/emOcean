@@ -4,10 +4,12 @@
     class="bg-white text-primary"
   >
     <q-toolbar>
-      <img
-        src="@/assets/img/logo.jpeg"
-        class="q-ma-sm logo"
-      >
+      <router-link :to="{path: '/'}">
+        <img
+          src="@/assets/img/logo.jpeg"
+          class="q-ma-sm logo"
+        >
+      </router-link>
       <q-space ></q-space>
       <q-btn
         flat
@@ -24,11 +26,14 @@
       >
         <q-menu>
           <q-list style="min-width: 100px">
-            <q-item clickable>
+            <q-item
+              to="/settings"
+              clickable
+            >
               <q-item-section>Settings</q-item-section>
             </q-item>
             <q-item clickable>
-              <q-item-section>Log out</q-item-section>
+              <q-item-section disabled>Log out</q-item-section>
             </q-item>
           </q-list>
         </q-menu>
