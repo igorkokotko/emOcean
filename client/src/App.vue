@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated class="glossy">
+    <!-- <q-header elevated class="glossy">
       <q-toolbar>
         <q-btn
           flat
@@ -11,7 +11,8 @@
           icon="menu"
         />
       </q-toolbar>
-    </q-header>
+    </q-header> -->
+    <project-header />
     <q-page-container>
       <router-view></router-view>
     </q-page-container>
@@ -19,11 +20,13 @@
 </template>
 
 <script>
+import ProjectHeader from '@/layouts/Header.vue'
 
 export default {
   name: 'LayoutDefault',
 
   components: {
+    ProjectHeader
   },
 
   data () {
