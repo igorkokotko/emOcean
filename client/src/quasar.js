@@ -37,7 +37,11 @@ import {
   QCard,
   QCardSection,
   QCardActions,
-  QSelect
+  QSelect,
+  QSlider,
+  QSeparator,
+  QToggle,
+  Ripple
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -76,9 +80,13 @@ Vue.use(Quasar, {
     QCard,
     QCardSection,
     QCardActions,
-    QSelect
+    QSelect,
+    QSlider,
+    QSeparator,
+    QToggle
   },
   directives: {
+    Ripple
   },
   plugins: {
     Notify
