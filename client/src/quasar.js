@@ -22,11 +22,19 @@ import {
   QItem,
   QItemSection,
   QItemLabel,
-  QInput,
   QSpinnerBars,
   QTooltip,
-  QSelect,
-  Notify
+  Notify,
+  QTabs,
+  QTab,
+  QRouteTab,
+  QTabPanels,
+  QTabPanel,
+  QScrollArea,
+  QSplitter,
+  QCard,
+  QCardSection,
+  QCardActions
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -51,11 +59,19 @@ Vue.use(Quasar, {
     QItem,
     QItemSection,
     QItemLabel,
-    QInput,
     QSpinnerBars,
     QTooltip,
-    QSelect,
-    Notify
+    Notify,
+    QTabs,
+    QTab,
+    QRouteTab,
+    QTabPanels,
+    QTabPanel,
+    QScrollArea,
+    QSplitter,
+    QCard,
+    QCardSection,
+    QCardActions
   },
   directives: {
   },
