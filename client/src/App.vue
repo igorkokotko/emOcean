@@ -1,17 +1,5 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated class="glossy">
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          @click="leftDrawerOpen = !leftDrawerOpen"
-          aria-label="Menu"
-          icon="menu"
-        />
-      </q-toolbar>
-    </q-header>
     <q-page-container>
       <router-view></router-view>
     </q-page-container>
@@ -35,4 +23,33 @@ export default {
 </script>
 
 <style>
+  /*reset*/
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0.5px;
+  background-color: white;
+}
+
+h1, h2, h3, h4 {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  line-height: normal;
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+li {
+  list-style: none;
+}
 </style>
