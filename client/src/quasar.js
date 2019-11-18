@@ -6,6 +6,7 @@ import {
   Quasar,
   QLayout,
   QHeader,
+  QFooter,
   QDrawer,
   QPageContainer,
   QPage,
@@ -22,14 +23,20 @@ import {
   QItemSection,
   QItemLabel,
   QSpace,
-  QMenu
+  QMenu,
+  QSpinnerBars,
+  QTooltip,
+  QSelect,
+  Notify
 } from 'quasar'
 
 Vue.use(Quasar, {
-  config: {},
+  config: {
+  },
   components: {
     QLayout,
     QHeader,
+    QFooter,
     QDrawer,
     QPageContainer,
     QPage,
@@ -46,10 +53,15 @@ Vue.use(Quasar, {
     QItemSection,
     QItemLabel,
     QSpace,
-    QMenu
+    QMenu,
+    QSpinnerBars,
+    QTooltip,
+    QSelect,
+    Notify
   },
   directives: {
   },
   plugins: {
+    Notify
   }
 })
