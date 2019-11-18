@@ -1,18 +1,18 @@
 <template>
   <div>
-    <q-card class="my-card q-ma-sm">
+    <q-card class="my-card q-ma-md">
       <q-splitter
         v-model="splitterModel"
-        :[attrPosition]="true"
-        style="height: 250px"
+        :horizontal="horizontalAttrPosition"
+        :vertical="!horizontalAttrPosition"
       >
         <template v-slot:before>
           <q-tabs
             v-model="tab"
-            :[attrPosition]="true"
+            :horizontal="horizontalAttrPosition"
+            :vertical="!horizontalAttrPosition"
             class="text-teal"
-          >
-            <q-route-tab
+          ><q-route-tab
               v-for="(item, index) in routeItems"
               :key="index"
               :to="item.to"
@@ -44,8 +44,6 @@ export default {
   data: function () {
     return {
       tab: 'mail',
-      windowWidth: 0,
-      attrPosition: 'vertical',
       splitterModel: 25,
       routeItems: [
         { to: '/settings/editProfile', title: 'Edit profile', show: true },
@@ -59,27 +57,15 @@ export default {
       ]
     }
   },
-  mounted () {
-    this.$nextTick(function () {
-      window.addEventListener('resize', this.getWindowWidth)
-    })
-  },
   methods: {
-    position () {
-      if (window.innerWidth >= 599) {
-        this.attrPosition = 'vertical'
-      } else {
-        this.attrPosition = 'horizontal'
-      }
-    },
-    getWindowWidth (event) {
-      this.windowWidth = document.documentElement.clientWidth
-      this.position()
+  },
+  computed: {
+    horizontalAttrPosition () {
+      return this.$q.screen.xs
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-
 </style>
