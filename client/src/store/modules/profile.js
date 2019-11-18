@@ -3,10 +3,10 @@ export default {
     // Request to the database
     async uploadProfile (ctx) {
       const profileData = {
-        nickname: 'Jaden Smith',
-        bio: "My name is Khris, and i'm profile creator",
-        avatar_url: 'https://media.licdn.com/dms/image/C5603AQGBn4_HoHYEDA/profile-displayphoto-shrink_200_200/0?e=1578528000&v=beta&t=seJnvBNJi1J9QlTbVBSZnZGLwRyZDTkxlfNhUM6VagU',
-        status: 'I also have a friend Danylo. He is really cool programmer.',
+        nickname: 'Elon Mask',
+        bio: 'My name is Elon and I like SoftServe company!',
+        avatar_url: 'https://amp.businessinsider.com/images/5d4ae5ea100a2411da63051d-750-562.jpg',
+        status: 'My name is Elon and I like SoftServe company!',
         user_background: 'https://images.alphacoders.com/805/805180.jpg',
         interests: ['nature', 'football', 'flowers'],
         likedPosts: ['postId_1', 'postId_2'],
