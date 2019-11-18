@@ -28,7 +28,14 @@ import {
   Notify,
   QTabs,
   QTab,
-  QRouteTab
+  QRouteTab,
+  QTabPanels,
+  QTabPanel,
+  QScrollArea,
+  QSplitter,
+  QCard,
+  QCardSection,
+  QCardActions
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -58,7 +65,14 @@ Vue.use(Quasar, {
     Notify,
     QTabs,
     QTab,
-    QRouteTab
+    QRouteTab,
+    QTabPanels,
+    QTabPanel,
+    QScrollArea,
+    QSplitter,
+    QCard,
+    QCardSection,
+    QCardActions
   },
   directives: {
   },
