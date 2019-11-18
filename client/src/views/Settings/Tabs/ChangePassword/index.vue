@@ -105,8 +105,8 @@ export default {
     },
     onFormSubmit () {
       authService.changePassword({
-        oldpassword: this.formModel.currentPassword,
-        newpassword: this.formModel.newPassword
+        oldPassword: this.formModel.currentPassword,
+        newPassword: this.formModel.newPassword
       })
         .then((response) => {
           this.$q.notify({
