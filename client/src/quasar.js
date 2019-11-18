@@ -26,7 +26,6 @@ import {
   QMenu,
   QSpinnerBars,
   QTooltip,
-  QSelect,
   Notify
 } from 'quasar'
 
@@ -46,7 +45,6 @@ Vue.use(Quasar, {
     QIcon,
     QForm,
     QInput,
-    QSelect,
     QAvatar,
     QList,
     QItem,
