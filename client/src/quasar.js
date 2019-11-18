@@ -16,7 +16,6 @@ import {
   QIcon,
   QForm,
   QInput,
-  QSelect,
   QAvatar,
   QList,
   QItem,
@@ -26,7 +25,17 @@ import {
   QMenu,
   QSpinnerBars,
   QTooltip,
-  Notify
+  Notify,
+  QTabs,
+  QTab,
+  QRouteTab,
+  QTabPanels,
+  QTabPanel,
+  QScrollArea,
+  QSplitter,
+  QCard,
+  QCardSection,
+  QCardActions
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -54,8 +63,17 @@ Vue.use(Quasar, {
     QMenu,
     QSpinnerBars,
     QTooltip,
-    QSelect,
-    Notify
+    Notify,
+    QTabs,
+    QTab,
+    QRouteTab,
+    QTabPanels,
+    QTabPanel,
+    QScrollArea,
+    QSplitter,
+    QCard,
+    QCardSection,
+    QCardActions
   },
   directives: {
   },
