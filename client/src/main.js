@@ -4,17 +4,17 @@ import router from './router'
 import store from './store'
 import './registerServiceWorker'
 import './quasar'
-import GAuth from 'vue-google-oauth2'
-import { clientId } from './config/config.js'
+// import GAuth from 'vue-google-oauth2'
+// import { clientId } from './config/config.js'
 
 Vue.config.productionTip = false
 
-const gauthOption = {
-  clientId: clientId,
-  scope: 'profile email',
-  prompt: 'select_account'
-}
-Vue.use(GAuth, gauthOption)
+// const gauthOption = {
+//   clientId: clientId,
+//   scope: 'profile email',
+//   prompt: 'select_account'
+// }
+// Vue.use(GAuth, gauthOption)
 
 new Vue({
   router,
