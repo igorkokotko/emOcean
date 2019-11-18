@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <project-header />
+    <v-header />
     <q-page-container>
       <router-view></router-view>
     </q-page-container>
@@ -8,13 +8,13 @@
 </template>
 
 <script>
-import ProjectHeader from '@/layouts/Header.vue'
+import vHeader from '@/layouts/Header.vue'
 
 export default {
   name: 'LayoutDefault',
 
   components: {
-    ProjectHeader
+    vHeader
   },
 
   data () {
