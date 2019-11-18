@@ -26,15 +26,31 @@
       >
         <q-menu>
           <q-list style="min-width: 100px">
-            <q-item
-              to="/settings"
-              clickable
-            >
-              <q-item-section>Settings</q-item-section>
-            </q-item>
-            <q-item clickable>
-              <q-item-section disabled>Log out</q-item-section>
-            </q-item>
+            <template v-if="$store.state.auth.token">
+              <q-item
+                to="/settings"
+                clickable
+              >
+                <q-item-section>Settings</q-item-section>
+              </q-item>
+              <q-item clickable>
+                <q-item-section disabled>Log out</q-item-section>
+              </q-item>
+            </template>
+            <template v-else>
+              <q-item
+                to="/login"
+                clickable
+              >
+                <q-item-section>Login</q-item-section>
+              </q-item>
+              <q-item
+                to="/register"
+                clickable
+              >
+                <q-item-section>Register</q-item-section>
+              </q-item>
+            </template>
           </q-list>
         </q-menu>
       </q-btn>
