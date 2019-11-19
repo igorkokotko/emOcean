@@ -1,17 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated class="glossy">
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          @click="leftDrawerOpen = !leftDrawerOpen"
-          aria-label="Menu"
-          icon="menu"
-        />
-      </q-toolbar>
-    </q-header>
+    <v-header />
     <q-page-container>
       <router-view></router-view>
     </q-page-container>
@@ -19,11 +8,13 @@
 </template>
 
 <script>
+import vHeader from '@/layouts/Header.vue'
 
 export default {
   name: 'LayoutDefault',
 
   components: {
+    vHeader
   },
 
   data () {
