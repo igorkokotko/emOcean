@@ -64,14 +64,17 @@ const state = {
       src: '/preferences/travel.jpg',
       title: 'travel',
       chosen: false
+    },
+    'id_14': {
+      src: '/preferences/fun.jpg',
+      title: 'fun',
+      chosen: false
     }
   }
 }
 
 const mutations = {
   updatePreference (state, payload) {
-    console.log('good')
-    console.log('payload:', payload)
     Object.assign(state.preferences[payload.key], payload.updates)
   }
 }
