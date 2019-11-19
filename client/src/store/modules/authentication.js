@@ -4,16 +4,24 @@ const state = {
   notifyRegistered: false,
   notifyReset: false
 }
+const getters = {
+  notifyRegistered: state => {
+    return state.notifyRegistered
+  },
+  notifyReset: state => {
+    return state.notifyReset
+  }
+}
 const mutations = {
   login (state, payload) {
     state.token = payload.token
     state.user = payload.user
   },
-  notifyRegistered (state, n) {
-    state.notifyRegistered = n
+  notifyRegistered (state, boolean) {
+    state.notifyRegistered = boolean
   },
-  notifyReset (state, n) {
-    state.notifyReset = n
+  notifyReset (state, boolean) {
+    state.notifyReset = boolean
   }
 }
 const actions = {
@@ -21,6 +29,7 @@ const actions = {
 
 export default {
   state,
+  getters,
   mutations,
   actions
 }
