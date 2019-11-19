@@ -4,15 +4,7 @@
       class="q-gutter-md"
     >
       <div>
-        <q-avatar
-          size="100px"
-          font-size="100px"
-          color="primary"
-          text-color="white"
-          :icon="photoUrl ? null : 'account_circle'"
-        >
-          <img :src="photoUrl">
-        </q-avatar>
+        <avatar :img="photoUrl" />
         <q-input
           @input="uploadAvatar"
           type="file"
@@ -74,9 +66,14 @@
 </template>
 
 <script>
+import Avatar from '@/components/Avatar.vue'
 const suggestedInterests = ['nature', 'IT', 'innovation', 'tourism', 'music']
 
 export default {
+  components: {
+    Avatar
+  },
+
   data () {
     return {
       filterOptions: suggestedInterests,
