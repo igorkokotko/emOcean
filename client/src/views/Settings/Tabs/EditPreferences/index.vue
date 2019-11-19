@@ -1,7 +1,7 @@
 <template>
   <div>
     <q-btn
-      v-for="(preference, key) in preferences"
+      v-for="(preference, key) in getPreferences"
       :key="key"
       @click="updatePreference({key: key, updates: {chosen: !preference.chosen}})"
       size="50px"
@@ -24,8 +24,7 @@ export default {
     ...mapActions('preferences', ['updatePreference'])
   },
   computed: {
-    ...mapGetters('preferences', ['preferences'])
-
+    ...mapGetters('preferences', ['getPreferences'])
   }
 }
 </script>
