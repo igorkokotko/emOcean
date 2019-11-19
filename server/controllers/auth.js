@@ -73,7 +73,7 @@ const changePassword = asyncMiddleware(async (req, res, next) => {
 })
 
 const sendPasswordResetCode = asyncMiddleware(async (req, res, next) => {
-  const { email } = req.user.email
+  const { email } = req.body
   // Each validation field could return is empty error or invalid format error
   const validatedEmailError = validateEmail(email)
   if (validatedEmailError !== undefined) {
