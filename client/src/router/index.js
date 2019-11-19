@@ -5,7 +5,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
+    path: '/profile',
     name: 'profile',
     component: () => import('../views/Profile/index.vue')
   },

@@ -2,13 +2,13 @@
   <div class="profile-card">
       <div class="user-avatar">
         <img :src="profile.avatar_url" alt="avatar"/>
-        <i v-if="profile.counters.views > 100" class="fas fa-star" title="More than 100 views on page"></i>
+        <i v-if="profile.counters.views > 100" class="fas fa-star" title="More than 100 views"></i>
       </div>
     <div class="card-content">
       <h2 class="name">
         {{profile.nickname}}
       </h2>
-<!--<follow-button v-if="profileData.id != $parent.me.id"></follow-button>-->
+<!--for future <follow-button v-if="profileData.id != $parent.me.id"></follow-button>-->
       <follow-button :following="profile.is_following"></follow-button>
       <p class="decription">
         {{profile.status}}

@@ -33,7 +33,7 @@
       </router-link>
     </nav>
     <div class="social-accounts">
-      <a v-for="account in socialAccounts" :key="account.type" :href="account.link" class="social-button" :class="`social-button--${account.type}`">
+      <a v-for="account in socialAccounts" :title="`Come and find me in the ${account.type}`" :key="account.type" :href="account.link" class="social-button" :class="`social-button--${account.type}`">
         <i v-if="account.type == 'facebook'" class="fab fa-facebook-f"></i>
         <i v-else-if="account.type == 'youtube'" class="fab fa-youtube"></i>
         <i v-else-if="account.type == 'instagram'" class="fab fa-instagram"></i>
