@@ -61,7 +61,7 @@ export default {
       this.loading = true
       const { password, oobCode } = this
       axios
-        .post('api/auth/resetpassword', { password, oobCode })
+        .post('api/auth/reset-password', { password, oobCode })
         .then(res => {
           this.loading = false
           this.$store.commit('notifyReset', true)

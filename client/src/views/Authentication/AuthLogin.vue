@@ -73,7 +73,7 @@ export default {
           this.$router.push('/feed')
         })
         .catch(err => {
-          this.error = err
+          this.error = err.response.data.error
           this.loading = false
         })
     },
@@ -84,7 +84,7 @@ export default {
       this.$gAuth
         .signIn()
         .then(GoogleUser => {
-          axios.post('api/auth/loginwithgoogle', GoogleUser.getAuthResponse())
+          axios.post('api/auth/login-with-google', GoogleUser.getAuthResponse())
             .then(res => {
               this.$store.commit('login', { token: res.data.token, user: res.data.token })
               this.setAxiosHeaders(res.data.token)
@@ -94,7 +94,7 @@ export default {
         })
         .catch(err => {
           if (err.error !== 'popup_closed_by_user') {
-            this.error = err
+            this.error = err.response.data.error
           }
         })
     }

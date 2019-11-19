@@ -8,7 +8,9 @@
 
       <p class='paragraph'>We will email you a link to reset your password</p>
 
-      <q-input v-model="email" label="Email" :dense="dense" :rules="[val => checkEmailField(val)]"/>
+      <q-input v-model.lazy="email" label="Email" :dense="dense" :rules="[val => checkEmailField(val)]"/>
+
+      <!-- <q-input v-model.lazy="email" label="Email" :dense="dense" :rules="[val => checkEmailField(val)]"/> -->
 
       <q-btn class="q-mb-md" color="white" text-color="black" @click="forgot" :disabled="!enableForgot">Send
         <q-spinner-bars
@@ -50,13 +52,13 @@ export default {
       this.loading = true
       const { email } = this
       axios
-        .post('api/auth/sendpasswordresetcode', { email })
+        .post('api/auth/send-password-reset-code', { email })
         .then(res => {
           this.showNotif('A reset link has been sent to your email. Check your inbox!')
           this.loading = false
         })
         .catch(err => {
-          this.message = err
+          this.message = err.response.data.error
           this.loading = false
         })
     }
