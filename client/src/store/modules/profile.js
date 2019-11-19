@@ -18,7 +18,7 @@ export default {
         following: ['followingID'],
         is_following: true,
         counters: {
-          views: '139k',
+          views: '139',
           postsCount: '18',
           followersCount: '84',
           followingCount: '85'

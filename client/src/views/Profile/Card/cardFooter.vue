@@ -1,17 +1,7 @@
 <template>
   <div class="profile-footer">
     <nav class="stats row">
-      <router-link class="col-4" to="/">
-        <a href="#" class="stat">
-          <div class="stat-count" v-if="footerCountInfo">
-            {{ footerCountInfo.postsCount }}
-          </div>
-          <div class="stat-titile">
-            Posts
-          </div>
-        </a>
-      </router-link>
-      <router-link class="col-4" to="/">
+      <router-link to="/followers">
         <a href="#" class="stat">
           <div class="stat-count" v-if="footerCountInfo">
             {{ footerCountInfo.followersCount }}
@@ -21,7 +11,17 @@
           </div>
         </a>
       </router-link>
-      <router-link class="col-4" to="/settings">
+      <router-link to="/posts">
+        <a href="#" class="stat">
+          <div class="stat-count" v-if="footerCountInfo">
+            {{ footerCountInfo.postsCount }}
+          </div>
+          <div class="stat-titile">
+            Posts
+          </div>
+        </a>
+      </router-link>
+      <router-link to="/following">
         <a href="#" class="stat">
           <div class="stat-count" v-if="footerCountInfo">
             {{ footerCountInfo.followingCount }}
@@ -34,24 +34,16 @@
     </nav>
     <div class="social-accounts">
       <a v-for="account in socialAccounts" :key="account.type" :href="account.link" class="social-button" :class="`social-button--${account.type}`">
-        <i class="fab fa-facebook-f"></i>
+        <i v-if="account.type == 'facebook'" class="fab fa-facebook-f"></i>
+        <i v-else-if="account.type == 'youtube'" class="fab fa-youtube"></i>
+        <i v-else-if="account.type == 'instagram'" class="fab fa-instagram"></i>
       </a>
-<!--      <a href="#" class="social-button  social-button&#45;&#45;linkedin">-->
-<!--        <i class="fab fa-linkedin-in"></i>-->
-<!--      </a>-->
-<!--      <a href="#" class="social-button social-button&#45;&#45;instagram">-->
-<!--        <i class="fab fa-snapchat-ghost"></i>-->
-<!--      </a>-->
-<!--      <a href="#" class="social-button social-button&#45;&#45;github">-->
-<!--        <i class="fab fa-snapchat-ghost"></i>-->
-<!--      </a>-->
     </div>
   </div>
 </template>
 
 <script>
 export default {
-
   props: {
     footerCountInfo: Object,
     socialAccounts: Array
@@ -101,13 +93,16 @@ export default {
   .stats {
     display: flex;
     justify-content: space-around;
+    & > * {
+      margin: 0 5px;
+    }
     .stat-count {
       font-weight: 600;
       font-size: 16px;
     }
     .stat-titile {
       text-transform: uppercase;
-      font-size: 12px;
+      font-size: 11px;
     }
   }
 </style>

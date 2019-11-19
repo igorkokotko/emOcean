@@ -49,19 +49,19 @@ export default {
 
     &.button-orange {
        background: linear-gradient(45deg, #D5135A, #F05924);
-       box-shadow: 0px 4px 30px rgba(223, 45, 70, 0.35);
+       box-shadow: 0 4px 30px rgba(223, 45, 70, 0.35);
 
       &:hover {
-         box-shadow: 0px 7px 30px rgba(223, 45, 70, 0.75);
+         box-shadow: 0 7px 30px rgba(223, 45, 70, 0.75);
          transform: translateY(-5px);
        }
       }
     &.button-blue {
       background: linear-gradient(45deg, lightseagreen, blue);
-      box-shadow: 0px 4px 30px lightblue;
+      box-shadow: 0 4px 30px lightblue;
 
       &:hover {
-        box-shadow: 0px 7px 30px cornflowerblue;
+        box-shadow: 0 7px 30px cornflowerblue;
         transform: translateY(-5px);
       }
     }

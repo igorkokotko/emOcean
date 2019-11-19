@@ -14,7 +14,6 @@
           <div class="col-12">
             <switch-video></switch-video>
           </div>
-          <div class="col-12">Video</div>
         </div>
     </div>
   </div>
@@ -51,7 +50,6 @@ export default {
       font-size: 13px;
       font-weight: 500;
       top: 25px;
-      min-width: 60px;
       border-radius: 20px 0 0 20px;
       right: 0;
       padding: 5px;

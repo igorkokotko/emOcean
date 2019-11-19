@@ -2,6 +2,7 @@
   <div class="profile-card">
       <div class="user-avatar">
         <img :src="profile.avatar_url" alt="avatar"/>
+        <i v-if="profile.counters.views > 100" class="fas fa-star" title="More than 100 views on page"></i>
       </div>
     <div class="card-content">
       <h2 class="name">
@@ -44,6 +45,14 @@ export default {
       height: 140px;
       border: 2px white solid;
       border-radius: 50%;
+      .fa-star {
+        display: inline-block;
+        position: absolute;
+        color: gold;
+        font-size: 20px;
+        right: 5px;
+        top: 15px;
+      }
       img {
         width: 100%;
         height: 100%;
