@@ -1,7 +1,7 @@
 <template>
   <div class="row forgot-container">
-    <div class="gt-xs offset-sm-2 col-sm-4 offset-md-3 col-md-3">Here should be logo and moto</div>
-    <div class="offset-xs-1 col-xs-10 col-sm-4 col-md-3 column">
+    <div class="gt-xs offset-sm-2 col-sm-4 offset-md-3 col-md-3 simple-container"><h2>Logo and Motto</h2></div>
+    <div class="offset-xs-1 col-xs-10 col-sm-4 col-md-3 column simple-container">
       <p class='paragraph'><strong>Forgot Password?</strong></p>
 
       <p class='paragraph'>Enter the email address associated with your account</p>
@@ -9,8 +9,6 @@
       <p class='paragraph'>We will email you a link to reset your password</p>
 
       <q-input v-model.lazy="email" label="Email" :dense="dense" :rules="[val => checkEmailField(val)]"/>
-
-      <!-- <q-input v-model.lazy="email" label="Email" :dense="dense" :rules="[val => checkEmailField(val)]"/> -->
 
       <q-btn class="q-mb-md" color="white" text-color="black" @click="forgot" :disabled="!enableForgot">Send
         <q-spinner-bars
@@ -58,7 +56,11 @@ export default {
           this.loading = false
         })
         .catch(err => {
-          this.message = err.response.data.error
+          if (err) {
+            this.message = err.response.data.error
+          } else {
+            this.message = 'Sorry, something went wrong...'
+          }
           this.loading = false
         })
     }
@@ -74,7 +76,14 @@ export default {
 <style scoped>
 .forgot-container {
   overflow: auto;
-  margin-top: 50px;
+  padding: 50px 0 30px 0;
+}
+
+.simple-container {
+  padding: 1rem;
+  background: #e7f0f1;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .paragraph {
