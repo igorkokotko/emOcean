@@ -47,6 +47,26 @@ const routes = [
         component: () => import('../views/Settings/Tabs/DeleteAccount/index.vue')
       }
     ]
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: () => import('../views/Authentication/AuthRegister.vue')
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('../views/Authentication/AuthLogin.vue')
+  },
+  {
+    path: '/forgotpassword',
+    name: 'Forgot Password',
+    component: () => import('../views/Authentication/AuthForgot.vue')
+  },
+  {
+    path: '/emailAction',
+    name: 'Reset Password',
+    component: () => import('../views/Authentication/AuthEmailAction.vue')
   }
 ]
 

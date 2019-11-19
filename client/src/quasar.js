@@ -7,6 +7,7 @@ import {
   Quasar,
   QLayout,
   QHeader,
+  QFooter,
   QDrawer,
   QPageContainer,
   QPage,
@@ -14,22 +15,37 @@ import {
   QToolbarTitle,
   QBtn,
   QIcon,
+  QForm,
+  QInput,
+  QAvatar,
   QList,
   QItem,
   QItemSection,
   QItemLabel,
+  QSpace,
+  QMenu,
+  QSpinnerBars,
+  QTooltip,
+  Notify,
   QTabs,
   QTab,
   QRouteTab,
   QTabPanels,
-  QTabPanel
+  QTabPanel,
+  QScrollArea,
+  QSplitter,
+  QCard,
+  QCardSection,
+  QCardActions
 } from 'quasar'
 
 Vue.use(Quasar, {
-  config: {},
+  config: {
+  },
   components: {
     QLayout,
     QHeader,
+    QFooter,
     QDrawer,
     QPageContainer,
     QPage,
@@ -37,18 +53,32 @@ Vue.use(Quasar, {
     QToolbarTitle,
     QBtn,
     QIcon,
+    QForm,
+    QInput,
+    QAvatar,
     QList,
     QItem,
     QItemSection,
     QItemLabel,
+    QSpace,
+    QMenu,
+    QSpinnerBars,
+    QTooltip,
+    Notify,
     QTabs,
     QTab,
     QRouteTab,
     QTabPanels,
-    QTabPanel
+    QTabPanel,
+    QScrollArea,
+    QSplitter,
+    QCard,
+    QCardSection,
+    QCardActions
   },
   directives: {
   },
   plugins: {
+    Notify
   }
 })
