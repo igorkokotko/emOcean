@@ -1,18 +1,18 @@
 <template>
-  <div>
+  <div class="row justify-around">
     <q-btn
       v-for="(preference, key) in getPreferences"
       :key="key"
       @click="updatePreference({key: key, updates: {chosen: !preference.chosen}})"
-      size="50px"
+      size="40px"
       round
       class="q-ma-xs"
     >
-      <q-avatar size="150px">
+      <q-avatar size="120px">
         <img :src="preference.src" :class ="{chosen: preference.chosen}"/>
-          <div v-bind:class="[preference.chosen ? 'chosen' : 'img-caption',
+          <div :class="[preference.chosen ? 'chosen' : 'img-caption',
             'absolute-center',
-            'text-h6',
+            'text-subtitle1',
             'text-center']"
           >
           {{preference.title}}
@@ -20,11 +20,11 @@
       </q-avatar>
     </q-btn>
     <q-btn
-      size="50px"
+      size="40px"
       round
       color="teal"
-      icon="video_library"
-    >
+      to="/"
+    > go
     </q-btn>
   </div>
 </template>
@@ -52,9 +52,9 @@ export default {
   align-self: center;
   border-radius: 0 40px 0 40px;
   }
+
 img.chosen {
   filter: grayscale(100%);
-  /* filter: blur(2px); */
 }
 
 .img-caption {
