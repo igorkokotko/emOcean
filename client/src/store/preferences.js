@@ -67,22 +67,6 @@ const state = {
     }
   }
 }
-//   preferences: [
-//     { src: '/preferences/animals.jpg', title: 'animals', chosen: 'false' },
-//     { src: '/preferences/cinema.jpg', title: 'cinema', chosen: 'false' },
-//     { src: '/preferences/culinary.jpg', title: 'culinary', chosen: 'false' },
-//     { src: '/preferences/dance.jpg', title: 'dance', chosen: 'false' },
-//     { src: '/preferences/extreme.jpg', title: 'extreme', chosen: 'false' },
-//     { src: '/preferences/game.jpg', title: 'game', chosen: 'false' },
-//     { src: '/preferences/health.jpg', title: 'health', chosen: 'false' },
-//     { src: '/preferences/learn.jpg', title: 'learn', chosen: 'false' },
-//     { src: '/preferences/nature.jpg', title: 'nature', chosen: 'false' },
-//     { src: '/preferences/prank.jpg', title: 'prank', chosen: 'false' },
-//     { src: '/preferences/science.jpg', title: 'science', chosen: 'false' },
-//     { src: '/preferences/sport.jpg', title: 'sport', chosen: 'false' },
-//     { src: '/preferences/travel.jpg', title: 'travel', chosen: 'false' }
-//   ]
-// }
 
 const mutations = {
   updatePreference (state, payload) {

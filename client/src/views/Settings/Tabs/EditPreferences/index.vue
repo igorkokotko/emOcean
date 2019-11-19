@@ -9,7 +9,7 @@
       class="q-ma-xs"
     >
       <q-avatar size="150px" >
-        <img :src="preference.src">
+        <img :src="preference.src" :class ="{chosen: preference.chosen}">
       </q-avatar>
     </q-btn>
   </div>
@@ -32,7 +32,7 @@ export default {
 
 <style scoped>
 .chosen{
-  background: #000;
-  border: 2px solid;
+  border: 10px solid  rgba(90, 251, 224, 0.171);
+  filter: blur(0px);
 }
 </style>
