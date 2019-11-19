@@ -1,5 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
+    <v-header />
     <q-page-container>
       <router-view></router-view>
     </q-page-container>
@@ -9,12 +10,14 @@
 
 <script>
 import Footer from './layouts/Footer.vue'
+import vHeader from '@/layouts/Header.vue'
 
 export default {
   name: 'LayoutDefault',
 
   components: {
-    Footer
+    Footer,
+    vHeader
   },
 
   data () {
