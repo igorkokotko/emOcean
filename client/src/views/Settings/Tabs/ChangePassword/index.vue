@@ -104,26 +104,27 @@ export default {
       this.$router.push({ path: '/forgotpassword' })
     },
     onFormSubmit () {
+      const notifyParameters = {
+        textColor: 'white',
+        actions: [{ icon: 'close', color: 'white' }],
+        timeout: 3000
+      }
       authService.changePassword({
         oldPassword: this.formModel.currentPassword,
         newPassword: this.formModel.newPassword
       })
         .then((response) => {
           this.$q.notify({
+            ...notifyParameters,
             color: 'primary',
-            textColor: 'white',
-            message: 'Your password was changed.',
-            actions: [{ icon: 'close', color: 'white' }],
-            timeout: 3000
+            message: 'Your password was changed.'
           })
         })
         .catch(err => {
           this.$q.notify({
+            ...notifyParameters,
             color: 'negative',
-            textColor: 'white',
-            message: err.response.data,
-            actions: [{ icon: 'close', color: 'white' }],
-            timeout: 3000
+            message: err && err.response && err.response.data ? err.response.data : 'Unknown error.'
           })
         })
     }
