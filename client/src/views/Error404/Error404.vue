@@ -15,25 +15,25 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-    *{
-        margin: 0;
-        padding: 0;
-    }
-    #errorpage{
-        margin:20%;
-        display:flex;
-        justify-content: center;
-        align-items: center;
-        text-align:center;
-        flex-direction: column;
-        color:#333;
-        i{
-            font-size: 8em;
-            color: #ccc;
-            margin:5%;
-        }
-        .error-info{
-            color:#777;
-        }
-    }
+*{
+  margin: 0;
+  padding: 0;
+}
+#errorpage{
+  margin:20%;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  text-align:center;
+  flex-direction: column;
+  color:#333;
+  i{
+    font-size: 8em;
+    color: #ccc;
+    margin:5%;
+  }
+  .error-info{
+    color:#777;
+  }
+}
 </style>
