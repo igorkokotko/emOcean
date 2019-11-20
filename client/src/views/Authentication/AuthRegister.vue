@@ -53,6 +53,7 @@
 <script>
 import axios from 'axios'
 import { validationMixin } from '../../utilities/validationMixin.js'
+var ApiService = require('../../utilities/ApiService.js')
 
 export default {
   mixins: [validationMixin],
@@ -85,11 +86,7 @@ export default {
           this.$router.push('/login')
         })
         .catch(err => {
-          if (err) {
-            this.error = err.response.data.error
-          } else {
-            this.error = 'Sorry, something went wrong...'
-          }
+          this.error = err.response ? err.response.data.error : 'Sorry. Something has gone wrong...'
           this.loading = false
         })
     },
@@ -99,15 +96,15 @@ export default {
         .then(GoogleUser => {
           axios.post('api/auth/login-with-google', GoogleUser.getAuthResponse())
             .then(res => {
-              this.$store.commit('login', { token: res.data.token, user: res.data.token })
-              this.setAxiosHeaders(res.data.token)
+              this.$store.commit('login', { token: res.data.token, user: res.data.user })
+              ApiService.setApiAuthorizationHeaders(res.data.token)
               this.loading = false
               this.$router.push('/feed')
             })
         })
         .catch(err => {
           if (err.error !== 'popup_closed_by_user') {
-            this.error = err
+            this.error = err.response ? err.response.data.error : 'Sorry. Something has gone wrong...'
           }
         })
     }

@@ -35,8 +35,4 @@ export default {
 </script>
 
 <style>
-.q-page-container {
-  background: linear-gradient(90deg, rgba(38,183,233,0.7903536414565826) 0%, rgba(34,218,197,1) 100%);
-  height: 100vh
-}
 </style>

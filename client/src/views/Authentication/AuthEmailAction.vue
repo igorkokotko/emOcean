@@ -24,13 +24,14 @@
 
       <q-btn color="white" text-color="black" @click="resetPass" :disabled="!enableCreate">Set password
         <q-spinner-bars
+          class='q-ml-md'
           color="primary"
           size="1em"
           v-show="loading"
         />
       </q-btn>
 
-      <p class="q-mt-md">{{ message }}</p>
+      <p class="q-mt-md" >{{ message }}</p>
     </div>
   </div>
 </template>
@@ -68,11 +69,7 @@ export default {
           this.$router.push('/login')
         })
         .catch(err => {
-          if (err) {
-            this.message = err.response.data.error
-          } else {
-            this.message = 'Sorry, something went wrong...'
-          }
+          this.message = err.response ? err.response.data.error : 'Sorry. Something has gone wrong...'
           this.loading = false
         })
     }
@@ -108,7 +105,7 @@ export default {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
-.q-spinner {
-  margin-left: 10px;
+#error-message {
+  color: #C10015;
 }
 </style>

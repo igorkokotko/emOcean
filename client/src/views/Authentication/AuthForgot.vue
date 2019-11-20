@@ -21,7 +21,7 @@
 
       <a href='/login'><q-btn color="white" text-color="black" style="width:100%">back</q-btn></a>
 
-      <p class="q-mt-md">{{ message }}</p>
+      <p class="q-mt-md" id='error-message'>{{ message }}</p>
 
     </div>
   </div>
@@ -56,11 +56,7 @@ export default {
           this.loading = false
         })
         .catch(err => {
-          if (err) {
-            this.message = err.response.data.error
-          } else {
-            this.message = 'Sorry, something went wrong...'
-          }
+          this.message = err.response ? err.response.data.error : 'Sorry. Something has gone wrong...'
           this.loading = false
         })
     }
@@ -84,6 +80,10 @@ export default {
   background: #e7f0f1;
   border-radius: 0.5rem;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#error-message {
+  color: #C10015;
 }
 
 .paragraph {

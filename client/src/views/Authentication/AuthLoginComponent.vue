@@ -42,6 +42,7 @@
 import axios from 'axios'
 import { validationMixin } from '../../utilities/validationMixin.js'
 import { notificationMixin } from '../../utilities/notificationMixin.js'
+var ApiService = require('../../utilities/ApiService.js')
 
 export default {
   mixins: [validationMixin, notificationMixin],
@@ -65,22 +66,15 @@ export default {
       axios
         .post('api/auth/login', { password, email })
         .then(res => {
-          this.$store.commit('login', { token: res.data.token, user: res.data.token })
-          this.setAxiosHeaders(res.data.token)
+          this.$store.commit('login', { token: res.data.token, user: res.data.user })
+          ApiService.setApiAuthorizationHeaders(res.data.token)
           this.loading = false
           this.$router.push('/feed')
         })
         .catch(err => {
-          if (err) {
-            this.error = err.response.data.error
-          } else {
-            this.error = 'Sorry, something went wrong...'
-          }
+          this.error = err.response ? err.response.data.error : 'Sorry. Something has gone wrong...'
           this.loading = false
         })
-    },
-    setAxiosHeaders (token) {
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
     },
     handleClickSignIn () {
       this.$gAuth
@@ -89,14 +83,14 @@ export default {
           axios.post('api/auth/login-with-google', GoogleUser.getAuthResponse())
             .then(res => {
               this.$store.commit('login', { token: res.data.token, user: res.data.token })
-              this.setAxiosHeaders(res.data.token)
+              ApiService.setApiAuthorizationHeaders(res.data.token)
               this.loading = false
               this.$router.push('/feed')
             })
         })
         .catch(err => {
           if (err.error !== 'popup_closed_by_user') {
-            this.error = err.response.data.error
+            this.error = err.response ? err.response.data.error : 'Sorry. Something has gone wrong...'
           }
         })
     }
@@ -104,14 +98,20 @@ export default {
   computed: {
     enableLogin () {
       return !!this.emailField && !!this.passwordField
+    },
+    notifyRegistered () {
+      return this.$store.getters.notifyRegistered
+    },
+    notifyReset () {
+      return this.$store.getters.notifyReset
     }
   },
   created: function () {
-    if (this.$store.state.auth.notifyRegistered) {
+    if (this.notifyRegistered) {
       this.showNotif('You\'ve successfully created an account! Now log in.')
-      this.$store.state.auth.notifyRegistered = false
+      this.notifyRegistered = false
     }
-    if (this.$store.state.auth.notifyReset) {
+    if (this.notifyReset) {
       this.showNotif('Your password was successfully reset. Now log in.')
       this.$store.state.auth.notifyReset = false
     }
