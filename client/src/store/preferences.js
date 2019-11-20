@@ -96,7 +96,6 @@ const getters = {
         setTags.add(obj.title)
       }
     }
-    console.log(setTags)
     return setTags
   }
 }
