@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import profile from './modules/profile'
 
 Vue.use(Vuex)
 
@@ -28,6 +29,7 @@ const authentication = {
 
 export default new Vuex.Store({
   modules: {
-    auth: authentication
+    auth: authentication,
+    profile
   }
 })

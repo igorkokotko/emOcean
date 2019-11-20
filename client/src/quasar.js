@@ -36,7 +36,8 @@ import {
   QSplitter,
   QCard,
   QCardSection,
-  QCardActions
+  QCardActions,
+  QSelect
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -74,7 +75,8 @@ Vue.use(Quasar, {
     QSplitter,
     QCard,
     QCardSection,
-    QCardActions
+    QCardActions,
+    QSelect
   },
   directives: {
   },

@@ -19,8 +19,14 @@ export default {
     },
     size: {
       type: String,
-      default: '100px'
+      default: '150px'
     }
   }
 }
 </script>
+
+<style scoped>
+img {
+  object-fit: cover;
+}
+</style>

@@ -10,9 +10,6 @@ export function checkNicknameField (val) {
   if (!validator.isLength(val, { min: 4, max: 20 })) {
     return 'Your nickname should be 4 to 20 characters long'
   }
-  if (/\s/.test(val)) {
-    return 'Your nickname cannot contain whitespaces'
-  }
 }
 
 export function checkPasswordField (val) {
@@ -27,5 +24,11 @@ export function checkPasswordField (val) {
 export function checkRepeatPasswordField (newval, oldval) {
   if (newval !== oldval) {
     return 'Your passwords do not match'
+  }
+}
+
+export function checkUserDescriptionField (val) {
+  if (!validator.isLength(val, { min: 0, max: 100 })) {
+    return 'Your can use maximum 100 characters'
   }
 }
