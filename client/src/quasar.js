@@ -26,7 +26,12 @@ import {
   QMenu,
   QSpinnerBars,
   QTooltip,
-  Notify
+  Notify,
+  QTabPanels,
+  QTabPanel,
+  QTabs,
+  QTab,
+  QRouteTab
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -54,7 +59,12 @@ Vue.use(Quasar, {
     QMenu,
     QSpinnerBars,
     QTooltip,
-    Notify
+    Notify,
+    QTabPanels,
+    QTabPanel,
+    QTabs,
+    QTab,
+    QRouteTab
   },
   directives: {
   },
