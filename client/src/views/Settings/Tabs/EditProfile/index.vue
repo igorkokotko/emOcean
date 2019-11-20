@@ -78,8 +78,20 @@
         type="url"
       />
       <div class="q-pt-md">
-        <q-btn label="Edit profile" type="submit" color="primary" no-caps/>
-        <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" no-caps/>
+        <q-btn
+          label="Edit profile"
+          type="submit"
+          color="primary"
+          no-caps
+        />
+        <q-btn
+          label="Reset"
+          type="reset"
+          color="primary"
+          flat
+          class="q-ml-sm"
+          no-caps
+        />
       </div>
     </q-form>
   </q-page>
