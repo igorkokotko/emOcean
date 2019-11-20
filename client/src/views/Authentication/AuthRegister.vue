@@ -1,7 +1,10 @@
 <template>
   <div class="row register-container">
-    <div class="gt-xs offset-sm-2 col-sm-4 offset-md-3 col-md-3">Here should be logo and moto</div>
-    <div class="offset-xs-1 col-xs-10 col-sm-4 col-md-3 column">
+    <div class="gt-xs offset-sm-2 col-sm-4 offset-md-3 col-md-3 simple-container">
+      <img id='logo-img' src='../../assets/emocean-logo.png' />
+      <h4>For dreamers who want to stay in motion</h4>
+    </div>
+    <div class="offset-xs-1 col-xs-10 col-sm-4 col-md-3 column simple-container">
       <q-input v-model.lazy="email" label="Email" :dense="dense" :rules="[val => checkEmailField(val)]"/>
 
       <q-input v-model.lazy="nickname" label="Nickname" :dense="dense" :rules="[val => checkNicknameField(val)]"/>
@@ -53,6 +56,7 @@
 <script>
 import axios from 'axios'
 import { validationMixin } from '../../utilities/validationMixin.js'
+var ApiService = require('../../utilities/ApiService.js')
 
 export default {
   mixins: [validationMixin],
@@ -85,7 +89,7 @@ export default {
           this.$router.push('/login')
         })
         .catch(err => {
-          this.error = err
+          this.error = err.response ? err.response.data.error : 'Sorry. Something has gone wrong...'
           this.loading = false
         })
     },
@@ -93,17 +97,17 @@ export default {
       this.$gAuth
         .signIn()
         .then(GoogleUser => {
-          axios.post('api/auth/loginwithgoogle', GoogleUser.getAuthResponse())
+          axios.post('api/auth/login-with-google', GoogleUser.getAuthResponse())
             .then(res => {
-              this.$store.commit('login', { token: res.data.token, user: res.data.token })
-              this.setAxiosHeaders(res.data.token)
+              this.$store.commit('login', { token: res.data.token, user: res.data.user })
+              ApiService.setApiAuthorizationHeaders(res.data.token)
               this.loading = false
               this.$router.push('/feed')
             })
         })
         .catch(err => {
           if (err.error !== 'popup_closed_by_user') {
-            this.error = err
+            this.error = err.response ? err.response.data.error : 'Sorry. Something has gone wrong...'
           }
         })
     }
@@ -119,7 +123,14 @@ export default {
 <style scoped>
 .register-container {
   overflow: auto;
-  margin-top: 50px;
+  padding: 50px 0 30px 0;
+}
+
+.simple-container {
+  padding: 1rem;
+  background: #e7f0f1;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 #error-message {
@@ -138,6 +149,18 @@ export default {
 .paragraph {
   margin-top: 20px;
   margin-bottom: 0;
+}
+
+#logo-img {
+  max-width: 50%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+h4 {
+  font-weight: 200;
+  letter-spacing: 3px;
 }
 
 a {
