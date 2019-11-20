@@ -89,11 +89,7 @@ Vue.use(Quasar, {
   },
   directives: {
     Ripple,
-    ClosePopup,
-    QSlider,
-    QSeparator,
-    QToggle,
-    QSelect
+    ClosePopup
   },
   plugins: {
     Notify
