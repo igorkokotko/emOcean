@@ -2,13 +2,12 @@
   <div class="profile-card">
       <div class="user-avatar">
         <img :src="profile.avatar_url" alt="avatar"/>
-        <i v-if="profile.counters.views > 100" class="fas fa-star" title="More than 100 views"></i>
+        <i v-if="popularAccount" class="fas fa-star" title="Popular account"></i>
       </div>
     <div class="card-content">
       <h2 class="name">
         {{profile.nickname}}
       </h2>
-<!--for future <follow-button v-if="profileData.id != $parent.me.id"></follow-button>-->
       <follow-button :following="profile.is_following"></follow-button>
       <p class="decription">
         {{profile.status}}
@@ -23,12 +22,22 @@ import CardFooter from './cardFooter'
 import FollowButton from './followBtn'
 
 export default {
+  data () {
+    return {
+      popularAccountLimit: 100
+    }
+  },
   props: {
     profile: Object
   },
   components: {
     CardFooter,
     FollowButton
+  },
+  computed: {
+    popularAccount () {
+      return this.profile.counters.views > this.popularAccountLimit
+    }
   }
 }
 </script>

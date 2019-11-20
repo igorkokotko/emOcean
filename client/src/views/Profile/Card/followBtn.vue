@@ -14,10 +14,6 @@ export default {
       default: false
     }
   },
-  data: function () {
-    return {
-    }
-  },
   methods: {
     changeFollowStatus () {
       this.following = !this.following

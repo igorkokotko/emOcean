@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="video-switch">
   <q-tabs
     v-model="tab"
     class="text-white  inline-label shadow-2"

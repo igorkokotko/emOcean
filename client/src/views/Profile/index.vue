@@ -22,17 +22,17 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import ProfileCard from './Card/index'
-import SwitchVideo from './Card/switchVideo'
+import switchVideo from './Card/switchVideo'
 
 export default {
   computed: mapGetters(['profileGetter']),
   methods: mapActions(['uploadProfile']),
-  async mounted () {
+  mounted () {
     this.uploadProfile()
   },
   components: {
     ProfileCard,
-    SwitchVideo
+    switchVideo
   }
 }
 </script>
