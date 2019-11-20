@@ -1,6 +1,9 @@
 <template>
   <div class="row register-container">
-    <div class="gt-xs offset-sm-2 col-sm-4 offset-md-3 col-md-3 simple-container"><h2>Logo and Motto</h2></div>
+    <div class="gt-xs offset-sm-2 col-sm-4 offset-md-3 col-md-3 simple-container">
+      <img id='logo-img' src='../../assets/emocean-logo.png' />
+      <h4>For dreamers who want to stay in motion</h4>
+    </div>
     <div class="offset-xs-1 col-xs-10 col-sm-4 col-md-3 column simple-container">
       <q-input v-model.lazy="email" label="Email" :dense="dense" :rules="[val => checkEmailField(val)]"/>
 
@@ -146,6 +149,18 @@ export default {
 .paragraph {
   margin-top: 20px;
   margin-bottom: 0;
+}
+
+#logo-img {
+  max-width: 50%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+h4 {
+  font-weight: 200;
+  letter-spacing: 3px;
 }
 
 a {

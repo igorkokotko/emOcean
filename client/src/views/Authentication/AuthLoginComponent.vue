@@ -109,7 +109,7 @@ export default {
   created: function () {
     if (this.notifyRegistered) {
       this.showNotif('You\'ve successfully created an account! Now log in.')
-      this.notifyRegistered = false
+      this.$store.state.auth.notifyRegistered = false
     }
     if (this.notifyReset) {
       this.showNotif('Your password was successfully reset. Now log in.')

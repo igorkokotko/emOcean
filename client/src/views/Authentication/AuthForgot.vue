@@ -1,6 +1,9 @@
 <template>
   <div class="row forgot-container">
-    <div class="gt-xs offset-sm-2 col-sm-4 offset-md-3 col-md-3 simple-container"><h2>Logo and Motto</h2></div>
+    <div class="gt-xs offset-sm-2 col-sm-4 offset-md-3 col-md-3 simple-container">
+      <img id='logo-img' src='../../assets/emocean-logo.png' />
+      <h4>For dreamers who want to stay in motion</h4>
+    </div>
     <div class="offset-xs-1 col-xs-10 col-sm-4 col-md-3 column simple-container">
       <p class='paragraph'><strong>Forgot Password?</strong></p>
 
@@ -80,6 +83,18 @@ export default {
   background: #e7f0f1;
   border-radius: 0.5rem;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+img {
+  max-width: 50%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+h4 {
+  font-weight: 200;
+  letter-spacing: 3px;
 }
 
 #error-message {
