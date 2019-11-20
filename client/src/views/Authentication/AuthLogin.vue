@@ -1,6 +1,9 @@
 <template>
   <div class="row login-container">
-    <div class="gt-xs offset-sm-2 col-sm-4 offset-md-3 col-md-3 simple-container"><h2>Logo and Motto</h2></div>
+    <div class="gt-xs offset-sm-2 col-sm-4 offset-md-3 col-md-3 simple-container">
+      <img id='logo-img' src='../../assets/emocean-logo.png' />
+      <h4>For dreamers who want to stay in motion</h4>
+    </div>
     <AuthLoginComponent :loginClassList="'offset-xs-1 col-xs-10 col-sm-4 col-md-3 column simple-container'"/>
   </div>
 </template>
@@ -19,6 +22,18 @@ export default {
 .login-container {
   overflow: auto;
   padding: 50px 0 30px 0;
+}
+
+#logo-img {
+  max-width: 50%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+h4 {
+  font-weight: 200;
+  letter-spacing: 3px;
 }
 
 .simple-container {
