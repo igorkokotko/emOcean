@@ -41,7 +41,8 @@ import {
   QSlider,
   QSeparator,
   QToggle,
-  Ripple
+  Ripple,
+  QSelect
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -83,7 +84,8 @@ Vue.use(Quasar, {
     QSelect,
     QSlider,
     QSeparator,
-    QToggle
+    QToggle,
+    QSelect
   },
   directives: {
     Ripple
