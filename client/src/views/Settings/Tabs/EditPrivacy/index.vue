@@ -6,7 +6,7 @@
         <q-item-section>
           <q-item-label>Accounts you follow</q-item-label>
           <q-item-label caption>
-            Add or delete followings users
+            Manage followings
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -28,27 +28,37 @@
           <q-item-label caption>Allow notification</q-item-label>
         </q-item-section>
         <q-item-section side >
-          <q-toggle color="blue" v-model="notif1" val="battery" />
+          <q-toggle color="teal" v-model="comment" />
         </q-item-section>
       </q-item>
 
       <q-item tag="label" v-ripple>
         <q-item-section>
-          <q-item-label>Comment to comment</q-item-label>
+          <q-item-label>Like post</q-item-label>
           <q-item-label caption>Allow notification</q-item-label>
         </q-item-section>
         <q-item-section side top>
-          <q-toggle color="green" v-model="notif2" val="friend" />
+          <q-toggle color="teal" v-model="like" />
+        </q-item-section>
+      </q-item>
+
+      <q-item tag="label" v-ripple>
+        <q-item-section>
+          <q-item-label>Reply</q-item-label>
+          <q-item-label caption>Allow notification</q-item-label>
+        </q-item-section>
+        <q-item-section side top>
+          <q-toggle color="teal" v-model="reply" />
         </q-item-section>
       </q-item>
 
       <q-item tag="label" v-ripple>
         <q-item-section>
           <q-item-label>Video uploaded</q-item-label>
-          <q-item-label caption>Allow notification when uploading video</q-item-label>
+          <q-item-label caption>Allow notification</q-item-label>
         </q-item-section>
         <q-item-section side top>
-          <q-toggle color="red" v-model="notif3" val="picture" />
+          <q-toggle color="teal" v-model="uploadPost" />
         </q-item-section>
       </q-item>
 
@@ -61,7 +71,7 @@
           <q-item-label caption>Hide comments</q-item-label>
         </q-item-section>
         <q-item-section side >
-          <q-toggle color="blue" v-model="notif1" val="battery" />
+          <q-toggle color="blue" v-model="hideOffencive" />
         </q-item-section>
       </q-item>
 
@@ -71,6 +81,15 @@
 
 <script>
 export default {
-  name: 'EditPrivacy'
+  name: 'EditPrivacy',
+  data () {
+    return {
+      comment: true,
+      like: true,
+      reply: true,
+      uploadPost: true,
+      hideOffencive: false
+    }
+  }
 }
 </script>
