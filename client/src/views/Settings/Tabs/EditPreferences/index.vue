@@ -23,7 +23,7 @@
       size="40px"
       round
       color="teal"
-      to="/"
+      to="/feed"
     > go
     </q-btn>
   </div>
