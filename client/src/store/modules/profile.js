@@ -24,9 +24,9 @@ export default {
           followingCount: '85'
         },
         socialAccounts: [
-          { type: 'youtube', link: 'youtube.com' },
-          { type: 'facebook', link: 'facebook.com' },
-          { type: 'instagram', link: 'instagram.com' }
+          { type: 'youtube', link: 'https://youtube.com' },
+          { type: 'facebook', link: 'https://facebook.com' },
+          { type: 'instagram', link: 'https://instagram.com' }
         ]
       }
       ctx.commit('updateProfile', profileData)

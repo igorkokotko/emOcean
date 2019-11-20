@@ -34,7 +34,6 @@ export default {
   margin: 0;
   box-sizing: border-box;
 }
-
 body {
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-size: 16px;
@@ -42,17 +41,14 @@ body {
   letter-spacing: 0.5px;
   background-color: white;
 }
-
 h1, h2, h3, h4 {
   line-height: normal;
   margin: 0;
 }
-
 a {
   text-decoration: none;
   color: inherit;
 }
-
 li {
   list-style: none;
 }

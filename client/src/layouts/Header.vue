@@ -4,7 +4,10 @@
     class="bg-white text-primary"
   >
     <q-toolbar>
-      <router-link :to="{path: '/'}">
+      <router-link
+        :to="{path: '/'}"
+        class="homeRouterLink"
+      >
         <img
           src="@/assets/img/logo.jpeg"
           class="q-ma-sm logo"
@@ -60,6 +63,12 @@
 
 <style scoped>
   .logo {
-    height: 50px;
+    height: 100%;
+    margin: 0;
+  }
+  .homeRouterLink {
+    height: 60px;
+    display: block;
+    padding: 8px 0;
   }
 </style>

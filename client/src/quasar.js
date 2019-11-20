@@ -27,11 +27,17 @@ import {
   QSpinnerBars,
   QTooltip,
   Notify,
-  QTabPanels,
-  QTabPanel,
   QTabs,
   QTab,
-  QRouteTab
+  QRouteTab,
+  QTabPanels,
+  QTabPanel,
+  QScrollArea,
+  QSplitter,
+  QCard,
+  QCardSection,
+  QCardActions,
+  QSelect
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -60,11 +66,17 @@ Vue.use(Quasar, {
     QSpinnerBars,
     QTooltip,
     Notify,
-    QTabPanels,
-    QTabPanel,
     QTabs,
     QTab,
-    QRouteTab
+    QRouteTab,
+    QTabPanels,
+    QTabPanel,
+    QScrollArea,
+    QSplitter,
+    QCard,
+    QCardSection,
+    QCardActions,
+    QSelect
   },
   directives: {
   },
