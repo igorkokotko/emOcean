@@ -124,7 +124,7 @@ export default {
           this.$q.notify({
             ...notifyParameters,
             color: 'negative',
-            message: err && err.response && err.response.data ? err.response.data : 'Unknown error.'
+            message: err && err.response && err.response.data ? err.response.data.error : 'Unknown error.'
           })
         })
     }
