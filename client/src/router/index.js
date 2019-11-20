@@ -1,9 +1,16 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Home from '../views/Home.vue'
+import Error404 from '../views/Error404/Error404.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
+  {
+    path: '/',
+    name: 'home',
+    component: Home
+  },
   {
     path: '/profile',
     name: 'profile',
@@ -67,6 +74,11 @@ const routes = [
     path: '/emailAction',
     name: 'Reset Password',
     component: () => import('../views/Authentication/AuthEmailAction.vue')
+  },
+  {
+    path: '*',
+    name: 'Error',
+    component: Error404
   }
 ]
 

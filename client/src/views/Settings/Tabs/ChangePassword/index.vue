@@ -2,12 +2,14 @@
   <q-page class="q-pa-lg">
     <q-form
       class="q-gutter-md"
+      @submit="onFormSubmit"
     >
       <q-input
         label="Current password"
         placeholder="Type your current password"
         v-model="formModel.currentPassword"
         :type="isCurrentPassVisible ? 'password' : 'text'"
+        :rules="[requiredField]"
       >
         <template v-slot:append>
           <q-icon
@@ -22,7 +24,7 @@
         placeholder="Type your new password"
         v-model="formModel.newPassword"
         :type="isNewPassVisible ? 'password' : 'text'"
-        :rules="[val => val.length >=8 || 'Please use at least 8 characters']"
+        :rules="[checkPasswordField, requiredField]"
         lazy-rules
       >
         <template v-slot:append>
@@ -38,7 +40,7 @@
         placeholder="Confirm your new password"
         v-model="formModel.confirmNewPassword"
         :type="isConfirmNewPassVisible ? 'password' : 'text'"
-        :rules="[val => formModel.newPassword === formModel.confirmNewPassword || 'Please type again your new password']"
+        :rules="[checkConfirmPassword, requiredField]"
         lazy-rules
       >
         <template v-slot:append>
@@ -50,14 +52,34 @@
         </template>
       </q-input>
       <div class="q-pt-md">
-        <q-btn label="Change password" type="submit" color="primary" no-caps/><br>
-        <q-btn label="Forgot password?" type="submit" color="primary" flat no-caps class="q-mt-md"/>
+        <q-btn
+          label="Change password"
+          type="submit"
+          color="primary"
+          no-caps
+        />
+        <br>
+        <q-btn
+          label="Forgot password?"
+          @click="onForgotPasswordClick"
+          color="primary"
+          flat
+          no-caps
+          class="q-mt-md"
+        />
       </div>
     </q-form>
   </q-page>
 </template>
 
 <script>
+import {
+  requiredField,
+  checkPasswordField,
+  checkRepeatPasswordField
+} from '@/utilities/validation.js'
+import authService from '@/services/auth.js'
+
 export default {
   data () {
     return {
@@ -70,12 +92,48 @@ export default {
         confirmNewPassword: ''
       }
     }
+  },
+
+  methods: {
+    requiredField,
+    checkPasswordField,
+    checkConfirmPassword (newval) {
+      return checkRepeatPasswordField(newval, this.formModel.newPassword)
+    },
+    onForgotPasswordClick () {
+      this.$router.push({ path: '/forgotpassword' })
+    },
+    onFormSubmit () {
+      const notifyParameters = {
+        textColor: 'white',
+        actions: [{ icon: 'close', color: 'white' }],
+        timeout: 3000
+      }
+      authService.changePassword({
+        oldPassword: this.formModel.currentPassword,
+        newPassword: this.formModel.newPassword
+      })
+        .then((response) => {
+          this.$q.notify({
+            ...notifyParameters,
+            color: 'primary',
+            message: 'Your password was changed.'
+          })
+        })
+        .catch(err => {
+          this.$q.notify({
+            ...notifyParameters,
+            color: 'negative',
+            message: err && err.response && err.response.data ? err.response.data.error : 'Unknown error.'
+          })
+        })
+    }
   }
 }
 </script>
 
 <style scoped>
 .q-field--with-bottom {
-  padding-bottom: 0;
+  padding-bottom: 10px;
 }
 </style>

@@ -15,28 +15,23 @@ import {
   QToolbarTitle,
   QBtn,
   QIcon,
-  QForm,
   QInput,
   QAvatar,
   QList,
   QItem,
   QItemSection,
   QItemLabel,
+  QForm,
   QSpace,
   QMenu,
   QSpinnerBars,
   QTooltip,
   Notify,
-  QTabs,
-  QTab,
-  QRouteTab,
   QTabPanels,
   QTabPanel,
-  QScrollArea,
-  QSplitter,
-  QCard,
-  QCardSection,
-  QCardActions
+  QTabs,
+  QTab,
+  QRouteTab
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -65,16 +60,11 @@ Vue.use(Quasar, {
     QSpinnerBars,
     QTooltip,
     Notify,
-    QTabs,
-    QTab,
-    QRouteTab,
     QTabPanels,
     QTabPanel,
-    QScrollArea,
-    QSplitter,
-    QCard,
-    QCardSection,
-    QCardActions
+    QTabs,
+    QTab,
+    QRouteTab
   },
   directives: {
   },
