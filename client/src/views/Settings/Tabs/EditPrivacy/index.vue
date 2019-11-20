@@ -1,6 +1,6 @@
 <template>
-  <div class="q-pa-md">
-    <q-list bordered padding>
+  <div>
+    <q-list>
       <q-item-label header>General</q-item-label>
       <q-item clickable v-ripple>
         <q-item-section>
