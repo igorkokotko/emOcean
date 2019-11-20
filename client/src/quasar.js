@@ -44,7 +44,12 @@ import {
   Ripple,
   QSelect,
   QDialog,
-  ClosePopup
+  ClosePopup,
+  QSlider,
+  QSeparator,
+  QToggle,
+  Ripple,
+  QSelect
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -92,7 +97,14 @@ Vue.use(Quasar, {
   },
   directives: {
     Ripple,
-    ClosePopup
+    ClosePopup,
+    QSlider,
+    QSeparator,
+    QToggle,
+    QSelect
+  },
+  directives: {
+    Ripple
   },
   plugins: {
     Notify
