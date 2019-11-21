@@ -42,14 +42,8 @@ import {
   QSeparator,
   QToggle,
   Ripple,
-  QSelect,
   QDialog,
-  ClosePopup,
-  QSlider,
-  QSeparator,
-  QToggle,
-  Ripple,
-  QSelect
+  ClosePopup
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -77,7 +71,6 @@ Vue.use(Quasar, {
     QMenu,
     QSpinnerBars,
     QTooltip,
-    Notify,
     QTabs,
     QTab,
     QRouteTab,
@@ -92,19 +85,11 @@ Vue.use(Quasar, {
     QSlider,
     QSeparator,
     QToggle,
-    QSelect,
     QDialog
   },
   directives: {
     Ripple,
-    ClosePopup,
-    QSlider,
-    QSeparator,
-    QToggle,
-    QSelect
-  },
-  directives: {
-    Ripple
+    ClosePopup
   },
   plugins: {
     Notify
