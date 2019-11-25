@@ -101,6 +101,7 @@ export default {
             .then(res => {
               this.$store.commit('login', { token: res.data.token, user: res.data.user })
               ApiService.setApiAuthorizationHeaders(res.data.token)
+              window.localStorage.setItem('token', res.data.token)
               this.loading = false
               this.$router.push('/feed')
             })
@@ -116,6 +117,14 @@ export default {
     enableCreate () {
       return !!this.emailField && !!this.nicknameField && !!this.passwordField && this.password === this.passwordConfirm
     }
+  },
+  beforeRouteEnter: (to, from, next) => {
+    if (window.localStorage.getItem('token') && window.localStorage.getItem('token') !== '') {
+      return next('/feed')
+    }
+    next(vm => {
+      vm.loadCurrentSettings(to.query)
+    })
   }
 }
 </script>

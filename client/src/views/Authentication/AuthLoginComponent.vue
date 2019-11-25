@@ -68,6 +68,7 @@ export default {
         .then(res => {
           this.$store.commit('login', { token: res.data.token, user: res.data.user })
           ApiService.setApiAuthorizationHeaders(res.data.token)
+          window.localStorage.setItem('token', res.data.token)
           this.loading = false
           this.$router.push('/feed')
         })
@@ -84,6 +85,7 @@ export default {
             .then(res => {
               this.$store.commit('login', { token: res.data.token, user: res.data.token })
               ApiService.setApiAuthorizationHeaders(res.data.token)
+              window.localStorage.setItem('token', res.data.token)
               this.loading = false
               this.$router.push('/feed')
             })

@@ -90,6 +90,15 @@ export default {
     } else {
       this.reset = false
     }
+  },
+
+  beforeRouteEnter: (to, from, next) => {
+    if (window.localStorage.getItem('token') && window.localStorage.getItem('token') !== '') {
+      return next('/feed')
+    }
+    next(vm => {
+      vm.loadCurrentSettings(to.query)
+    })
   }
 }
 </script>

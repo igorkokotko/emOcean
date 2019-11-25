@@ -14,6 +14,15 @@ import AuthLoginComponent from './AuthLoginComponent.vue'
 export default {
   components: {
     AuthLoginComponent
+  },
+
+  beforeRouteEnter: (to, from, next) => {
+    if (window.localStorage.getItem('token') && window.localStorage.getItem('token') !== '') {
+      return next('/feed')
+    }
+    next(vm => {
+      vm.loadCurrentSettings(to.query)
+    })
   }
 }
 </script>
