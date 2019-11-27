@@ -1,10 +1,10 @@
 <template>
-  <div class='header' @click='hideSearch'>
+  <div class="header" @click='visible'>
     <q-header
       bordered
       class="bg-white text-primary"
     >
-      <q-toolbar>
+      <q-toolbar ref="toolbar">
         <router-link
           :to="{path: '/'}"
           class="homeRouterLink"
@@ -17,7 +17,6 @@
         <q-space ></q-space>
         <div id='input-search' ref='search' :style='{ visibility: "hidden"}'>
           <q-input
-            ref='input'
             v-model='search'
             />
           </div>
@@ -26,7 +25,7 @@
           round
           dense
           icon="search"
-          @click='showSearch'
+          @click='visible'
           class="q-mr-xs text-cyan" />
         <q-btn
           flat
@@ -37,7 +36,7 @@
         >
           <q-menu>
             <q-list style="min-width: 100px">
-              <template v-if="$store.state.auth.token">
+              <template v-if="this.$store.getters.getToken">
                 <q-item
                   to="/settings"
                   clickable
@@ -79,13 +78,10 @@ export default {
     }
   },
   methods: {
-    showSearch () {
-      this.$refs.search.style.visibility = 'visible'
-    },
-    hideSearch (e) {
-      if (e.target.className === 'q-toolbar row no-wrap items-center') {
+    visible (e) {
+      if (e.target === this.$refs.toolbar.$el) {
         this.$refs.search.style.visibility = 'hidden'
-      }
+      } else this.$refs.search.style.visibility = 'visible'
     }
   }
 }

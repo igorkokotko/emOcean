@@ -1,69 +1,69 @@
 <template>
   <div class='add-post'>
-  <template>
-  <div class='q-pa-md q-gutter-sm'>
-    <q-dialog
-      v-model='dialog'
-      transition-show='slide-up'
-      transition-hide='slide-down'
-    >
-      <q-card class='bg-white text-black h-70' id='modal-window'>
-        <q-bar>
-          <q-space />
-          <q-btn dense flat icon='close' v-close-popup></q-btn>
-        </q-bar>
-        <q-card-section>
-          <div class='text-h6 text-center'>Choose your video here</div>
-        </q-card-section>
-        <q-card-section>
-          <label for='file' class='custom-file-upload'>
-            <p>Choose Video</p>
-          </label>
-          <input ref='input' type='file'
-          name='file'
-          id='file'
-          class='inputfile'
-          @change='uploadImage'
-          />
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-  </div>
-  </template>
-    <div class='step-buttons'>
-        <a class='cancel-btn'
-           @click='goToHome'>
-            Cancel
-        </a>
-        <a class='share-btn'
-         @click='addToFeed'
+    <template>
+        <div class='q-pa-md q-gutter-sm'>
+          <q-dialog
+            v-model='dialog'
+            transition-show='slide-up'
+            transition-hide='slide-down'
           >
-            Share
-        </a>
-      </div>
-    <div class='wrapper'>
-    <div class='adder-wrapper'>
-      <div class='selected-video'>
-   <video ref='video' width='480'  height='auto' controls>
+            <q-card class='bg-white text-black h-70' id='modal-window'>
+              <q-bar>
+                <q-space />
+                <q-btn dense flat icon='close' v-close-popup></q-btn>
+              </q-bar>
+              <q-card-section>
+                <div class='text-h6 text-center'>Choose your video here</div>
+              </q-card-section>
+              <q-card-section>
+                <label for='file' class='custom-file-upload'>
+                  <p>Choose Video</p>
+                </label>
+                <input ref='input' type='file'
+                name='file'
+                id='file'
+                class='inputfile'
+                @change='uploadImage'
+                />
+              </q-card-section>
+            </q-card>
+          </q-dialog>
+        </div>
+    </template>
+        <div class='step-buttons'>
+            <a class='cancel-btn'
+              @click='$router.push("/feed")'>
+                Cancel
+            </a>
+            <a class='share-btn'
+            @click='addToFeed'
+              >
+                Share
+            </a>
+          </div>
+        <div class='wrapper'>
+        <div class='adder-wrapper'>
+          <div class='selected-video'>
+      <video ref='video' width='480'  max-height='270' controls>
+          <source
+        :src='post.postVideo'
+        type='video/mp4'>
       <source
-    :src='post.postVideo'
-    type='video/mp4'>
-  <source
-    :src='post.postVideo'
-    type='video/ogg'>
-  <source
-    :src='post.postVideo'
-    type='video/webm'>
-     </video>
-         </div>
-      <div class='caption-container'>
-        <textarea ref='textarea' maxlength='128'
-          placeholder='Write a caption...'
-          type='text'>
-        </textarea>
+        :src='post.postVideo'
+        type='video/ogg'>
+      <source
+        :src='post.postVideo'
+        type='video/webm'>
+        </video>
+            </div>
+          <div class='caption-container'>
+            <textarea ref='textarea' maxlength='128'
+              placeholder='Write a caption...'
+              type='text'>
+            </textarea>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
   </div>
 </template>
 
@@ -78,8 +78,7 @@ export default {
       post: {
         createdOn: new Date(),
         username: 'fullstack_vue',
-        userImage:
-          'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1211695/vue_lg_bg.png',
+        userImage: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1211695/vue_lg_bg.png',
         postVideo: '',
         likes: 0,
         hasBeenLiked: false,
@@ -105,9 +104,6 @@ export default {
         this.$refs.video.src = this.post.postVideo
         this.dialog = false
       }
-    },
-    goToHome () {
-      this.$router.push('/feed')
     }
   },
   computed: {
@@ -139,7 +135,7 @@ body{
     top: 25%;
 }
 .inputfile{
-display: none;
+  display: none;
 }
 #modal-window .q-card__section{
   height: 70px;
@@ -147,7 +143,7 @@ display: none;
 #modal-window .q-bar{
   background: #87e0f5
 }
-label p{
+#modal-window label p{
   background: #87e0f5;
   padding: 10px;
   margin: auto;
@@ -181,7 +177,7 @@ label p{
     justify-content: space-between;
  .cancel-btn,
  .share-btn{
-  padding: 7px;
+    padding: 7px;
     font-size: 1rem;
     background: #87e0f5;
     border-radius: 10px;

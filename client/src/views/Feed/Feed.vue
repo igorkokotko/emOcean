@@ -11,7 +11,7 @@
         <figure class='image is-32x32'>
             <img :src='post.userImage' />
           </figure>
-          <video ref='videoElm' width='480'  height='auto' >
+          <video ref='videoElm' width='480'  max-height='270' >
             <source
               :src='post.postVideo'
               type='video/mp4'>
@@ -45,7 +45,7 @@
         </div>
       </div>
       </div>
-        <div class='big-btn' @click='test'>
+        <div class='big-btn' @click="$router.push('/addpost')">
               <i class='fas fa-2x fa-plus' ></i>
         </div>
     </div>
@@ -70,9 +70,6 @@ export default {
       } else {
         currentVideo.pause()
       }
-    },
-    test () {
-      this.$router.push('/addpost')
     }
   },
   computed: {
@@ -83,7 +80,7 @@ export default {
 
 <style lang='scss'>
 .big-btn{
-width: 75px;
+    width: 75px;
     background: #87e0f5;
     border-radius: 50%;
     height: 75px;
@@ -92,56 +89,56 @@ width: 75px;
     right: 3%;
     cursor: pointer;
     i{
-          position: absolute;
-          color: #fff;
-    left: 25px;
-    top: 23px;
+      position: absolute;
+      color: #fff;
+      left: 25px;
+      top: 23px;
     }
 }
 .feed-post {
     padding-top: 50px;
     height: fit-content;
-        padding: 6px 0px;
+    padding: 6px 0px;
 }
 .heart-and-comments {
     flex-direction: column;
     position: absolute;
     right: 3%;
-       top: 35%;
+    top: 35%;
     bottom: 65%;
-          cursor: pointer;
-    .heart i{
-    display: inline;
+    cursor: pointer;
+      .heart i{
+        display: inline;
         color: #DBE4E2;
     }
     .likes{
       display: inline-block;
-    text-align: center;
-    font-size: 3.2vmin;
-    width: 7vmin;
-    margin: 5px 0;
-        font-weight: 100;
-            color: #DBE4E2;
+      text-align: center;
+      font-size: 3.2vmin;
+      width: 7vmin;
+      margin: 5px 0;
+      font-weight: 100;
+      color: #DBE4E2;
     }
     .comments-icon {
-          display: inline-block;
+        display: inline-block;
         font-size: large;
         height: 25px;
         cursor: pointer
     }
     .comments-icon i::before,
     .heart i::before{
-   font-size: 4vmin;
-        color: #DBE4E2;
+      font-size: 4vmin;
+      color: #DBE4E2;
     }
     .comments-icon p{
-    display: inline-block;
-    vertical-align: bottom;
-    font-size: 3.2vmin;
-    width: 7vmin;
-    margin: 5px 0;
-    text-align: center;
-        color: #DBE4E2;
+      display: inline-block;
+      vertical-align: bottom;
+      font-size: 3.2vmin;
+      width: 7vmin;
+      margin: 5px 0;
+      text-align: center;
+      color: #DBE4E2;
     }
     .comments-counter {
         text-align: center;
@@ -149,30 +146,30 @@ width: 75px;
 }
 .content .caption{
   position: absolute;
- bottom: 3%;
- width: 90%;
-font-size: 0.85rem;
-word-wrap:break-word;
-        span {
-            font-weight: bold;
-        }
+  bottom: 3%;
+  width: 90%;
+  font-size: 0.85rem;
+  word-wrap:break-word;
+    span {
+      font-weight: bold;
+    }
 }
 .content .caption2{
   position: absolute;
   width: 88%;
- bottom: 4%;
-font-size: 0.85rem;
-word-wrap:break-word;
-        span {
-            font-weight: bold;
-        }
+  bottom: 4%;
+  font-size: 0.85rem;
+  word-wrap:break-word;
+    span {
+      font-weight: bold;
+    }
 }
 .content p{
-      color: #DBE4E2;
+    color: #DBE4E2;
 }
 .image-container{
-  max-width: 800px;
-  position: relative;
+    max-width: 800px;
+    position: relative;
     background: #87e0f5;
     border-radius: 11px;
     box-shadow: 1px 1px 18px;
@@ -185,24 +182,24 @@ word-wrap:break-word;
     position: absolute;
     top: 8%;
     margin: 0;
-        }
-        .image.is-32x32 img {
-    height: 32px;
-    width: 32px;
-}
+    }
+    .image.is-32x32 img {
+      height: 32px;
+      width: 32px;
+  }
 }
 .feed-post {
     position: relative;
     padding: 10px;
     .content-wrapper {
-        margin: 7.5px 10px;
+      margin: 7.5px 10px;
     }
     video{
       max-width:100%;
       padding: 7px 7px 2px 7px;
     }
     .fas.fa-heart {
-        color: #f06595;
+      color: #f06595;
     }
 }
 body,
@@ -218,10 +215,10 @@ background: linear-gradient(90deg, rgba(38,183,233,0.7903536414565826) 0%, rgba(
     justify-content: center;
 }
 ::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 .caption-container {
-    display: flex;
+  display: flex;
     textarea {
         border: 0;
         font-size: 1rem;
