@@ -41,6 +41,7 @@
 <script>
 import axios from 'axios'
 import { validationMixin } from '../../utilities/validationMixin.js'
+const Authorized = require('./Authorized.js')
 
 export default {
   mixins: [validationMixin],
@@ -93,7 +94,7 @@ export default {
   },
 
   beforeRouteEnter: (to, from, next) => {
-    if (window.localStorage.getItem('token') && window.localStorage.getItem('token') !== '') {
+    if (Authorized.isAuthorized()) {
       return next('/feed')
     }
     next(vm => {

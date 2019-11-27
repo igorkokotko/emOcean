@@ -56,7 +56,8 @@
 <script>
 import axios from 'axios'
 import { validationMixin } from '../../utilities/validationMixin.js'
-var ApiService = require('../../utilities/ApiService.js')
+const ApiService = require('../../utilities/ApiService.js')
+const Authorized = require('./Authorized.js')
 
 export default {
   mixins: [validationMixin],
@@ -99,9 +100,10 @@ export default {
         .then(GoogleUser => {
           axios.post('api/auth/login-with-google', GoogleUser.getAuthResponse())
             .then(res => {
-              this.$store.commit('login', { token: res.data.token, user: res.data.user })
-              ApiService.setApiAuthorizationHeaders(res.data.token)
-              window.localStorage.setItem('token', res.data.token)
+              const token = res.data.token
+              this.$store.commit('login', { token: token, user: res.data.user })
+              ApiService.setApiAuthorizationHeaders(token)
+              window.localStorage.setItem('token', token)
               this.loading = false
               this.$router.push('/feed')
             })
@@ -119,7 +121,7 @@ export default {
     }
   },
   beforeRouteEnter: (to, from, next) => {
-    if (window.localStorage.getItem('token') && window.localStorage.getItem('token') !== '') {
+    if (Authorized.isAuthorized()) {
       return next('/feed')
     }
     next(vm => {

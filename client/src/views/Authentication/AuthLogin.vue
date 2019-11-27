@@ -10,14 +10,14 @@
 
 <script>
 import AuthLoginComponent from './AuthLoginComponent.vue'
+const Authorized = require('./Authorized.js')
 
 export default {
   components: {
     AuthLoginComponent
   },
-
   beforeRouteEnter: (to, from, next) => {
-    if (window.localStorage.getItem('token') && window.localStorage.getItem('token') !== '') {
+    if (Authorized.isAuthorized()) {
       return next('/feed')
     }
     next(vm => {

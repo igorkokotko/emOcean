@@ -66,9 +66,10 @@ export default {
       axios
         .post('api/auth/login', { password, email })
         .then(res => {
-          this.$store.commit('login', { token: res.data.token, user: res.data.user })
-          ApiService.setApiAuthorizationHeaders(res.data.token)
-          window.localStorage.setItem('token', res.data.token)
+          const token = res.data.token
+          this.$store.commit('login', { token: token, user: res.data.user })
+          ApiService.setApiAuthorizationHeaders(token)
+          window.localStorage.setItem('token', token)
           this.loading = false
           this.$router.push('/feed')
         })
@@ -83,9 +84,10 @@ export default {
         .then(GoogleUser => {
           axios.post('api/auth/login-with-google', GoogleUser.getAuthResponse())
             .then(res => {
-              this.$store.commit('login', { token: res.data.token, user: res.data.token })
-              ApiService.setApiAuthorizationHeaders(res.data.token)
-              window.localStorage.setItem('token', res.data.token)
+              const token = res.data.token
+              this.$store.commit('login', { token: token, user: res.data.user })
+              ApiService.setApiAuthorizationHeaders(token)
+              window.localStorage.setItem('token', token)
               this.loading = false
               this.$router.push('/feed')
             })
