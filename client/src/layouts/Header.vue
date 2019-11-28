@@ -1,5 +1,5 @@
 <template>
-  <div class="header" @click='visible'>
+  <div class="header" @click="visible">
     <q-header
       bordered
       class="bg-white text-primary"
@@ -15,9 +15,9 @@
           >
         </router-link>
         <q-space ></q-space>
-        <div id='input-search' ref='search' :style='{ visibility: "hidden"}'>
+        <div id="input-search" ref="search" :style="{ visibility: 'hidden'}">
           <q-input
-            v-model='search'
+            v-model="search"
             />
           </div>
         <q-btn
@@ -25,7 +25,7 @@
           round
           dense
           icon="search"
-          @click='visible'
+          @click="visible"
           class="q-mr-xs text-cyan" />
         <q-btn
           flat

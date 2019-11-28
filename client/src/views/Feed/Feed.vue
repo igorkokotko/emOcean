@@ -1,52 +1,52 @@
 <template>
-  <div id='feed'>
-    <div class='feed-wrapper'>
-      <div class='feed-post'
-        v-for='(post, key) in getPosts'
-        :key='key'
+  <div id="feed">
+    <div class="feed-wrapper">
+      <div class="feed-post"
+        v-for="(post, key) in getPosts"
+        :key="key"
       >
-        <div class='image-container'
-        @dblclick='updateLikes({ key: key, updates: ({ hasBeenLiked : post.hasBeenLiked, likes: post.likes })  })'
-        @click='play'>
-        <figure class='image is-32x32'>
-            <img :src='post.userImage' />
+        <div class="image-container"
+        @dblclick="updateLikes({ key: key, updates: ({ hasBeenLiked : post.hasBeenLiked, likes: post.likes })  })"
+        @click="play">
+        <figure class="image is-32x32">
+            <img :src="post.userImage" />
           </figure>
-          <video ref='videoElm' width='480'  max-height='270' >
+          <video ref="videoElm" width="480"  max-height="270" >
             <source
-              :src='post.postVideo'
-              type='video/mp4'>
+              :src="post.postVideo"
+              type="video/mp4">
             <source
-              :src='post.postVideo'
-              type='video/ogg'>
+              :src="post.postVideo"
+              type="video/ogg">
             <source
-              :src='post.postVideo'
-              type='video/webm'>
+              :src="post.postVideo"
+              type="video/webm">
           </video>
         </div>
-        <div class='content-wrapper'>
-          <div class='heart-and-comments'>
-            <div class='heart'
-            @click='updateLikes({ key: key, updates: ({ hasBeenLiked : post.hasBeenLiked, likes: post.likes })  })'
+        <div class="content-wrapper">
+          <div class="heart-and-comments">
+            <div class="heart"
+            @click="updateLikes({ key: key, updates: ({ hasBeenLiked : post.hasBeenLiked, likes: post.likes })  })"
             >
-              <i class='far fa-heart fa-lg'
-                :class='{"fas": post.hasBeenLiked}'>
+              <i class="far fa-heart fa-lg"
+                :class="{'fas': post.hasBeenLiked}">
               </i>
-              <p class='likes'>{{post.likes}}</p>
+              <p class="likes">{{post.likes}}</p>
             </div>
-            <div class='comments-icon'>
-              <i class='far fa-comment-alt fa-md'></i>
+            <div class="comments-icon">
+              <i class="far fa-comment-alt fa-md"></i>
               <p>{{post.comments.length}}</p>
             </div>
           </div>
-          <div class='content'>
-          <p class='caption'
-              ref='caption'
-              :class='[post.caption.length > 40 ? "caption" : "caption2"]'><span>{{post.username}}</span> {{post.caption}}</p>
+          <div class="content">
+          <p class="caption"
+              ref="caption"
+              :class="[post.caption.length > 40 ? 'caption' : 'caption2']"><span>{{post.username}}</span> {{post.caption}}</p>
         </div>
       </div>
       </div>
-        <div class='big-btn' @click="$router.push('/addpost')">
-              <i class='fas fa-2x fa-plus' ></i>
+        <div class="big-btn" @click="$router.push('/addpost')">
+              <i class="fas fa-2x fa-plus" ></i>
         </div>
     </div>
  </div>
@@ -78,7 +78,7 @@ export default {
 }
 </script>
 
-<style lang='scss'>
+<style lang="scss">
 .big-btn{
     width: 75px;
     background: #87e0f5;

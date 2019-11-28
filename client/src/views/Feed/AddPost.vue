@@ -1,65 +1,65 @@
 <template>
-  <div class='add-post'>
+  <div class="add-post">
     <template>
-        <div class='q-pa-md q-gutter-sm'>
+        <div class="q-pa-md q-gutter-sm">
           <q-dialog
-            v-model='dialog'
-            transition-show='slide-up'
-            transition-hide='slide-down'
+            v-model="dialog"
+            transition-show="slide-up"
+            transition-hide="slide-down"
           >
-            <q-card class='bg-white text-black h-70' id='modal-window'>
+            <q-card class="bg-white text-black h-70" id="modal-window">
               <q-bar>
                 <q-space />
-                <q-btn dense flat icon='close' v-close-popup></q-btn>
+                <q-btn dense flat icon="close" v-close-popup></q-btn>
               </q-bar>
               <q-card-section>
-                <div class='text-h6 text-center'>Choose your video here</div>
+                <div class="text-h6 text-center">Choose your video here</div>
               </q-card-section>
               <q-card-section>
-                <label for='file' class='custom-file-upload'>
+                <label for="file" class="custom-file-upload">
                   <p>Choose Video</p>
                 </label>
-                <input ref='input' type='file'
-                name='file'
-                id='file'
-                class='inputfile'
-                @change='uploadImage'
+                <input ref="input" type="file"
+                name="file"
+                id="file"
+                class="inputfile"
+                @change="uploadImage"
                 />
               </q-card-section>
             </q-card>
           </q-dialog>
         </div>
     </template>
-        <div class='step-buttons'>
-            <a class='cancel-btn'
-              @click='$router.push("/feed")'>
+        <div class="step-buttons">
+            <a class="cancel-btn"
+              @click="$router.push('/feed')">
                 Cancel
             </a>
-            <a class='share-btn'
-            @click='addToFeed'
+            <a class="share-btn"
+            @click="addToFeed"
               >
                 Share
             </a>
           </div>
-        <div class='wrapper'>
-        <div class='adder-wrapper'>
-          <div class='selected-video'>
-      <video ref='video' width='480'  max-height='270' controls>
+        <div class="wrapper">
+        <div class="adder-wrapper">
+          <div class="selected-video">
+      <video ref="video" width="480"  max-height="270" controls>
           <source
-        :src='post.postVideo'
-        type='video/mp4'>
+        :src="post.postVideo"
+        type="video/mp4">
       <source
-        :src='post.postVideo'
-        type='video/ogg'>
+        :src="post.postVideo"
+        type="video/ogg">
       <source
-        :src='post.postVideo'
-        type='video/webm'>
+        :src="post.postVideo"
+        type="video/webm">
         </video>
             </div>
-          <div class='caption-container'>
-            <textarea ref='textarea' maxlength='128'
-              placeholder='Write a caption...'
-              type='text'>
+          <div class="caption-container">
+            <textarea ref="textarea" maxlength="128"
+              placeholder="Write a caption..."
+              type="text">
             </textarea>
           </div>
         </div>
@@ -82,7 +82,7 @@ export default {
         postVideo: '',
         likes: 0,
         hasBeenLiked: false,
-        caption: "",
+        caption: '',
         comments: []
       }
     }
