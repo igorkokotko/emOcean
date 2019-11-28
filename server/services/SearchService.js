@@ -1,4 +1,5 @@
 const { db } = require("../config/databaseConfig");
+const CustomError = require("../common/CustomError");
 
 const findByNickname = (nickname) => {
   return new Promise((resolve, reject) => {
@@ -8,7 +9,13 @@ const findByNickname = (nickname) => {
       .get()
       .then(( snapshot ) => {
         if (snapshot.empty) {
-          reject()
+          reject(
+            new CustomError({
+              name: "DatabaseError",
+              message: "No user has been found",
+              status: 404
+            })
+          )
         } else {
           const users = [];
           snapshot.forEach(doc => {
