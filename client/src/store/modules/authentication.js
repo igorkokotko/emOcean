@@ -5,6 +5,9 @@ const state = {
   notifyReset: false
 }
 const getters = {
+  getToken: state => {
+    return state.token
+  },
   notifyRegistered: state => {
     return state.notifyRegistered
   },

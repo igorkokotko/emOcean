@@ -1,4 +1,5 @@
 import preferences from './preferences'
+import posts from './posts'
 
 import Vue from 'vue'
 import Vuex from 'vuex'
@@ -11,6 +12,7 @@ export default new Vuex.Store({
   modules: {
     profile,
     auth,
+    posts,
     preferences: preferences
   }
 })

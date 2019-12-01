@@ -7,6 +7,7 @@ const errorHandler = require('./middleware/errorHandler')
 dotenv.config({ path: './config/config.env' })
 
 const auth = require('./routes/auth')
+const profiles = require('./routes/profiles')
 
 // Run server
 const app = express()
@@ -15,6 +16,9 @@ app.use(bodyParser.json())
 
 // Authentication route
 app.use('/api/auth', auth)
+
+//Profiles route
+app.use('/api/profiles', profiles)
 
 app.use(errorHandler)
 
