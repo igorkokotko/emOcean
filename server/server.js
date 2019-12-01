@@ -13,15 +13,20 @@ const auth = require('./routes/auth')
 const profiles = require('./routes/profiles')
 const posts = require('./routes/posts')
 
+
 // Run server
 const app = express()
 
 app.use(bodyParser.json())
 
-// Routes
+// Authentication route
 app.use('/api/auth', auth)
-app.use('/api/profiles', profiles)
+
+// Posts route
 app.use('/api/posts', posts)
+
+//Profiles route
+app.use('/api/profiles', profiles)
 
 app.use(errorHandler)
 

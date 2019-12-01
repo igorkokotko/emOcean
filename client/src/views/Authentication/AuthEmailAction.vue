@@ -41,6 +41,7 @@
 <script>
 import axios from 'axios'
 import { validationMixin } from '../../utilities/validationMixin.js'
+const Authorized = require('./Authorized.js')
 
 export default {
   mixins: [validationMixin],
@@ -90,6 +91,15 @@ export default {
     } else {
       this.reset = false
     }
+  },
+
+  beforeRouteEnter: (to, from, next) => {
+    if (Authorized.isAuthorized()) {
+      return next('/feed')
+    }
+    next(vm => {
+      vm.loadCurrentSettings(to.query)
+    })
   }
 }
 </script>

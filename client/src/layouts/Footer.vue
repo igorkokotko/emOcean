@@ -42,7 +42,7 @@ a {
     color: #fff;
   }
 }
-@media screen and (min-width: 768px){
+@media screen and (min-width: 700px){
   .q-footer {
     display:none;
   }
