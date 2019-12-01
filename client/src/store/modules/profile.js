@@ -4,10 +4,10 @@ export default {
     async uploadProfile (ctx) {
       const profileData = {
         nickname: 'Elon Mask',
-        bio: 'My name is Elon and I like SoftServe company!',
+        bio: 'My name is Elon and I like SoftServe company! My name is Elon and I like SoftServe company!',
         avatar_url: 'https://amp.businessinsider.com/images/5d4ae5ea100a2411da63051d-750-562.jpg',
         status: 'My name is Elon and I like SoftServe company!',
-        user_background: 'https://images.alphacoders.com/805/805180.jpg',
+        user_background: 'https://amp.businessinsider.com/images/5d4ae5ea100a2411da63051d-750-562.jpg', // 'https://images.alphacoders.com/805/805180.jpg',
         interests: ['nature', 'football', 'flowers'],
         likedPosts: ['postId_1', 'postId_2'],
         saved: {

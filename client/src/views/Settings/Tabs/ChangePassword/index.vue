@@ -55,16 +55,16 @@
         <q-btn
           label="Change password"
           type="submit"
-          color="primary"
-          no-caps
+          rounded
+          color="secondary"
         />
         <br>
         <q-btn
           label="Forgot password?"
           @click="onForgotPasswordClick"
-          color="primary"
+          rounded
+          color="secondary"
           flat
-          no-caps
           class="q-mt-md"
         />
       </div>
