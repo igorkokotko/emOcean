@@ -24,6 +24,8 @@
       round
       color="teal"
       to="/feed"
+      @click="getTagsMap(getPreferences)"
+
     > go
     </q-btn>
   </div>
@@ -35,7 +37,17 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'EditPreferences',
   methods: {
-    ...mapActions('preferences', ['updatePreference'])
+    ...mapActions('preferences', ['updatePreference']),
+    getTagsMap: (state) => {
+      let tagsMap = new Map()
+      for (let obj in state) {
+        if (state[obj].chosen) {
+          tagsMap.set(state[obj].title, true)
+        }
+      }
+      console.log(tagsMap)
+      return tagsMap
+    }
   },
   computed: {
     ...mapGetters('preferences', ['getPreferences'])

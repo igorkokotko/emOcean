@@ -88,15 +88,6 @@ const actions = {
 const getters = {
   getPreferences: (state) => {
     return state.preferences
-  },
-  getChosenHashTags: (state) => {
-    let setTags = new Set()
-    for (let obj in state.preferences) {
-      if (obj.chosen) {
-        setTags.add(obj.title)
-      }
-    }
-    return setTags
   }
 }
 
