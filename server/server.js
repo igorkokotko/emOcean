@@ -18,10 +18,14 @@ const app = express()
 
 app.use(bodyParser.json())
 
-// Routes
+// Authentication route
 app.use('/api/auth', auth)
+
+// Posts route
+app.use('/api/posts', posts)	app.use('/api/posts', posts)
+
+//Profiles route
 app.use('/api/profiles', profiles)
-app.use('/api/posts', posts)
 
 app.use(errorHandler)
 

@@ -1,5 +1,6 @@
-const { db, auth } = require("../config/databaseConfig")
-const CustomError = require("../common/CustomError")
+const { db, auth } = require("../config/databaseConfig");
+const CustomError = require("../common/CustomError");
+const nicknameKeywords = require("../common/nicknameKeywords")
 
 const createUserWithEmailAndPassword = (email, password, nickname) => {
   return new Promise((resolve, reject) => {
@@ -9,12 +10,13 @@ const createUserWithEmailAndPassword = (email, password, nickname) => {
       .get()
       .then(snapshot => {
         if (snapshot.empty) {
+          const keywords = nicknameKeywords.setKeywords(nickname)
           auth()
             .createUserWithEmailAndPassword(email, password)
             .then(({ user }) => {
               usersRef
                 .doc(user.uid)
-                .set({ nickname, profileId: user.uid })
+                .set({ nickname, profileId: user.uid, keywords })
                 .then(res => resolve("User created"))
                 .catch(err => reject(err))
             })

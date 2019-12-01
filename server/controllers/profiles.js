@@ -5,6 +5,13 @@ const {
   validateImage,
 } = require("../validation/profiles")
 
+const search = asyncMiddleware(async (req, res, next) => {
+  const { nickname } = req.body
+  // db logic
+  const message = await searchService.findByNickname(nickname)
+  res.status(200).json({ message })
+})
+
 // req.userId - from protected route handler
 const getMyProfile = asyncMiddleware(async (req, res) => {
   const myProfile = await profilesService.getProfileById(req.userId)
@@ -131,6 +138,7 @@ const unfollowProfile = asyncMiddleware(async (req, res) => {
 })
 
 module.exports = {
+  search,
   getMyProfile,
   getProfileById,
   getProfileByNickname,
