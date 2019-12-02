@@ -14,7 +14,20 @@ const routes = [
   {
     path: '/profile',
     name: 'profile',
+    props: true,
     component: () => import('../views/Profile/index.vue')
+    // children: [
+    //   {
+    //     path: 'follow',
+    //     name: 'followPage',
+    //     component: () => import('../views/FollowList/index.vue')
+    //   }
+    // ]
+  },
+  {
+    path: '/profile/follow',
+    name: 'followPage',
+    component: () => import('../views/FollowList/index.vue')
   },
   {
     path: '/settings',
