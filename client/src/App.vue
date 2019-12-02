@@ -39,7 +39,7 @@ body {
   font-size: 16px;
   line-height: 1.5;
   letter-spacing: 0.5px;
-  background-color: white;
+  background-color: #F7F9FC;
 }
 h1, h2, h3, h4 {
   line-height: normal;
