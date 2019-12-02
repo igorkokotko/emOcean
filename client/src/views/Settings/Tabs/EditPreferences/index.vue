@@ -23,8 +23,7 @@
       size="40px"
       round
       color="teal"
-      to="/feed"
-      @click="getTagsMap(getPreferences)"
+      @click="getTags(getPreferences)"
 
     > go
     </q-btn>
@@ -33,20 +32,27 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import axios from 'axios'
 
 export default {
   name: 'EditPreferences',
   methods: {
     ...mapActions('preferences', ['updatePreference']),
-    getTagsMap: (state) => {
-      let tagsMap = new Map()
+    getTags: (state) => {
+      let tags = []
       for (let obj in state) {
         if (state[obj].chosen) {
-          tagsMap.set(state[obj].title, true)
+          tags.push(state[obj].title)
         }
       }
-      console.log(tagsMap)
-      return tagsMap
+      console.log(tags)
+      axios.post('/api/preferences/save', tags)
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((e) => {
+          console.error(e)
+        })
     }
   },
   computed: {
