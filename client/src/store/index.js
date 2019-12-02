@@ -1,4 +1,4 @@
-import preferences from './preferences'
+import preferences from './modules/preferences'
 import posts from './posts'
 
 import Vue from 'vue'
