@@ -1,6 +1,5 @@
 const validator = require('validator')
 
-// Currently validation rules isn't very sctrict, but in development process we would make him more advanced
 const validateEmail = email => {
   if (validator.isEmpty(email)) {
     return {
@@ -28,9 +27,7 @@ const validatePassword = password => {
   if (
     !validator.isLength(password, { min: 8, max: 20 }) ||
     validator.isEmpty(password) ||
-    // regexp for whitespace check
     /\s/.test(password) ||
-    // two validation below to be sure that password wouldnt have only lowercase or uppercase
     validator.isUppercase(password) ||
     validator.isLowercase(password)
   ) {
