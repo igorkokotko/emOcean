@@ -72,6 +72,8 @@ export default {
     .card-content {
       padding: 50px 15px 0;
       text-align: center;
+      background-color: white;
+      height: 100%;
       & > * {
         margin-bottom: 15px;
       }

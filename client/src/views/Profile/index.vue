@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="profile-header" :style="{ backgroundImage: `url(${profileGetter.user_background})` }">
+    <div class="profile-header" :style="{ backgroundImage: `${(profileGetter.user_background) ? 'url('+profileGetter.user_background + ')' : 'url(https://i.ytimg.com/vi/DiS7ZMwTA0I/maxresdefault.jpg)'}`}">
       <div class="view-counter" v-if="profileGetter.counters">
         <i class="fas fa-eye"></i>
         {{profileGetter.counters.views}}
@@ -29,6 +29,7 @@ export default {
   methods: mapActions(['uploadProfile']),
   mounted () {
     this.uploadProfile()
+    // this.getUser(2)
   },
   components: {
     ProfileCard,
