@@ -5,9 +5,17 @@ const {db} = require("../config/databaseConfig");
 
 
 let save = function (req, res) {
-    // console.log(req.body[1])
-    // console.log(req.user)
-    db.collection('users').doc(req.user).update({preferences: req.body})   
+    db.collection('users').doc(req.user).update({preferences: req.body}, 
+        function(error) {
+            if (error) {
+                console.log('ahtung!' + error);
+                res.send(error)
+            } else {
+                console.log('data was succesfuly updated');
+                res.send('succesfull')
+            }
+        });
+    // res.send()
   };
 
 
