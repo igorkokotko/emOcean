@@ -17,9 +17,7 @@ export default {
     if (!Authorized.isAuthorized()) {
       return next('/login')
     }
-    next(vm => {
-      vm.loadCurrentSettings(to.query)
-    })
+    next()
   }
 }
 </script>

@@ -16,7 +16,7 @@ const getters = {
   }
 }
 const mutations = {
-  login (state, payload) {
+  signin (state, payload) {
     state.token = payload.token
     state.user = payload.user
   },
@@ -28,9 +28,19 @@ const mutations = {
   }
 }
 const actions = {
+  signin ({ commit }, payload) {
+    return commit('signin', payload)
+  },
+  notifyRegistered ({ commit }, boolean) {
+    return commit('notifyRegistered', boolean)
+  },
+  notifyReset ({ commit }, boolean) {
+    return commit('notifyReset', boolean)
+  }
 }
 
 export default {
+  namespaced: true,
   state,
   getters,
   mutations,
