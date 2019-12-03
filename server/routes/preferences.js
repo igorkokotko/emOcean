@@ -11,10 +11,10 @@ let save = function (req, res) {
         res.send('Code Updated')
       })
       .catch(error => {
-        res.send('Error - ' + error)
+        res.status(408).send('Error - ' + error)
       })
   } catch (error) {
-    res.send('Error - ' + error)
+    res.status(505).send('Error - ' + error)
   }
 };
 

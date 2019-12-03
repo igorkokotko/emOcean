@@ -47,6 +47,10 @@ export default {
       }
       console.log(tags)
       axios.post('/api/preferences/save', tags)
+        .then((response) => {
+          console.log(response)
+          alert('data saved')
+        })
         .catch(error => {
           if (error.response) {
             console.log(error.response.data)
@@ -57,9 +61,7 @@ export default {
           } else {
             console.log('Error', error.message)
           }
-        })
-        .then((response) => {
-          console.log(response)
+          alert('Oooops, something went wrong!')
         })
     }
   },
