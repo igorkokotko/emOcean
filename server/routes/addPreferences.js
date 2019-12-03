@@ -5,20 +5,18 @@ const {db} = require("../config/databaseConfig");
 
 
 let save = function (req, res) {
-    db.collection('users').doc(req.user).update({preferences: req.body}, 
-        // function(error) {
-        //     if (error) {
-        //         console.log('ahtung!' + error);
-        //         res.send(error)
-        //     } else {
-        //         console.log('data was succesfuly updated');
-        //         res.send('succesfull')
-        //     }
-        // }
-        );
-    res.send()
-  };
-
+  try {
+    db.collection('users').doc(req.user).update({preferences: req.body})    
+      .then(resolve => {
+        res.send('Code Updated')
+      })
+      .catch(error => {
+        res.send('Error - ' + error)
+      })
+  } catch (error) {
+    res.send('Error - ' + error)
+  }
+};
 
 router.post('/save', protected, save)
 
