@@ -1,9 +1,7 @@
-const CustomError = require("../common/CustomError")
-const asyncMiddleware = require("../middleware/asyncMiddleware")
-const profilesService = require("../services/ProfilesService")
-const {
-  validateImage,
-} = require("../validation/profiles")
+const CustomError = require('../common/CustomError')
+const asyncMiddleware = require('../middleware/asyncMiddleware')
+const profilesService = require('../services/ProfilesService')
+const { validateImage } = require('../validation/profiles')
 
 const search = asyncMiddleware(async (req, res, next) => {
   const { nickname } = req.body
@@ -12,53 +10,67 @@ const search = asyncMiddleware(async (req, res, next) => {
   res.status(200).json({ message })
 })
 
-// req.userId - from protected route handler
-const getMyProfile = asyncMiddleware(async (req, res) => {
-  const myProfile = await profilesService.getProfileById(req.userId)
-
-  res.status(200).json({ myProfile })
-})
-
-const getProfileById = asyncMiddleware(async (req, res) => {
-  const { id } = req.params
-
-  const profile = await profilesService.getProfileById(id)
+const getProfile = asyncMiddleware(async (req, res, next) => {
+  const { nickname, id } = req.query
+  let profile
+  if (!nickname && !id) {
+    return next(
+      new CustomError({
+        name: 'Bad Request',
+        message: 'Invalid query request',
+        status: 400
+      })
+    )
+  } else if (id) {
+    profile = await profilesService.getProfileById(id)
+  } else {
+    profile = await profilesService.getProfileByNickname(nickname)
+  }
 
   res.status(200).json({ profile })
 })
 
-const getProfileByNickname = asyncMiddleware(async (req, res) => {
-  const { nickname } = req.params
-
-  const profile = await profilesService.getProfileByNickname(nickname)
-
-  res.status(200).json({ profile })
-})
-
-const uploadAvatar = asyncMiddleware(async (req, res, next) => {
-  const avatarImage = req.file
-  // second param means max image size in mb 
-  const validatedAvatarError = validateImage(avatarImage, 5)
-  if (validatedAvatarError !== undefined) {
-    return next(new CustomError(validatedAvatarError))
+const uploadImage = asyncMiddleware(async (req, res, next) => {
+  const { type } = req.query
+  const image = req.file
+  if (type && image) {
+    let validatedImageError, dest
+    switch (type) {
+      case 'background': {
+        validatedImageError = validateImage(image, 10)
+        dest = type + 's'
+        break
+      }
+      case 'avatar': {
+        validatedImageError = validateImage(image, 5)
+        dest = type + 's'
+        break
+      }
+      default: {
+        return next(
+          new CustomError({
+            name: 'Bad Request',
+            message:
+              'Incorrect query. Make sure that you entered correct image type',
+            status: 400
+          })
+        )
+      }
+    }
+    if (validatedImageError !== undefined) {
+      return next(new CustomError(validatedImageError))
+    }
+    const imageUrl = await profilesService.uploadPhoto(image, req.userId, dest)
+    res.status(200).json({ imageUrl })
+  } else {
+    return next(
+      new CustomError({
+        name: 'Bad Request',
+        message: 'Incorrect query. Make sure that you send query image type',
+        status: 400
+      })
+    )
   }
-
-  const avatarImageUrl = await profilesService.uploadPhoto(avatarImage, req.userId, 'avatars')
-
-  res.status(200).json({ avatarImageUrl })
-})
-
-const uploadBackground = asyncMiddleware(async (req, res, next) => {
-  const backgroundImage = req.file
-
-  const validatedBackgroundError = validateImage(backgroundImage, 5)
-  if (validatedBackgroundError !== undefined) {
-    return next(new CustomError(validatedBackgroundError))
-  }
-
-  const backgroundImageUrl = await profilesService.uploadPhoto(backgroundImage, req.userId, 'backgrounds')
-
-  res.status(200).json({ backgroundImageUrl })
 })
 
 const saveProfile = asyncMiddleware(async (req, res) => {
@@ -76,13 +88,7 @@ const setPreferences = asyncMiddleware(async (req, res) => {
 
   res.status(200).json({ message })
 })
-const getMyFollowers = asyncMiddleware(async (req, res) => {
-  const myId = req.userId
 
-  const followers = await profilesService.getFollowersById(myId)
-
-  res.status(200).json({ followers })
-})
 const getFollowersById = asyncMiddleware(async (req, res) => {
   const profileId = req.params.id
 
@@ -90,29 +96,7 @@ const getFollowersById = asyncMiddleware(async (req, res) => {
 
   res.status(200).json({ followers })
 })
-const blockProfile = asyncMiddleware(async (req, res) => {
-  const blockedUserId = req.params.id
 
-  const message = await profilesService.blockProfile(req.userId, blockedUserId)
-
-  res.status(200).json({ message })
-})
-
-const unblockProfile = asyncMiddleware(async (req, res) => {
-  const unblockedUserId = req.params.id
-
-  const message = await profilesService.unblockProfile(req.userId, unblockedUserId)
-
-  res.status(200).json({ message })
-})
-
-const getMyFollowings = asyncMiddleware(async (req, res) => {
-  const myId = req.userId
-
-  const followings = await profilesService.getFollowingsById(myId)
-
-  res.status(200).json({ followings })
-})
 const getFollowingsById = asyncMiddleware(async (req, res) => {
   const profileId = req.params.id
 
@@ -120,38 +104,38 @@ const getFollowingsById = asyncMiddleware(async (req, res) => {
 
   res.status(200).json({ followings })
 })
-const followProfile = asyncMiddleware(async (req, res) => {
-  const myId = req.userId
-  const followId = req.params.id
-
-  const followProfile = await profilesService.followProfile(myId, followId)
-
-  res.status(200).json({ followProfile })
-})
-const unfollowProfile = asyncMiddleware(async (req, res) => {
-  const myId = req.userId
-  const followId = req.params.id
-
-  const followProfile = await profilesService.unfollowProfile(myId, followId)
-
-  res.status(200).json({ followProfile })
+const profileAction = asyncMiddleware(async (req, res) => {
+  const actionsList = ['follow', 'unfollow', 'block', 'unblock']
+  const { action, id } = req.query
+  if (action && id && actionsList.includes(action)) {
+    const myProfileId = req.userId
+    const profileActions = {
+      follow: 'followProfile',
+      unfollow: 'unfollowProfile',
+      block: 'blockProfile',
+      unblock: 'unblockProfile'
+    }
+    const followMethod = profileActions[action]
+    const result = await profilesService[followMethod](myProfileId, id)
+    res.status(200).json({ result })
+  } else {
+    return next(
+      new CustomError({
+        name: 'Bad Request',
+        message: 'Invalid query request',
+        status: 400
+      })
+    )
+  }
 })
 
 module.exports = {
   search,
-  getMyProfile,
-  getProfileById,
-  getProfileByNickname,
+  getProfile,
   saveProfile,
-  uploadAvatar,
-  uploadBackground,
+  uploadImage,
   setPreferences,
-  getMyFollowers,
   getFollowersById,
-  blockProfile,
-  unblockProfile,
-  getMyFollowings,
   getFollowingsById,
-  followProfile,
-  unfollowProfile
+  profileAction
 }
