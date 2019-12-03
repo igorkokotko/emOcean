@@ -1,12 +1,11 @@
 const validateVideo = (video, acceptedVideoSize) => {
-  if (
-    !(
-      video.mimetype === 'video/mpeg' ||
-      video.mimetype === 'video/ogg' ||
-      video.mimetype === 'video/mp4' ||
-      video.mimetype === 'video/webm'
-    )
-  ) {
+  const availableFormats = [
+    'video/mpeg',
+    'video/ogg',
+    'video/mp4',
+    'video/webm'
+  ]
+  if (!availableFormats.includes(video.mimetype)) {
     return {
       name: 'ClientError',
       message:

@@ -12,7 +12,6 @@ const search = asyncMiddleware(async (req, res, next) => {
 
 const getProfile = asyncMiddleware(async (req, res, next) => {
   const { nickname, id } = req.query
-  let profile
   if (!nickname && !id) {
     return next(
       new CustomError({
@@ -21,13 +20,12 @@ const getProfile = asyncMiddleware(async (req, res, next) => {
         status: 400
       })
     )
-  } else if (id) {
-    profile = await profilesService.getProfileById(id)
   } else {
-    profile = await profilesService.getProfileByNickname(nickname)
+    const profile = id
+      ? await profilesService.getProfileById(id)
+      : await profilesService.getProfileByNickname(nickname)
+    res.status(200).json({ profile })
   }
-
-  res.status(200).json({ profile })
 })
 
 const uploadImage = asyncMiddleware(async (req, res, next) => {

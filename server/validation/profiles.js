@@ -1,11 +1,6 @@
 const validateImage = (image, acceptedImageSize) => {
-  if (
-    !(
-      image.mimetype === 'image/jpeg' ||
-      image.mimetype === 'image/png' ||
-      image.mimetype === 'image/jpg'
-    )
-  ) {
+  const availableFormats = ['image/jpeg', 'image/jpg', 'image/png']
+  if (!availableFormats.includes(image.mimetype)) {
     return {
       name: 'ClientError',
       message:
