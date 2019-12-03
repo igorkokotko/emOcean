@@ -20,9 +20,7 @@ export default {
     if (Authorized.isAuthorized()) {
       return next('/feed')
     }
-    next(vm => {
-      vm.loadCurrentSettings(to.query)
-    })
+    next()
   }
 }
 </script>
