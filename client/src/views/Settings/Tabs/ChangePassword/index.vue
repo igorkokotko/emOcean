@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-lg">
+  <q-page>
     <q-form
       class="q-gutter-md"
       @submit="onFormSubmit"

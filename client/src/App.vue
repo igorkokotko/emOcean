@@ -11,6 +11,7 @@
 <script>
 import Footer from './layouts/Footer.vue'
 import vHeader from '@/layouts/Header.vue'
+import ApiService from '@/utilities/ApiService.js'
 
 export default {
   name: 'LayoutDefault',
@@ -22,6 +23,14 @@ export default {
 
   data () {
     return {
+    }
+  },
+
+  created () {
+    if (window.localStorage.getItem('token') && window.localStorage.getItem('token') !== '') {
+      const token = window.localStorage.getItem('token')
+      this.$store.commit('login', { token })
+      ApiService.setApiAuthorizationHeaders(token)
     }
   }
 }

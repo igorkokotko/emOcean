@@ -89,6 +89,12 @@ export default {
     rotate (deg) {
       this.$refs.cropper.rotate(deg)
     }
+  },
+
+  watch: {
+    src (newValue) {
+      this.$refs.cropper.replace(newValue)
+    }
   }
 }
 </script>

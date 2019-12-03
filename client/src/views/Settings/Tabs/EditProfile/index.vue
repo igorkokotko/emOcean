@@ -12,7 +12,9 @@
         </q-card-section>
         <q-card-section>
           <template v-if="photoUrl===''">
-            <avatar :img="photoUrl" />
+            <div class="row justify-center">
+              <avatar :img="photoUrl" />
+            </div>
           </template>
           <template v-else>
             <edit-image
@@ -20,11 +22,32 @@
               class="avatar"
             />
           </template>
-          <div class="row justify-center">
-            <q-input
-              @input="uploadAvatar"
-              type="file"
-              class="inputFile"
+          <div class="row justify-center q-mt-sm">
+            <label
+              for="inputAvatar"
+              ref="photoUrlLabel"
+            >
+              <input
+                ref="avatar"
+                type="file"
+                id="inputAvatar"
+                accept="image/*"
+                @input="uploadPhotoUrl"
+                class="uploadImage"
+              >
+              <q-btn
+                round
+                color="secondary"
+                icon="cloud_upload"
+                @click="btnUploadPhotoUrl"
+                class="q-mr-md"
+              />
+            </label>
+            <q-btn
+              round
+              color="negative"
+              icon="delete"
+              @click="deletePhotoUrl"
             />
           </div>
         </q-card-section>
@@ -36,21 +59,47 @@
         </q-card-section>
         <q-card-section>
           <template v-if="backgroundUrl===''">
-            <img src="" />
+            <div class="row justify-center">
+              <img
+                src="@/assets/img/cover_photo.jpg"
+                class="coverPhoto"
+              />
+            </div>
           </template>
           <template v-else>
             <edit-image
+              class="backgroundImage"
               :src="backgroundUrl"
               :aspectRatio="16 / 9"
             />
           </template>
-          <div class="row justify-center">
-            <label class="btn btn-primary btn-upload" for="inputImage" title="Upload image file">
-            <input type="file" class="sr-only" id="inputImage" name="file" accept="image/*">
-            <span class="docs-tooltip" data-toggle="tooltip" title="Import image with Blob URLs">
-              <span class="fa fa-upload"></span>
-            </span>
-          </label>
+          <div class="row justify-center q-mt-sm">
+            <label
+              for="inputImage"
+              ref="backgroundUrlLabel"
+            >
+              <input
+                ref="background"
+                type="file"
+                id="inputImage"
+                accept="image/*"
+                @input="uploadBackgroundUrl"
+                class="uploadImage"
+              >
+              <q-btn
+                round
+                color="secondary"
+                icon="cloud_upload"
+                @click="btnUploadBackgroundUrl"
+                class="q-mr-md"
+              />
+            </label>
+            <q-btn
+              round
+              color="negative"
+              icon="delete"
+              @click="deleteBackgroundUrl"
+            />
           </div>
         </q-card-section>
       </q-card>
@@ -65,6 +114,7 @@
             placeholder="Add your username"
             v-model="profile.nickname"
             :rules="[requiredField, checkNicknameField]"
+            lazy-rules
           />
           <q-input
             label="Bio"
@@ -74,6 +124,7 @@
             autogrow
             counter
             :rules="[checkUserDescriptionField]"
+            lazy-rules
           />
           <q-input
             label="Status"
@@ -83,6 +134,7 @@
             autogrow
             counter
             :rules="[checkUserDescriptionField]"
+            lazy-rules
           />
         </q-card-section>
       </q-card>
@@ -96,20 +148,35 @@
             label="YouTube"
             placeholder="Add YouTube link to your profile"
             v-model="profile.socialAccounts.youtube"
-            type="url"
-          />
+            :rules="[checkURL]"
+            lazy-rules
+          >
+            <template v-slot:prepend>
+              <q-icon class="fab fa-youtube youtube" />
+            </template>
+          </q-input>
           <q-input
             label="Instagram"
             placeholder="Add Instagram link to your profile"
             v-model="profile.socialAccounts.instagram"
-            type="url"
-          />
+            :rules="[checkURL]"
+            lazy-rules
+          >
+            <template v-slot:prepend>
+              <q-icon class="fab fa-instagram instagram" />
+            </template>
+          </q-input>
           <q-input
             label="Facebook"
             placeholder="Add Facebook link to your profile"
             v-model="profile.socialAccounts.facebook"
-            type="url"
-          />
+            :rules="[checkURL]"
+            lazy-rules
+          >
+            <template v-slot:prepend>
+              <q-icon class="fab fa-facebook-f facebook" />
+            </template>
+          </q-input>
         </q-card-section>
       </q-card>
 
@@ -139,8 +206,10 @@ import EditImage from './EditImage.vue'
 import {
   requiredField,
   checkNicknameField,
-  checkUserDescriptionField
+  checkUserDescriptionField,
+  checkURL
 } from '@/utilities/validation.js'
+import authService from '@/services/auth.js'
 
 export default {
   components: {
@@ -149,20 +218,27 @@ export default {
   },
 
   data () {
+    const emptyProfile = {
+      nickname: '',
+      bio: '',
+      status: '',
+      avatar_url: null,
+      user_background: null,
+      socialAccounts: {
+        youtube: '',
+        instagram: '',
+        facebook: ''
+      }
+    }
     return {
       photoUrl: '',
       backgroundUrl: '',
-      profile: {
-        nickname: '',
-        bio: '',
-        status: '',
-        avatar_url: null,
-        user_background: null,
-        socialAccounts: {
-          youtube: '',
-          instagram: '',
-          facebook: ''
-        }
+      profile: { ...emptyProfile },
+      emptyProfile,
+      notifyParameters: {
+        textColor: 'white',
+        actions: [{ icon: 'close', color: 'white' }],
+        timeout: 3000
       }
     }
   },
@@ -180,17 +256,46 @@ export default {
   },
 
   created () {
-    this.$store.dispatch('uploadProfile')
+    this.$store.dispatch('getProfile')
   },
 
   methods: {
-    uploadAvatar (val) {
-      this.profile.avatar_url = val[0]
-      this.photoUrl = URL.createObjectURL(val[0])
+    uploadPhotoUrl (val) {
+      if (val.target.files[0].size > 2097152) {
+        this.$q.notify({
+          ...this.notifyParameters,
+          color: 'negative',
+          message: 'File is too big.'
+        })
+        this.$refs.avatar.val = ""
+        return
+      }
+      this.profile.avatar_url = val.target.files[0]
+      const reader = new FileReader()
+      reader.onload = () => {
+        this.photoUrl = reader.result
+      }
+      reader.readAsDataURL(val.target.files[0])
+    },
+
+    btnUploadPhotoUrl () {
+      this.$refs.photoUrlLabel.click()
+    },
+
+    deletePhotoUrl (val) {
+      this.photoUrl = ""
     },
 
     uploadBackgroundUrl (val) {
-      console.log(val)
+      if (val.target.files[0].size > 2097152) {
+        this.$q.notify({
+          ...this.notifyParameters,
+          color: 'negative',
+          message: 'File is too big.'
+        })
+        this.$refs.background.val = ""
+        return
+      }
       this.profile.user_background = val.target.files[0]
       const reader = new FileReader()
       reader.onload = () => {
@@ -199,12 +304,42 @@ export default {
       reader.readAsDataURL(val.target.files[0])
     },
 
+    btnUploadBackgroundUrl () {
+      this.$refs.backgroundUrlLabel.click()
+    },
+
+    deleteBackgroundUrl (val) {
+      this.backgroundUrl = ""
+    },
+
     onSubmit () {
       const profile = { ...this.profile, socialAccounts: [] }
       Object.keys(this.profile.socialAccounts).forEach(item => {
         profile.socialAccounts.push({ type: item, link: this.profile.socialAccounts[item] })
       })
-      this.$store.commit('updateProfile', profile)
+      if (!profile.interests) { profile.interests = [] }
+      this.$store.dispatch('updateProfile', profile)
+        .then(() => {
+          this.$q.notify({
+            ...this.notifyParameters,
+            color: 'primary',
+            message: 'Your profile was edited.'
+          })
+        })
+        .catch(err => {
+          this.$q.notify({
+            ...this.notifyParameters,
+            color: 'negative',
+            message: err && err.response && err.response.data ? err.response.data.error : 'Unknown error.'
+          })
+        })
+      const avatarFormData = new FormData()
+      avatarFormData.append('file', this.profile.avatar_url)
+      authService.uploadAvatar(avatarFormData)
+
+      const coverPhotoFormData = new FormData()
+      coverPhotoFormData.append('file', this.profile.user_background)
+      authService.uploadBackground(coverPhotoFormData)
     },
 
     onReset () {
@@ -213,32 +348,39 @@ export default {
 
     loadDataFromStore () {
       const socialAccounts = {}
-      this.profileGetter.socialAccounts.forEach(item => {
-        socialAccounts[item.type] = item.link
-      })
-      this.profile = { ...this.profileGetter, socialAccounts }
-      this.photoUrl = this.profile.avatar_url
-      this.backgroundUrl = this.profile.user_background
+      if (this.profileGetter.socialAccounts) {
+        this.profileGetter.socialAccounts.forEach(item => {
+          socialAccounts[item.type] = item.link
+        })
+      }
+      this.profile = { ...this.emptyProfile, ...this.profileGetter, socialAccounts }
+      if (this.profile.avatar_url && JSON.stringify(this.profile.avatar_url) !== JSON.stringify({})) {
+        this.photoUrl = this.profile.avatar_url
+      }
+      if (this.profile.user_background && JSON.stringify(this.profile.user_background) !== JSON.stringify({})) {
+        this.backgroundUrl = this.profile.user_background
+      }
     },
 
     requiredField,
     checkNicknameField,
-    checkUserDescriptionField
+    checkUserDescriptionField,
+    checkURL
   }
 }
 </script>
 
 <style scoped>
-.q-field--with-bottom {
-  padding-bottom: 0;
-}
-
 .q-avatar__content, .q-avatar img:not(.q-icon) {
   width: auto;
 }
 
-.backgroundUrl {
-  max-width: 300px;
+.coverPhoto {
+  max-width: 500px;
+}
+
+.uploadImage {
+  display: none;
 }
 </style>
 
@@ -254,5 +396,21 @@ export default {
 .avatar .cropper-view-box,
 .avatar .cropper-face {
   border-radius: 50%;
+}
+
+.facebook {
+  color: #3b5999;
+}
+
+.youtube {
+  color: #FF0000;
+}
+
+.instagram {
+  color: #e4405f;
+}
+
+.backgroundImage .vueCropperWrapper {
+  max-width: 500px;
 }
 </style>

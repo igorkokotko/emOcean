@@ -1,8 +1,10 @@
+import authService from '@/services/auth'
+
 export default {
   actions: {
     // Request to the database
-    async uploadProfile (ctx) {
-      const profileData = {
+    updateProfile (ctx, editedData) {
+      /* const profileData = {
         nickname: 'Elon Mask',
         bio: 'My name is Elon and I like SoftServe company! My name is Elon and I like SoftServe company!',
         avatar_url: 'https://amp.businessinsider.com/images/5d4ae5ea100a2411da63051d-750-562.jpg',
@@ -28,8 +30,18 @@ export default {
           { type: 'facebook', link: 'https://facebook.com' },
           { type: 'instagram', link: 'https://instagram.com' }
         ]
-      }
-      ctx.commit('updateProfile', profileData)
+      } */
+      // ctx.commit('updateProfile', profileData)
+      return authService.updateProfile(editedData)
+        .then((response) => {
+          ctx.commit('updateProfile', response.data.myProfile)
+        })
+    },
+    getProfile (ctx) {
+      return authService.getProfile()
+        .then((response) => {
+          ctx.commit('updateProfile', response.data.myProfile)
+        })
     }
   },
   mutations: {

@@ -43,8 +43,11 @@
                 >
                   <q-item-section>Settings</q-item-section>
                 </q-item>
-                <q-item clickable>
-                  <q-item-section disabled>Log out</q-item-section>
+                <q-item
+                  clickable
+                  @click="logOut"
+                >
+                  <q-item-section>Log out</q-item-section>
                 </q-item>
               </template>
               <template v-else>
@@ -82,6 +85,18 @@ export default {
       if (e.target === this.$refs.toolbar.$el) {
         this.$refs.search.style.visibility = 'hidden'
       } else this.$refs.search.style.visibility = 'visible'
+    },
+    logOut () {
+      this.$store.commit('login', { token: '', user: '' })
+      window.localStorage.removeItem('token')
+      this.$q.notify({
+        textColor: 'white',
+        actions: [{ icon: 'close', color: 'white' }],
+        timeout: 3000,
+        color: 'primary',
+        message: 'You logged out.'
+      })
+      this.$router.push('/feed')
     }
   }
 }
