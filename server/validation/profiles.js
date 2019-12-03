@@ -1,8 +1,15 @@
 const validateImage = (image, acceptedImageSize) => {
-  if (image.mimetype !== "image/jpeg") {
+  if (
+    !(
+      image.mimetype === 'image/jpeg' ||
+      image.mimetype === 'image/png' ||
+      image.mimetype === 'image/jpg'
+    )
+  ) {
     return {
       name: 'ClientError',
-      message: 'Incorrect image format. You need to upload image with .jpg/.jpeg format',
+      message:
+        'Incorrect image format. You need to upload image with .jpg/.jpeg/.png format',
       status: 400
     }
   }

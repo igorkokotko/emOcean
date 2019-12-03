@@ -1,8 +1,16 @@
 const validateVideo = (video, acceptedVideoSize) => {
-  if (!(video.mimetype === "video/mpeg" || video.mimetype === "video/ogg" || video.mimetype === "video/mp4" || video.mimetype === "video/webm")) {
+  if (
+    !(
+      video.mimetype === 'video/mpeg' ||
+      video.mimetype === 'video/ogg' ||
+      video.mimetype === 'video/mp4' ||
+      video.mimetype === 'video/webm'
+    )
+  ) {
     return {
       name: 'ClientError',
-      message: 'Incorrect video format. You need to upload video with .mpeg/.ogg/.mp4/.webm',
+      message:
+        'Incorrect video format. You need to upload video with .mpeg/.ogg/.mp4/.webm',
       status: 400
     }
   }

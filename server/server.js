@@ -1,7 +1,7 @@
 const express = require('express')
 const dotenv = require('dotenv')
 const bodyParser = require('body-parser')
-const XMLHttpRequest = require("xhr2")
+const XMLHttpRequest = require('xhr2')
 const errorHandler = require('./middleware/errorHandler')
 
 dotenv.config({ path: './config/config.env' })
@@ -12,7 +12,6 @@ global.XMLHttpRequest = XMLHttpRequest
 const auth = require('./routes/auth')
 const profiles = require('./routes/profiles')
 const posts = require('./routes/posts')
-
 
 // Run server
 const app = express()
