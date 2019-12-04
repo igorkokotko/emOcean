@@ -3,7 +3,7 @@
     <q-btn
       v-for="(preference, key) in getPreferences"
       :key="key"
-      @click="updatePref({key: key, updates: {chosen: !preference.chosen}})"
+      @click="updatePreference({key: key, updates: {chosen: !preference.chosen}})"
       size="40px"
       round
       class="q-ma-xs"
@@ -23,7 +23,7 @@
       size="40px"
       round
       color="teal"
-      @click="getTags(getPreferences)"
+      @click="savePreferences(getPreferences)"
 
     > go
     </q-btn>
@@ -36,26 +36,30 @@ import axios from 'axios'
 
 export default {
   name: 'EditPreferences',
+  data: function () {
+    return {
+      tags: []
+    }
+  },
   methods: {
-    // ...mapActions('preferences', ['updatePreference', 'rollbackChanges']),
-    ...mapActions({ updatePref: 'preferences/updatePreference', rollback: 'preferences/rollbackChanges' }),
-    getTags: function (state) {
-      let tags = []
+    ...mapActions('preferences', ['updatePreference', 'rollbackChanges']),
+    getChosenTags: function (state) {
       for (let obj in state) {
         if (state[obj].chosen) {
-          tags.push(state[obj].hashtag)
+          this.tags.push(state[obj].hashtag)
         }
       }
-      // console.log(this.$store)
-      // this.rollback(tags)
-      console.log(tags)
-      axios.post('/api/preferences/save', tags)
+    },
+
+    savePreferences: function (state) {
+      this.getChosenTags(state)
+      axios.post('/api/preferences/save', this.tags)
         .then((response) => {
           console.log(response)
           alert('data saved')
         })
         .catch(error => {
-          this.rollback(tags)
+          this.rollbackChanges(this.tags)
           if (error.response) {
             console.log(error.response.data)
             console.log(error.response.status)

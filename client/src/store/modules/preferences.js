@@ -78,14 +78,9 @@ const mutations = {
     Object.assign(state.preferences[payload.key], payload.updates)
   },
   rollbackChanges (state, tags) {
-    console.log('mutation')
     for (let tag of tags) {
-      console.log(tag)
       for (let obj in state.preferences) {
-        console.log(state.preferences[obj])
-        console.log(state.preferences[obj].hashtag)
         if (state.preferences[obj].hashtag === tag) {
-          // console.log(obj.hashtag)
           state.preferences[obj].chosen = false
         }
       }
@@ -98,7 +93,6 @@ const actions = {
     commit('updatePreference', payload)
   },
   rollbackChanges ({ commit }, tags) {
-    console.log('rollback')
     commit('rollbackChanges', tags)
   }
 }
