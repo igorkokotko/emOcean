@@ -15,7 +15,7 @@
             'text-subtitle1',
             'text-center']"
           >
-          {{preference.hashtag.slice(1)}}
+          {{preference.hashtag | sliceHash}}
           </div>
       </q-avatar>
     </q-btn>
@@ -75,6 +75,11 @@ export default {
   },
   computed: {
     ...mapGetters('preferences', ['getPreferences'])
+  },
+  filters: {
+    sliceHash: function (value) {
+      return value.slice(1)
+    }
   }
 }
 </script>
