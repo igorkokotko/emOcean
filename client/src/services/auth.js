@@ -10,14 +10,14 @@ export default {
   },
 
   getProfile () {
-    return axios.get('/api/profiles/get-my-profile')
+    return axios.get('/api/profiles/get-profile')
   },
 
   uploadAvatar (avatar) {
-    return axios.post('/api/profiles/upload-avatar', avatar)
+    return axios.post('/api/profiles/upload-image', avatar)
   },
 
   uploadBackground (background) {
-    return axios.post('/api/profiles/upload-background', background)
+    return axios.post('/api/profiles/upload-image', background)
   }
 }

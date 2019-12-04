@@ -68,6 +68,9 @@ export default {
         .then(res => {
           const token = res.data.token
           this.$store.commit('login', { token: token, user: res.data.user })
+          const profileId = res.data.profileId
+          this.$store.commit('updateProfileId', profileId)
+          window.localStorage.setItem('profileId', profileId)
           ApiService.setApiAuthorizationHeaders(token)
           window.localStorage.setItem('token', token)
           this.loading = false

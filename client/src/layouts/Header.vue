@@ -89,6 +89,7 @@ export default {
     logOut () {
       this.$store.commit('login', { token: '', user: '' })
       window.localStorage.removeItem('token')
+      window.localStorage.removeItem('profileId')
       this.$q.notify({
         textColor: 'white',
         actions: [{ icon: 'close', color: 'white' }],

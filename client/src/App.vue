@@ -32,6 +32,11 @@ export default {
       this.$store.commit('login', { token })
       ApiService.setApiAuthorizationHeaders(token)
     }
+
+    if (window.localStorage.getItem('profileId') && window.localStorage.getItem('profileId') !== '') {
+      const profileId = window.localStorage.getItem('profileId')
+      this.$store.commit('updateProfileId', profileId)
+    }
   }
 }
 </script>

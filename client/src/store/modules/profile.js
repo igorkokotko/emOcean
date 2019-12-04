@@ -47,10 +47,14 @@ export default {
   mutations: {
     updateProfile (state, profileData) {
       state.profile = profileData
+    },
+    updateProfileId (state, profileId) {
+      state.profileId = profileId
     }
   },
   state: {
-    profile: {}
+    profile: {},
+    profileId: ''
   },
   getters: {
     profileGetter (state) {
