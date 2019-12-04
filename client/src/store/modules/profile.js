@@ -37,10 +37,6 @@ export default {
       }
       ctx.commit('updateProfile', profileData)
     }
-    // getUserById (userId, ctx) {
-    //   var users = this.getAllUsers()
-    //   ctx.commit('updateProfile', users[userId]
-    // }
   },
   mutations: {
     updateProfile (state, profileData) {
@@ -60,8 +56,5 @@ export default {
     followersGetter (state) {
       return state.profile.followers
     }
-    // getUser (userId) {
-    //   return this.getUserById(userId)
-    // }
   }
 }
