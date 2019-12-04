@@ -39,8 +39,10 @@
 </template>
 
 <script>
-import axios from 'axios'
 import { validationMixin } from '../../utilities/validationMixin.js'
+import { mapActions } from 'vuex'
+const Authorized = require('./Authorized.js')
+const ApiService = require('../../utilities/ApiService.js')
 
 export default {
   mixins: [validationMixin],
@@ -60,14 +62,14 @@ export default {
   },
 
   methods: {
+    ...mapActions({ notifyResetAction: 'auth/notifyReset' }),
     resetPass () {
       this.loading = true
       const { password, oobCode } = this
-      axios
-        .post('api/auth/reset-password', { password, oobCode })
+      ApiService.resetPass({ password, oobCode })
         .then(res => {
           this.loading = false
-          this.$store.commit('notifyReset', true)
+          this.notifyResetAction(true)
           this.$router.push('/login')
         })
         .catch(err => {
@@ -90,6 +92,13 @@ export default {
     } else {
       this.reset = false
     }
+  },
+
+  beforeRouteEnter: (to, from, next) => {
+    if (Authorized.isAuthorized()) {
+      return next('/feed')
+    }
+    next()
   }
 }
 </script>
