@@ -3,7 +3,7 @@
     <q-btn
       v-for="(preference, key) in getPreferences"
       :key="key"
-      @click="updatePreference({key: key, updates: {chosen: !preference.chosen}})"
+      @click="updatePref({key: key, updates: {chosen: !preference.chosen}})"
       size="40px"
       round
       class="q-ma-xs"
@@ -15,7 +15,7 @@
             'text-subtitle1',
             'text-center']"
           >
-          {{preference.title}}
+          {{preference.hashtag.slice(1)}}
           </div>
       </q-avatar>
     </q-btn>
@@ -37,14 +37,17 @@ import axios from 'axios'
 export default {
   name: 'EditPreferences',
   methods: {
-    ...mapActions('preferences', ['updatePreference']),
-    getTags: (state) => {
+    // ...mapActions('preferences', ['updatePreference', 'rollbackChanges']),
+    ...mapActions({ updatePref: 'preferences/updatePreference', rollback: 'preferences/rollbackChanges' }),
+    getTags: function (state) {
       let tags = []
       for (let obj in state) {
         if (state[obj].chosen) {
-          tags.push(state[obj].title)
+          tags.push(state[obj].hashtag)
         }
       }
+      // console.log(this.$store)
+      // this.rollback(tags)
       console.log(tags)
       axios.post('/api/preferences/save', tags)
         .then((response) => {
@@ -52,6 +55,7 @@ export default {
           alert('data saved')
         })
         .catch(error => {
+          this.rollback(tags)
           if (error.response) {
             console.log(error.response.data)
             console.log(error.response.status)
