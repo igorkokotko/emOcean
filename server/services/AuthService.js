@@ -1,91 +1,91 @@
-const { db, auth } = require("../config/databaseConfig");
-const CustomError = require("../common/CustomError");
-const nicknameKeywords = require("../common/nicknameKeywords")
+const { db, auth } = require('../config/databaseConfig')
+const CustomError = require('../common/CustomError')
+const nicknameKeywords = require('../common/nicknameKeywords')
 
 const createUserWithEmailAndPassword = (email, password, nickname) => {
-  return new Promise((resolve, reject) => {
-    const usersRef = db.collection("users");
-    usersRef
-      .where("nickname", "==", nickname)
-      .get()
-      .then(snapshot => {
-        if (snapshot.empty) {
-          const keywords = nicknameKeywords.setKeywords(nickname)
-          auth()
-            .createUserWithEmailAndPassword(email, password)
-            .then(({ user }) => {
-              usersRef
-                .doc(user.uid)
-                .set({ nickname, profileId: user.uid, keywords })
-                .then(res => resolve("User created"))
-                .catch(err => reject(err));
-            })
-            .catch(err => reject(err));
-        } else {
-          reject(
-            new CustomError({
-              name: "DatabaseError",
-              message: "Nickname already taken. Try with something else",
-              status: 400
-            })
-          );
+  const usersRef = db.collection('users')
+  const avatarUrl =
+    'https://firebasestorage.googleapis.com/v0/b/emocean-74133.appspot.com/o/avatars%2Fno-profile-image.png?alt=media&token=f5825834-7e53-46e7-becd-f14559a73e331'
+  return usersRef
+    .where('nickname', '==', nickname)
+    .get()
+    .then(snapshot => {
+      if (snapshot.empty) {
+        const keywords = nicknameKeywords.setKeywords(nickname)
+        return auth()
+          .createUserWithEmailAndPassword(email, password)
+          .then(({ user }) => {
+            return usersRef
+              .doc(user.uid)
+              .set({
+                nickname,
+                profile_id: user.uid,
+                avatar_url: avatarUrl,
+                keywords
+              })
+              .then(() => {
+                return 'User created'
+              })
+          })
+      } else {
+        {
+          throw new CustomError({
+            name: 'DatabaseError',
+            message: 'Nickname already taken. Try with something else',
+            status: 400
+          })
         }
-      });
-  });
-};
+      }
+    })
+}
+
 const loginWithEmailAndPassword = function(email, password) {
-  return new Promise(function(resolve, reject) {
-    auth()
-      .signInWithEmailAndPassword(email, password)
-      .then(({ user }) => resolve(user))
-      .catch(err => reject(err));
-  });
-};
+  return auth()
+    .signInWithEmailAndPassword(email, password)
+    .then(({ user }) => {
+      return user
+    })
+}
 
 const changePassword = function(oldPassword, newPassword, email) {
-  return new Promise(function(resolve, reject) {
-    const credential = auth.EmailAuthProvider.credential(email, oldPassword);
-    auth()
-      .signInWithCredential(credential)
-      .then(() => {
-        auth()
-          .currentUser.updatePassword(newPassword)
-          .then(() => resolve("Password changed"))
-          .catch(err => reject(err));
-      })
-      .catch(err => reject(err));
-  });
-};
+  const credential = auth.EmailAuthProvider.credential(email, oldPassword)
+  return auth()
+    .signInWithCredential(credential)
+    .then(() => {
+      return auth()
+        .currentUser.updatePassword(newPassword)
+        .then(() => {
+          return 'Password changed'
+        })
+    })
+}
 
 const sendPasswordResetCode = function(email) {
-  return new Promise(function(resolve, reject) {
-    auth().useDeviceLanguage();
-    auth()
-      .sendPasswordResetEmail(email)
-      .then(() => resolve("Email sent"))
-      .catch(err => reject(err));
-  });
-};
+  auth().useDeviceLanguage()
+  return auth()
+    .sendPasswordResetEmail(email)
+    .then(() => {
+      return 'Email sent'
+    })
+}
 
 const resetPassword = function(actionCode, newPassword) {
-  return new Promise(function(resolve, reject) {
-    auth().useDeviceLanguage();
-    auth()
-      .confirmPasswordReset(actionCode, newPassword)
-      .then(() => resolve("You can now sign in with your new password"))
-      .catch(err => reject(err));
-  });
-};
+  auth().useDeviceLanguage()
+  return auth()
+    .confirmPasswordReset(actionCode, newPassword)
+    .then(() => {
+      return 'You can now sign in with your new password'
+    })
+}
 
 const signInWithGoogle = function(token_id) {
-  return new Promise(function(resolve, reject) {
-    const credential = auth.GoogleAuthProvider.credential(token_id);
-    auth()
-      .signInWithCredential(credential)
-      .then(({ user }) => resolve(user))
-      .catch(err => reject(err));
-  });
-};
+  const credential = auth.GoogleAuthProvider.credential(token_id)
+  return auth()
+    .signInWithCredential(credential)
+    .then(({ user }) => {
+      return user
+    })
+}
 
 module.exports = {
   createUserWithEmailAndPassword,
@@ -94,4 +94,4 @@ module.exports = {
   resetPassword,
   changePassword,
   signInWithGoogle
-};
+}

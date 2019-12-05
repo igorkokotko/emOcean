@@ -1,5 +1,6 @@
 const firebasePackage = require('firebase')
 require('firebase/auth')
+require('firebase/storage')
 require('firebase/firestore')
 
 firebasePackage.initializeApp({
@@ -13,9 +14,11 @@ firebasePackage.initializeApp({
 })
 
 const db = firebasePackage.firestore()
+const storage = firebasePackage.storage()
 const auth = firebasePackage.auth
 module.exports = {
   firebase: firebasePackage,
   db,
-  auth
+  auth,
+  storage
 }
