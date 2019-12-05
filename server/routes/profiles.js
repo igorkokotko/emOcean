@@ -6,51 +6,33 @@ const upload = multer({ storage })
 const protected = require('../middleware/protectRoute')
 const {
   search,
-  getMyProfile,
-  getProfileById,
-  getProfileByNickname,
+  getProfile,
   saveProfile,
-  uploadAvatar,
-  uploadBackground,
+  uploadImage,
   setPreferences,
-  getMyFollowers,
   getFollowersById,
-  blockProfile,
-  unblockProfile,
-  getMyFollowings,
   getFollowingsById,
-  followProfile,
-  unfollowProfile
+  profileAction
 } = require('../controllers/profiles')
 
-// edite profile
+// edit profile
 router.post('/save-profile', protected, saveProfile)
-router.post('/upload-avatar', protected, upload.single('file'), uploadAvatar)
-router.post('/upload-background', protected, upload.single('file'), uploadBackground)
+router.post('/upload-image', protected, upload.single('file'), uploadImage)
 
 // get some profiles
-router.get('/get-my-profile', protected, getMyProfile)
-router.get('/get-profile-id/:id', getProfileById)
-router.get('/get-profile-nickname/:nickname', getProfileByNickname)
+router.get('/get-profile', getProfile)
+
+// profile actions (Block, unblock, follow, unfollow)
+router.get('/profile-action', protected, profileAction)
 
 // preferences
 router.post('/set-preferences', protected, setPreferences)
 
 // FOLLOWERS
-router.get('/get-my-followers', protected, getMyFollowers)
 router.get('/get-followers/:id', protected, getFollowersById)
 
-// black list
-router.get('/block/:id', protected, blockProfile) // block in my profile, block in his profile
-router.get('/unblock/:id', protected, unblockProfile) // block in my profile, block in his profile
-
 // FOLLOWING
-// follow getters
-router.get('/get-my-followings', protected, getMyFollowings)
 router.get('/get-followings/:id', protected, getFollowingsById)
-// follow actions
-router.get('/follow/:id', protected, followProfile)
-router.get('/unfollow/:id', protected, unfollowProfile)
 
 // Search logic
 router.post('/search', search)
@@ -61,3 +43,15 @@ router.post('/search', search)
 // delete profile
 
 module.exports = router
+
+// examples of correct queries with axios
+// GET api/profiles/get-profile?id=12345
+// GET api/profiles/get-profile?nickname=johndoe
+
+// POST api/profiles/upload-image?type=avatar  (with form data file, image format .png,.jpeg,.jpg)
+// POST api/profiles/upload-image?type=background  (with form data file, image format .png,.jpeg,.jpg)
+
+// GET api/profiles/profile-action?action=follow&id=12345
+// GET api/profiles/profile-action?action=unfollow&id=12345
+// GET api/profiles/profile-action?action=block&id=12345
+// GET api/profiles/profile-action?action=unblock&id=12345

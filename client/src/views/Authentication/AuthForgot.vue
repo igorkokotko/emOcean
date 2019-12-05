@@ -31,9 +31,9 @@
 </template>
 
 <script>
-import axios from 'axios'
 import { validationMixin } from '../../utilities/validationMixin.js'
 import { notificationMixin } from '../../utilities/notificationMixin.js'
+const ApiService = require('../../utilities/ApiService.js')
 
 export default {
   mixins: [validationMixin, notificationMixin],
@@ -52,8 +52,7 @@ export default {
     forgot () {
       this.loading = true
       const { email } = this
-      axios
-        .post('api/auth/send-password-reset-code', { email })
+      ApiService.forgot({ email })
         .then(res => {
           this.showNotif('A reset link has been sent to your email. Check your inbox!')
           this.loading = false

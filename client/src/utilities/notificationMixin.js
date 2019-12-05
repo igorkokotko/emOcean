@@ -2,10 +2,10 @@ export const notificationMixin = {
   methods: {
     showNotif (message) {
       this.$q.notify({
-        color: 'primary',
-        textColor: 'white',
+        color: 'white',
+        textColor: 'primary',
         message: message,
-        actions: [{ icon: 'close', color: 'white' }],
+        actions: [{ icon: 'close', color: 'primary' }],
         timeout: 3000
       })
     }

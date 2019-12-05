@@ -1,354 +1,409 @@
 const { db, storage } = require('../config/databaseConfig')
 const CustomError = require('../common/CustomError')
 
-const uploadPhoto = function (photo, userId, dest) {
-  return new Promise(function (resolve, reject) {
-    const metaData = {
-      contentType: photo.mimetype
+const uploadPhoto = function(photo, userId, dest) {
+  const metaData = {
+    contentType: photo.mimetype
+  }
+  const imageRef = storage.ref().child(`${dest}/${userId}`)
+
+  return imageRef.put(photo.buffer, metaData).then(() => {
+    return imageRef.getDownloadURL()
+  })
+}
+
+const saveProfile = function(profile, userId) {
+  const profilesRef = db.collection('users')
+  const profileRef = db.collection('users').doc(userId)
+
+  return profileRef.get().then(doc => {
+    const prevNickname = doc.data().nickname
+    // if user didn't change nickname, everything is ok
+    if (prevNickname === profile.nickname) {
+      return profileRef
+        .update({
+          bio: profile.bio,
+          status: profile.status,
+          interests: profile.interests,
+          avatar_url: profile.avatar_url,
+          socialAccounts: profile.socialAccounts,
+          user_background: profile.user_background
+        })
+        .then(() => {
+          return 'Profile edited successfully'
+        })
+    } else {
+      // but if user changed nickname, we need to check if new nickname is unique and only then update data
+      return profilesRef
+        .where('nickname', '==', profile.nickname)
+        .get()
+        .then(snapshot => {
+          if (snapshot.empty) {
+            return profileRef
+              .update({
+                nickname: profile.nickname,
+                bio: profile.bio,
+                status: profile.status,
+                interests: profile.interests,
+                avatar_url: profile.avatar_url,
+                socialAccounts: profile.socialAccounts,
+                user_background: profile.user_background
+              })
+              .then(() => {
+                return 'Profile edited successfully'
+              })
+          } else {
+            {
+              throw new CustomError({
+                name: 'DatabaseError',
+                message: 'Nickname already taken. Try with something else',
+                status: 400
+              })
+            }
+          }
+        })
     }
-    
-    const imageRef = storage.ref().child(`${dest}/${userId}`)
-    
-    imageRef.put(photo.buffer, metaData).then(() => {
-      imageRef.getDownloadURL().then(res => resolve(res))
-        .catch(err => reject(err))
-    })
-      .catch(err => reject(err))
   })
 }
 
-const saveProfile = function (profile, userId) {
-  return new Promise(function (resolve, reject) {
-    const profilesRef = db.collection('users')
-    const profileRef = db.collection('users').doc(userId)
-    
-    profileRef.get()
-      .then(doc => {
-        const prevNickname = doc.data().nickname
-        // if user didn't change nickname, everything is ok
-        if (prevNickname === profile.nickname) {
-          profileRef.update({
-            bio: profile.bio,
-            status: profile.status,
-            interests: profile.interests,
-            avatar_url: profile.avatar_url,
-            socialAccounts: profile.socialAccounts,
-            user_background: profile.user_background
-          }).then(() => resolve('Profile edited successfully'))
-            .catch(err => reject(err))
-        } else {
-          // but if user changed nickname, we need to check if new nickname is unique and only then update data 
-          profilesRef.where('nickname', '==', profile.nickname).get()
-            .then(snapshot => {
-              if (snapshot.empty) {
-                profileRef.update({
-                  nickname: profile.nickname,
-                  bio: profile.bio,
-                  status: profile.status,
-                  interests: profile.interests,
-                  avatar_url: profile.avatar_url,
-                  socialAccounts: profile.socialAccounts,
-                  user_background: profile.user_background
-                }).then(() => resolve('Profile edited successfully'))
-                  .catch(err => reject(err))
-              } else {
-                reject(new CustomError({
-                  name: 'DatabaseError',
-                  message: 'Nickname already taken. Try with something else',
-                  status: 400
-                }))
-              }
-            }).catch(err => reject(err))
-        }
+const getProfileById = function(userId) {
+  const profileRef = db.collection('users').doc(userId)
+
+  return profileRef.get().then(doc => {
+    if (!doc.exists) {
+      throw new CustomError({
+        name: 'DatabaseError',
+        message: 'No profile with given id',
+        status: 404
       })
-      .catch(err => reject(err))
+    }
+    return doc.data()
   })
 }
 
-const getProfileById = function (userId) {
-  return new Promise(function (resolve, reject) {
-    const profileRef = db.collection('users').doc(userId)
-    
-    profileRef.get()
-      .then(doc => {
-        if (!doc.exists) reject(new CustomError({
-          name: 'DatabaseError',
-          message: 'No profile with given id',
-          status: 404
-        }))
-        else resolve(doc.data())
-      })
-      .catch(err => reject(err))
-  })
-}
+const getProfileByNickname = function(userNickname) {
+  const profilesRef = db.collection('users')
 
-const getProfileByNickname = function (userNickname) {
-  return new Promise(function (resolve, reject) {
-    const profilesRef = db.collection('users')
-    
-    profilesRef.where('nickname', '==', userNickname).get()
-      .then(profile => {
-        if (profile.empty) reject(new CustomError({
+  return profilesRef
+    .where('nickname', '==', userNickname)
+    .get()
+    .then(profile => {
+      if (profile.empty) {
+        throw new CustomError({
           name: 'DatabaseError',
           message: 'No profile with given nickname',
           status: 404
-        }))
-        
-        profile.forEach(doc => {
-          resolve(doc.data())
         })
+      }
+      profile.forEach(doc => {
+        return doc.data()
       })
-      .catch(err => reject(err))
-  })
+    })
 }
 
-const setPreferences = function (preferences, userId) {
-  return new Promise(function (resolve, reject) {
-    const profileRef = db.collection('users').doc(userId)
-    
-    profileRef.get()
-      .then(doc => {
-        if (!doc.exists) reject(new CustomError({
-          name: 'DatabaseError',
-          message: 'No profile with given id',
-          status: 404
-        }))
-        
-        profileRef.update({ interests: preferences })
-          .then(res => resolve('Preferences successfully set'))
-          .catch(err => reject(err))
-      }).catch(err => reject(err))
-  })
-}
+const setPreferences = function(preferences, userId) {
+  const profileRef = db.collection('users').doc(userId)
 
-const getFollowersById = function (id) {
-  return new Promise(function (resolve, reject) {
-    const profileRef = db.collection('users').doc(id)
-    
-    profileRef.get()
-      .then(doc => {
-        if (!doc.exists) reject(new CustomError({
-          name: 'DatabaseError',
-          message: 'No profile with given id',
-          status: 404
-        }))
-        
-        if (!doc.data().followers || doc.data().followers.length === 0) resolve('This profile doesnt have followers')
-        
-        resolve(doc.data().followers)
-      })
-      .catch(err => reject(err))
-  })
-}
-
-const blockProfile = function (userId, blockedProfileId) {
-  return new Promise(function (resolve, reject) {
-    // Profile of user which wants to block someone
-    const profileRef = db.collection('users').doc(userId)
-    // Profile of user which would be blocked
-    const blockedProfileRef = db.collection('users').doc(blockedProfileId)
-    profileRef.get()
-      .then(doc => {
-        if (!doc.exists) reject(new CustomError({
-          name: 'DatabaseError',
-          message: 'No profile with given id',
-          status: 404
-        }))
-        // Check if user which would be blocked follows our profile or not
-        if (doc.data().followers && doc.data().followers.indexOf(blockedProfileId) < 0) {
-          // if not follow, check if user blocked someone before 
-          if (doc.data().blockedProfiles) {
-            // if user already blocked than we don't need to update document
-            if (doc.data().blockedProfiles.indexOf(blockedProfileId) >= 0) reject(new CustomError({
-              name: 'DatabaseError',
-              message: 'Profile with given id already blocked',
-              status: 400
-            }))
-            // else we update blocked profiles array
-            const newBlockedProfiles = doc.data().blockedProfiles.concat(blockedProfileId)
-            
-            profileRef.update({ blockedProfiles: newBlockedProfiles })
-              .then(() => resolve('Profile successfully blocked'))
-              .catch(err => reject(err))
-          } else {
-            // if user doesn't have blocked users before we update our profile with blocked array with single element 
-            profileRef.update({ blockedProfiles: [blockedProfileId] })
-           
-            resolve('Profile successfully blocked')
-          }
-        } else {
-          // if blocked user follows user profile we need to use transactions because
-          // we need to update simultaneously blocked user profile and user which block profile
-          db.runTransaction(t => {
-            return t.get(profileRef)
-              .then(docMy => {
-                return t.get(blockedProfileRef)
-                  .then(docBlockedUser => {
-                    // filter user array followers and return array without blocked user id 
-                    const followersWithoutBlockedUser = docMy.data().followers.filter(profileId => profileId !== blockedProfileId)
-                    // filter blocked user array followings and return array without blocked user id
-                    const blockedUserFollowing = docBlockedUser.data().followings.filter(profileId => profileId !== userId)
-
-                    t.update(blockedProfileRef, { followings: blockedUserFollowing })
-                    // check if user blocked someone before
-                    if (docMy.data().blockedProfiles) {
-                      const newBlockedProfiles = docMy.data().blockedProfiles.concat(blockedProfileId)
-                      t.update(profileRef, { blockedProfiles: newBlockedProfiles, followers: followersWithoutBlockedUser })
-                      
-                      resolve('User succesfully blocked')
-                    } else {
-                      t.update(profileRef, { blockedProfiles: [blockedProfileId], followers: followersWithoutBlockedUser })
-                      
-                      resolve('User succesfully blocked')
-                    }
-                  })
-              })
-          })
-            .then(res => resolve(res))
-            .catch(err => reject(err))
-        }
-      })
-  })
-}
-
-const unblockProfile = function (myId, blockedProfileId) {
-  return new Promise(function (resolve, reject) {
-    const profileRef = db.collection('users').doc(myId)
-
-    profileRef.get().then(doc => {
-      if (!doc.exists) reject(new CustomError({
+  return profileRef.get().then(doc => {
+    if (!doc.exists) {
+      throw new CustomError({
         name: 'DatabaseError',
         message: 'No profile with given id',
         status: 404
-      }))
+      })
+    }
 
-      if (!doc.data().blockedProfiles || doc.data().blockedProfiles.indexOf(blockedProfileId) < 0) reject(new CustomError({
+    return profileRef.update({ interests: preferences }).then(() => {
+      return 'Preferences successfully set'
+    })
+  })
+}
+
+const getFollowersById = function(id) {
+  const profileRef = db.collection('users').doc(id)
+
+  return profileRef.get().then(doc => {
+    if (!doc.exists) {
+      throw new CustomError({
+        name: 'DatabaseError',
+        message: 'No profile with given id',
+        status: 404
+      })
+    }
+    const { followers } = doc.data()
+    if (!followers || followers.length === 0) {
+      return 'This profile doesnt have followers'
+    }
+    return followers
+  })
+}
+
+const followProfile = function(myUserId, followId) {
+  const myProfileRef = db.collection('users').doc(myUserId)
+  const followProfileRef = db.collection('users').doc(followId)
+
+  return db
+    .runTransaction(t => {
+      return t.get(myProfileRef).then(docMyProfile => {
+        return t.get(followProfileRef).then(docFollowProfile => {
+          const { followings } = docMyProfile.data()
+          const myProfileData = [
+            {
+              nickname: docMyProfile.data().nickname,
+              avatar_url: docMyProfile.data().avatar_url,
+              id: myUserId
+            }
+          ]
+          const { followers } = docFollowProfile.data()
+          const followProfileData = [
+            {
+              nickname: docFollowProfile.data().nickname,
+              avatar_url: docFollowProfile.data().avatar_url,
+              id: followId
+            }
+          ]
+          const followSuccess = 'User succesfully followed'
+
+          if (!followers && !followings) {
+            t.update(myProfileRef, {
+              followings: followProfileData
+            })
+            t.update(followProfileRef, {
+              followers: myProfileData
+            })
+            return followSuccess
+          }
+
+          if (followers && !followings) {
+            t.update(myProfileRef, {
+              followings: followProfileData
+            })
+            t.update(followProfileRef, {
+              followers: followers.concat(myProfileData)
+            })
+            return followSuccess
+          }
+
+          if (!followers && followings) {
+            t.update(myProfileRef, {
+              followings: followings.concat(followProfileData)
+            })
+            t.update(followProfileRef, { followers: myProfileData })
+            return followSuccess
+          }
+          const followingsFiltered = followings.filter(
+            following => following.id === followId
+          )
+          const followersFiltered = followers.filter(
+            followers => followers.id === followId
+          )
+          if (followersFiltered.length <= 0 && followingsFiltered.length <= 0) {
+            t.update(myProfileRef, {
+              followings: followings.concat(followProfileData)
+            })
+            t.update(followProfileRef, {
+              followers: followers.concat(myProfileData)
+            })
+            return followSuccess
+          }
+          {
+            throw new CustomError({
+              name: 'DatabaseError',
+              message: 'You already follow this user',
+              status: 400
+            })
+          }
+        })
+      })
+    })
+    .then(res => {
+      return res
+    })
+}
+
+const unfollowProfile = function(myUserId, followId) {
+  const myProfileRef = db.collection('users').doc(myUserId)
+  const followProfileRef = db.collection('users').doc(followId)
+
+  return db
+    .runTransaction(t => {
+      return t.get(myProfileRef).then(docMyProfile => {
+        return t.get(followProfileRef).then(docFollowUser => {
+          const { followings } = docMyProfile.data()
+          const { followers } = docFollowUser.data()
+          const notFollowError = new CustomError({
+            name: 'DatabaseError',
+            message: 'You are not following this user',
+            status: 400
+          })
+          if (followings && followers) {
+            const followingsFiltered = followings.filter(
+              following => following.id !== followId
+            )
+            const followersFiltered = followers.filter(
+              followers => followers.id !== myUserId
+            )
+            if (
+              followingsFiltered.length !== followings.length &&
+              followersFiltered.length !== followers.length
+            ) {
+              t.update(myProfileRef, { followings: followingsFiltered })
+              t.update(followProfileRef, {
+                followers: followingsFiltered
+              })
+              return 'User succesfully unfollowed'
+            } else {
+              throw notFollowError
+            }
+          } else {
+            throw notFollowError
+          }
+        })
+      })
+    })
+    .then(res => {
+      return res
+    })
+}
+
+const blockProfile = function(myId, blockedProfileId) {
+  // Profile of user which wants to block someone
+  const profileRef = db.collection('users').doc(myId)
+  // Profile of user which would be blocked
+  const blockedProfileRef = db.collection('users').doc(blockedProfileId)
+
+  return db.runTransaction(t => {
+    return t.get(profileRef).then(myProfileDocument => {
+      return t.get(blockedProfileRef).then(blockedProfileDocument => {
+        if (!myProfileDocument.exists) {
+          throw new CustomError({
+            name: 'DatabaseError',
+            message: 'No profile with given id',
+            status: 404
+          })
+        }
+        const { followers, blockedProfiles } = myProfileDocument.data()
+        const { followings } = blockedProfileDocument.data()
+        const blockedProfileData = [
+          {
+            id: blockedProfileId,
+            nickname: blockedProfileDocument.data().nickname,
+            avatar_url: blockedProfileDocument.data().avatar_url
+          }
+        ]
+        const successBlockMessage = 'Profile succesfully blocked'
+        if (
+          followers &&
+          !followers.some(follower => follower.id === blockedProfileId)
+        ) {
+          if (blockedProfiles) {
+            if (
+              blockedProfiles.some(profile => profile.id === blockedProfileId)
+            ) {
+              throw new CustomError({
+                name: 'DatabaseError',
+                message: 'Profile with given id already blocked',
+                status: 400
+              })
+            } else {
+              const newBlockedProfiles = blockedProfiles.concat(
+                blockedProfileData
+              )
+              t.update(profileRef, { blockedProfiles: newBlockedProfiles })
+              t.update(blockedProfileRef, {})
+
+              return successBlockMessage
+            }
+          } else {
+            t.update(profileRef, { blockedProfiles: blockedProfileData })
+            t.update(blockedProfileRef, {})
+            return successBlockMessage
+          }
+        } else {
+          const filteredFollowers = followers
+            ? followers.filter(profile => profile.id !== blockedProfileId)
+            : []
+          const filteredFollowings = followings
+            ? followings.filter(profile => profile.id !== myId)
+            : []
+          t.update(blockedProfileRef, { followings: filteredFollowings })
+          if (blockedProfiles) {
+            const newBlockedProfiles = blockedProfiles.concat(
+              blockedProfileData
+            )
+            t.update(profileRef, {
+              blockedProfiles: newBlockedProfiles,
+              followers: filteredFollowers
+            })
+            return successBlockMessage
+          } else {
+            t.update(profileRef, {
+              blockedProfiles: blockedProfileData,
+              followers: filteredFollowers
+            })
+            return successBlockMessage
+          }
+        }
+      })
+    })
+  })
+}
+
+const unblockProfile = function(myId, blockedProfileId) {
+  const profileRef = db.collection('users').doc(myId)
+
+  return profileRef.get().then(doc => {
+    if (!doc.exists) {
+      throw new CustomError({
+        name: 'DatabaseError',
+        message: 'No profile with given id',
+        status: 404
+      })
+    }
+    const { blockedProfiles } = doc.data()
+
+    if (
+      !blockedProfiles ||
+      !blockedProfiles.some(profile => profile.id === blockedProfileId)
+    ) {
+      throw new CustomError({
         name: 'DatabaseError',
         message: 'There is no user with given id in your blacklist',
         status: 404
-      }))
+      })
+    }
+    const newBlockedProfilesArray = blockedProfiles.filter(
+      profile => profile.id !== blockedProfileId
+    )
 
-      const newBlockedProfilesArray = doc.data().blockedProfiles.filter(profileId => profileId !== blockedProfileId)
-      
-      profileRef.update({ blockedProfiles: newBlockedProfilesArray })
-      
-      resolve('User succesfully unblocked')
-    })
-      .catch(err => reject(err))
+    return profileRef
+      .update({ blockedProfiles: newBlockedProfilesArray })
+      .then(() => {
+        return 'User succesfully unblocked'
+      })
   })
 }
 
-const getFollowingsById = function (profileId) {
-  return new Promise(function (resolve, reject) {
-    const profileRef = db.collection('users').doc(profileId)
-    
-    profileRef.get().then(doc => {
-      if (!doc.exists) reject(new CustomError({
+const getFollowingsById = function(profileId) {
+  const profileRef = db.collection('users').doc(profileId)
+
+  return profileRef.get().then(doc => {
+    if (!doc.exists) {
+      throw new CustomError({
         name: 'DatabaseError',
         message: 'No profile with given id',
         status: 404
-      }))
-
-      if (!doc.data().followings || doc.data().followings.length === 0) reject(new CustomError({
+      })
+    }
+    const { followings } = doc.data()
+    if (!followings || followings.length === 0) {
+      throw new CustomError({
         name: 'DatabaseError',
         message: 'User with given id doesnt have followings',
         status: 404
-      }))
-
-      resolve(doc.data().followings)
-    })
-      .catch(err => reject(err))
-  })
-}
-
-const followProfile = function (myUserId, followId) {
-  return new Promise(function (resolve, reject) {
-    const myProfileRef = db.collection('users').doc(myUserId)
-    const followProfileRef = db.collection('users').doc(followId)
-    
-    db.runTransaction(t => {
-      return t.get(myProfileRef)
-        .then(docMyProfile => {
-          return t.get(followProfileRef)
-            .then(docFollowUser => {
-              const myFollowings = docMyProfile.data().followings
-              const followProfileFollowers = docFollowUser.data().followers
-              
-              if (!myFollowings && !followProfileFollowers) {
-                t.update(myProfileRef, { followings: [followId] })
-                t.update(followProfileRef, { followers: [myUserId] })
-                resolve('User succesfully followed')
-              }
-              
-              if (!myFollowings && followProfileFollowers) {
-                t.update(myProfileRef, { followings: [followId] })
-                t.update(followProfileRef, { followers: followProfileFollowers.concat(myUserId) })
-                resolve('User succesfully followed')
-              }
-             
-              if (myFollowings && !followProfileFollowers) {
-                t.update(myProfileRef, { followings: myFollowings.concat(followId) })
-                t.update(followProfileRef, { followers: [myUserId] })
-                resolve('User succesfully followed')
-              }
-             
-              if (myFollowings.indexOf(followId) < 0 && followProfileFollowers.indexOf(myUserId) < 0) {
-                t.update(myProfileRef, { followings: myFollowings.concat(followId) })
-                t.update(followProfileRef, { followers: followProfileFollowers.concat(myUserId) })
-                resolve('User succesfully followed')
-              }
-             
-              reject(new CustomError({
-                name: 'DatabaseError',
-                message: 'You already follow this user',
-                status: 400
-              }))
-            })
-        })
-    }).then(res => resolve(res))
-      .catch(err => reject(err))
-  })
-}
-
-const unfollowProfile = function (myUserId, followId) {
-  return new Promise(function (resolve, reject) {
-    const myProfileRef = db.collection('users').doc(myUserId)
-    const followProfileRef = db.collection('users').doc(followId)
-    
-    db.runTransaction(t => {
-      return t.get(myProfileRef)
-        .then(docMyProfile => {
-          return t.get(followProfileRef)
-            .then(docFollowUser => {
-              const myFollowings = docMyProfile.data().followings
-              const followProfileFollowers = docFollowUser.data().followers
-              
-              if (myFollowings &&
-                followProfileFollowers &&
-                myFollowings.indexOf(followId) >= 0 &&
-                followProfileFollowers.indexOf(myUserId) >= 0) {
-                const filteredMyFollowing = myFollowings.filter(profileId => profileId !== followId)
-                const filtetedFollowProfileFollowers = followProfileFollowers.filter(profileId => profileId !== myUserId)
-                t.update(myProfileRef, { followings: filteredMyFollowing })
-                t.update(followProfileRef, { followers: filtetedFollowProfileFollowers })
-                
-                resolve('User succesfully unfollowed')
-              } else {
-                reject(new CustomError({
-                  name: 'DatabaseError',
-                  message: 'You are not following this user',
-                  status: 400
-                }))
-              }
-            })
-            .catch(err => {
-              reject(err)
-            })
-        })
-    }).then(res => resolve(res))
-      .catch(err => {
-        reject(err)
       })
+    }
+    return followings
   })
 }
 

@@ -1,7 +1,7 @@
 const express = require('express')
 const dotenv = require('dotenv')
 const bodyParser = require('body-parser')
-const XMLHttpRequest = require("xhr2")
+const XMLHttpRequest = require('xhr2')
 const errorHandler = require('./middleware/errorHandler')
 
 dotenv.config({ path: './config/config.env' })
@@ -22,7 +22,7 @@ app.use(bodyParser.json())
 app.use('/api/auth', auth)
 
 // Posts route
-app.use('/api/posts', posts)	app.use('/api/posts', posts)
+app.use('/api/posts', posts)
 
 //Profiles route
 app.use('/api/profiles', profiles)

@@ -1,13 +1,13 @@
-const jwt = require("jsonwebtoken")
-const CustomError = require("../common/CustomError")
-const createJwtToken = require("../common/createToken")
-const asyncMiddleware = require("../middleware/asyncMiddleware")
-const authService = require("../services/AuthService")
+const jwt = require('jsonwebtoken')
+const CustomError = require('../common/CustomError')
+const createJwtToken = require('../common/createToken')
+const asyncMiddleware = require('../middleware/asyncMiddleware')
+const authService = require('../services/AuthService')
 const {
   validateEmail,
   validateNickname,
   validatePassword
-} = require("../validation/auth")
+} = require('../validation/auth')
 
 const register = asyncMiddleware(async (req, res, next) => {
   const { email, password, nickname } = req.body
@@ -55,12 +55,12 @@ const login = asyncMiddleware(async (req, res, next) => {
 
   const token = createJwtToken(currentUser)
 
-  res.status(200).json({ token })
+  res.status(200).json({ token, myProfileId: currentUser.uid })
 })
 
 const changePassword = asyncMiddleware(async (req, res, next) => {
   const { oldPassword, newPassword } = req.body
-  const token = req.headers.authorization.split(" ")[1]
+  const token = req.headers.authorization.split(' ')[1]
   const { email } = jwt.verify(token, process.env.JWT_SECRET).value
 
   const validatedPasswordError = validatePassword(newPassword)
