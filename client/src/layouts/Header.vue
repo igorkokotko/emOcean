@@ -36,7 +36,7 @@
         >
           <q-menu>
             <q-list style="min-width: 100px">
-              <template v-if="this.$store.getters.getToken">
+              <template v-if="isAuthenticated">
                 <q-item
                   to="/settings"
                   clickable
@@ -87,7 +87,7 @@ export default {
       } else this.$refs.search.style.visibility = 'visible'
     },
     logOut () {
-      this.$store.commit('login', { token: '', user: '' })
+      this.$store.dispatch('auth/signin', { token: '', user: '' })
       window.localStorage.removeItem('token')
       window.localStorage.removeItem('profileId')
       this.$q.notify({
@@ -98,6 +98,11 @@ export default {
         message: 'You logged out.'
       })
       this.$router.push('/feed')
+    }
+  },
+  computed: {
+    isAuthenticated () {
+      return this.$store.getters['auth/getToken']
     }
   }
 }

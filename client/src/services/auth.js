@@ -9,15 +9,15 @@ export default {
     return axios.post('/api/profiles/save-profile', editedData)
   },
 
-  getProfile () {
-    return axios.get('/api/profiles/get-profile')
+  getProfile (params) {
+    return axios.get('/api/profiles/get-profile', { params })
   },
 
-  uploadAvatar (avatar) {
-    return axios.post('/api/profiles/upload-image', avatar)
+  uploadAvatar (avatar, params) {
+    return axios.post('/api/profiles/upload-image', avatar, { params })
   },
 
-  uploadBackground (background) {
-    return axios.post('/api/profiles/upload-image', background)
+  uploadBackground (background, params) {
+    return axios.post('/api/profiles/upload-image', background, { params })
   }
 }

@@ -29,13 +29,13 @@ export default {
   created () {
     if (window.localStorage.getItem('token') && window.localStorage.getItem('token') !== '') {
       const token = window.localStorage.getItem('token')
-      this.$store.commit('login', { token })
+      this.$store.commit('auth/signin', { token })
       ApiService.setApiAuthorizationHeaders(token)
     }
 
     if (window.localStorage.getItem('profileId') && window.localStorage.getItem('profileId') !== '') {
       const profileId = window.localStorage.getItem('profileId')
-      this.$store.commit('updateProfileId', profileId)
+      this.$store.commit('profile/updateMyProfileId', profileId)
     }
   }
 }

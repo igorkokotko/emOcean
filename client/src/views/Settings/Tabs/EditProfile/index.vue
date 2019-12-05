@@ -245,7 +245,7 @@ export default {
 
   computed: {
     profileGetter () {
-      return this.$store.getters.profileGetter
+      return this.$store.getters['profile/myProfile']
     }
   },
 
@@ -256,7 +256,7 @@ export default {
   },
 
   created () {
-    this.$store.dispatch('getProfile')
+    this.$store.dispatch('profile/getMyProfile')
   },
 
   methods: {
@@ -284,6 +284,7 @@ export default {
 
     deletePhotoUrl (val) {
       this.photoUrl = ""
+      this.profile.avatar_url = ""
     },
 
     uploadBackgroundUrl (val) {
@@ -310,6 +311,7 @@ export default {
 
     deleteBackgroundUrl (val) {
       this.backgroundUrl = ""
+      this.profile.user_background = ""
     },
 
     onSubmit () {
@@ -318,28 +320,51 @@ export default {
         profile.socialAccounts.push({ type: item, link: this.profile.socialAccounts[item] })
       })
       if (!profile.interests) { profile.interests = [] }
-      this.$store.dispatch('updateProfile', profile)
-        .then(() => {
-          this.$q.notify({
-            ...this.notifyParameters,
-            color: 'primary',
-            message: 'Your profile was edited.'
-          })
-        })
-        .catch(err => {
-          this.$q.notify({
-            ...this.notifyParameters,
-            color: 'negative',
-            message: err && err.response && err.response.data ? err.response.data.error : 'Unknown error.'
-          })
-        })
-      const avatarFormData = new FormData()
-      avatarFormData.append('file', this.profile.avatar_url)
-      authService.uploadAvatar(avatarFormData)
 
-      const coverPhotoFormData = new FormData()
-      coverPhotoFormData.append('file', this.profile.user_background)
-      authService.uploadBackground(coverPhotoFormData)
+      const arrayPromiseAll = []
+      if (this.profileGetter.avatar_url !== this.profile.avatar_url && this.profile.avatar_url !== "") {
+        const avatarFormData = new FormData()
+        avatarFormData.append('file', this.profile.avatar_url)
+
+        arrayPromiseAll.push(authService.uploadAvatar(avatarFormData, { type: 'avatar' }))
+      }
+      if (this.profileGetter.user_background !== this.profile.user_background && this.profile.user_background !== "") {
+        const coverPhotoFormData = new FormData()
+        coverPhotoFormData.append('file', this.profile.user_background)
+
+        arrayPromiseAll.push(authService.uploadBackground(coverPhotoFormData, { type: 'background' }))
+      }
+      Promise.all(arrayPromiseAll)
+        .then((res) => {
+          console.log(res)
+          if (res.length === 1) {
+            if (this.profileGetter.avatar_url !== this.profile.avatar_url) {
+              profile.avatar_url = res[0].data.imageUrl
+            } else {
+              profile.user_background = res[0].data.imageUrl
+            }
+          }
+          if (res.length === 2) {
+            profile.avatar_url = res[0].data.imageUrl
+            profile.user_background = res[1].data.imageUrl
+          }
+
+          this.$store.dispatch('profile/updateMyProfile', profile)
+            .then(() => {
+              this.$q.notify({
+                ...this.notifyParameters,
+                color: 'primary',
+                message: 'Your profile was edited.'
+              })
+            })
+            .catch(err => {
+              this.$q.notify({
+                ...this.notifyParameters,
+                color: 'negative',
+                message: err && err.response && err.response.data ? err.response.data.error : 'Unknown error.'
+              })
+            })
+        })
     },
 
     onReset () {

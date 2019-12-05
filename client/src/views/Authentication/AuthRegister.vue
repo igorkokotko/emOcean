@@ -54,8 +54,8 @@
 </template>
 
 <script>
-import axios from 'axios'
 import { validationMixin } from '../../utilities/validationMixin.js'
+import { mapActions } from 'vuex'
 const ApiService = require('../../utilities/ApiService.js')
 const Authorized = require('./Authorized.js')
 
@@ -79,14 +79,16 @@ export default {
   },
 
   methods: {
+    ...mapActions({ signIn: 'auth/signin', notifyRegister: 'auth/notifyRegistered' }),
     register () {
       this.loading = true
       const { email, password, nickname } = this
-      axios
-        .post('api/auth/register', { email, password, nickname })
+      ApiService.register({ email, password, nickname })
         .then(res => {
           this.loading = false
-          this.$store.commit('notifyRegistered', true)
+          this.notifyRegister(true)
+        })
+        .then(res => {
           this.$router.push('/login')
         })
         .catch(err => {
@@ -98,11 +100,10 @@ export default {
       this.$gAuth
         .signIn()
         .then(GoogleUser => {
-          axios.post('api/auth/login-with-google', GoogleUser.getAuthResponse())
+          ApiService.googleSignIn(GoogleUser.getAuthResponse())
             .then(res => {
               const token = res.data.token
-              this.$store.commit('login', { token: token, user: res.data.user })
-              ApiService.setApiAuthorizationHeaders(token)
+              this.signIn({ token: token, user: res.data.user })
               window.localStorage.setItem('token', token)
               this.loading = false
               this.$router.push('/feed')
@@ -124,9 +125,7 @@ export default {
     if (Authorized.isAuthorized()) {
       return next('/feed')
     }
-    next(vm => {
-      vm.loadCurrentSettings(to.query)
-    })
+    next()
   }
 }
 </script>

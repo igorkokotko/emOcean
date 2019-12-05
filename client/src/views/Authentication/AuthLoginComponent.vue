@@ -39,10 +39,10 @@
 </template>
 
 <script>
-import axios from 'axios'
 import { validationMixin } from '../../utilities/validationMixin.js'
 import { notificationMixin } from '../../utilities/notificationMixin.js'
-var ApiService = require('../../utilities/ApiService.js')
+import { mapActions, mapGetters } from 'vuex'
+const ApiService = require('../../utilities/ApiService.js')
 
 export default {
   mixins: [validationMixin, notificationMixin],
@@ -60,18 +60,23 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      signIn: 'auth/signin',
+      notifyRegisterAction: 'auth/notifyRegistered',
+      notifyResetAction: 'auth/notifyReset',
+      updateMyProfileId: 'profile/updateMyProfileId'
+    }),
     login () {
       this.loading = true
       const { email, password } = this
-      axios
-        .post('api/auth/login', { password, email })
+      ApiService.login({ password, email })
         .then(res => {
           const token = res.data.token
-          this.$store.commit('login', { token: token, user: res.data.user })
-          const profileId = res.data.profileId
-          this.$store.commit('updateProfileId', profileId)
+          const profileId = res.data.myProfileId
+          this.updateMyProfileId(profileId)
           window.localStorage.setItem('profileId', profileId)
           ApiService.setApiAuthorizationHeaders(token)
+          this.signIn({ token: token, user: res.data.user })
           window.localStorage.setItem('token', token)
           this.loading = false
           this.$router.push('/feed')
@@ -85,11 +90,10 @@ export default {
       this.$gAuth
         .signIn()
         .then(GoogleUser => {
-          axios.post('api/auth/login-with-google', GoogleUser.getAuthResponse())
+          ApiService.googleSignIn(GoogleUser.getAuthResponse())
             .then(res => {
               const token = res.data.token
-              this.$store.commit('login', { token: token, user: res.data.user })
-              ApiService.setApiAuthorizationHeaders(token)
+              this.signIn({ token: token, user: res.data.user })
               window.localStorage.setItem('token', token)
               this.loading = false
               this.$router.push('/feed')
@@ -106,21 +110,19 @@ export default {
     enableLogin () {
       return !!this.emailField && !!this.passwordField
     },
-    notifyRegistered () {
-      return this.$store.getters.notifyRegistered
-    },
-    notifyReset () {
-      return this.$store.getters.notifyReset
-    }
+    ...mapGetters({
+      notifyRegistered: 'auth/notifyRegistered',
+      notifyReset: 'auth/notifyReset'
+    })
   },
   created: function () {
     if (this.notifyRegistered) {
       this.showNotif('You\'ve successfully created an account! Now log in.')
-      this.$store.state.auth.notifyRegistered = false
+      this.notifyRegisterAction(false)
     }
     if (this.notifyReset) {
       this.showNotif('Your password was successfully reset. Now log in.')
-      this.$store.state.auth.notifyReset = false
+      this.notifyResetAction(false)
     }
   }
 }
