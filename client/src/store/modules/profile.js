@@ -20,6 +20,7 @@ export default {
       return ctx.commit('updateMyProfileId', myProfileId)
     }
   },
+
   mutations: {
     updateMyProfile (state, myProfileData) {
       state.myProfile = myProfileData
@@ -28,10 +29,12 @@ export default {
       state.myProfileId = myProfileId
     }
   },
+
   state: {
     myProfile: {},
     myProfileId: ''
   },
+
   getters: {
     myProfile (state) {
       return state.myProfile

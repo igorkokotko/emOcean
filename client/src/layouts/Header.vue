@@ -75,17 +75,26 @@
 <script>
 export default {
   name: 'Header',
+
   data () {
     return {
       search: ''
     }
   },
+
+  computed: {
+    isAuthenticated () {
+      return this.$store.getters['auth/getToken']
+    }
+  },
+
   methods: {
     visible (e) {
       if (e.target === this.$refs.toolbar.$el) {
         this.$refs.search.style.visibility = 'hidden'
       } else this.$refs.search.style.visibility = 'visible'
     },
+
     logOut () {
       this.$store.dispatch('auth/signin', { token: '', user: '' })
       window.localStorage.removeItem('token')
@@ -98,11 +107,6 @@ export default {
         message: 'You logged out.'
       })
       this.$router.push('/feed')
-    }
-  },
-  computed: {
-    isAuthenticated () {
-      return this.$store.getters['auth/getToken']
     }
   }
 }
