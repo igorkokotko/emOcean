@@ -1,16 +1,15 @@
 const express = require("express")
 const router = express.Router()
-const protected = require("../middleware/protectRoute")
-const mediaValidation = require("../middleware/mediaValidation")
-const upload = require('../config/multerConfig')
-const {
-  savePost,
-  uploadVideos,
-  searchPosts
-} = require("../controllers/posts")
+const multer = require('multer')
+const storage = multer.memoryStorage()
+const upload = multer({ storage })
+const protected = require('../middleware/protectRoute')
+const { savePost, uploadVideo } = require('../controllers/posts')
+const { search } = require('../controllers/posts')
 
 router.post('/save-post', protected, savePost)
-router.get('/search', searchPosts)
+router.post('/upload-video', protected, upload.single('file'), uploadVideo)
+router.get('/search', search)
 
 router.post("/upload-videos", protected, upload.array("file", 2), mediaValidation, uploadVideos)
 

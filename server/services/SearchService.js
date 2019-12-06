@@ -30,11 +30,27 @@ const searchByNick = (nickname) => {
 
 const findByTag = (val) => {
   let postsRef = db.collection('posts');
-  return postsRef.where('tag', 'array-contains', val).get()
+  let query = postsRef.where('tag', '==', val).get()
+
+  .then(snapshot => {
+    if (snapshot.empty) {
+      console.log('No matching documents.');
+      return;
+    }    
+    snapshot.forEach(doc => {
+      console.log(doc.id, '=>', doc.data());
+    });
+  })
+  .catch(err => {
+    console.log('Error getting documents', err);
+  });
+
+  return query
 }
 
+// findByTag('#nature')
 
 module.exports = {
-  searchByNick,
+  findByNickname,
   findByTag
 };

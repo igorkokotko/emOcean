@@ -13,7 +13,11 @@ const auth = require('./routes/auth')
 const profiles = require('./routes/profiles')
 const posts = require('./routes/posts')
 const preferences = require('./routes/preferences')
+<<<<<<< HEAD
 const feed = require('./routes/feed')
+=======
+const posts = require('./routes/posts')
+>>>>>>> controller, search_by_tags
 
 // Run server
 const app = express()
@@ -30,6 +34,7 @@ app.use('/api/posts', posts)
 
 //Profiles route
 app.use('/api/profiles', profiles)
+
 //addPref
 app.use('/api/preferences', preferences)
 
