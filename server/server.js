@@ -38,7 +38,6 @@ app.use('/api/feed', feed)
 
 app.use(errorHandler)
 
-
 const PORT = process.env.port || 5000
 
 app.listen(
