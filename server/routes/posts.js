@@ -19,6 +19,7 @@ router.post('/upload-video', protected, upload.single('file'), uploadVideo)
 // delete my posts
 // get post by id
 // get posts by userId
+// like/unlike  post 
 // like/unlike  post
 
 module.exports = router
