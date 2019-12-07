@@ -55,27 +55,21 @@ export default {
       this.getChosenTags(state)
       axios.post('/api/preferences/save', this.tags)
         .then((response) => {
-          console.log(response)
           alert('data saved')
         })
         .catch(error => {
           this.rollbackChanges(this.tags)
           if (error.response) {
-            console.log(error.response.data)
-            console.log(error.response.status)
-            console.log(error.response.headers)
-          } else if (error.request) {
-            console.log(error.requset)
-          } else {
-            console.log('Error', error.message)
+            alert('Oooops, something went wrong!')
           }
-          alert('Oooops, something went wrong!')
         })
     }
   },
+
   computed: {
     ...mapGetters('preferences', ['getPreferences'])
   },
+
   filters: {
     sliceHash: function (value) {
       return value.slice(1)
