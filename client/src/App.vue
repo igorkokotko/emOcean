@@ -5,19 +5,22 @@
       <router-view></router-view>
     </q-page-container>
     <Footer/>
+    <v-auth-banner />
   </q-layout>
 </template>
 
 <script>
 import Footer from './layouts/Footer.vue'
 import vHeader from '@/layouts/Header.vue'
+import AuthBanner from './views/Authentication/AuthBanner.vue'
 
 export default {
   name: 'LayoutDefault',
 
   components: {
     Footer,
-    vHeader
+    vHeader,
+    'v-auth-banner': AuthBanner
   },
 
   data () {
