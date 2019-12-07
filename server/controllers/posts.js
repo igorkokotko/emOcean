@@ -2,6 +2,7 @@ const CustomError = require('../common/CustomError')
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const postsService = require('../services/PostsService')
 const { validateVideo } = require('../validation/posts')
+const searchService = require("../services/SearchService")
 
 const uploadVideo = asyncMiddleware(async (req, res, next) => {
   const uploadedVideo = req.file
@@ -25,7 +26,15 @@ const savePost = asyncMiddleware(async (req, res, next) => {
   res.status(200).json({ success: true })
 })
 
+
+const searchPost = function(req, res) {
+  const value  = req.body
+  let message = searchService.findByTag(value)
+  res.send(message)
+}
+
 module.exports = {
   savePost,
-  uploadVideo
+  uploadVideo,
+  searchPost
 }
