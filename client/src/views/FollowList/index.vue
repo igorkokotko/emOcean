@@ -17,8 +17,8 @@
       transition-next="scale"
     >
       <q-tab-panel name="followers">
-        <followItem
-          :follow="followersGetter"
+        <followList
+          :followList="followersGetter"
         />
         <p v-if="!followersGetter.length" class="notification">
           no followers found...
@@ -26,8 +26,8 @@
       </q-tab-panel>
 
       <q-tab-panel name="following">
-        <followItem
-          :follow="followingGetter"
+        <followList
+          :followList="followingGetter"
         />
         <p v-if="!followingGetter.length" class="notification">
           no following found...
@@ -39,7 +39,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import FollowItem from './FollowItem'
+import FollowList from './FollowList'
 export default {
   methods: mapActions(['uploadProfile']),
   computed: mapGetters(['followingGetter', 'followersGetter']),
@@ -52,7 +52,7 @@ export default {
     }
   },
   components: {
-    FollowItem
+    FollowList
   }
 }
 </script>

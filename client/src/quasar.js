@@ -91,8 +91,7 @@ Vue.use(Quasar, {
     QDialog,
     QBanner,
     QScrollObserver,
-    QBar,
-    QDialog
+    QBar
   },
   directives: {
     Ripple,
