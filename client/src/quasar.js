@@ -88,13 +88,13 @@ Vue.use(Quasar, {
     QSelect,
     QSlider,
     QSeparator,
-    QToggle,
-    QBar,
+    QToggle,   
     QDialog,
     QBanner,
     QVirtualScroll,
     QScrollObserver,
-    QChatMessage
+    QChatMessage,
+    QBar
   },
   directives: {
     Ripple,
