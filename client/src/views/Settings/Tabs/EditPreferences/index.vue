@@ -55,17 +55,22 @@ export default {
       this.getChosenTags(state)
       axios.post('/api/preferences/save', this.tags)
         .then((response) => {
-          alert('data saved')
         })
         .catch(error => {
           this.rollbackChanges(this.tags)
           if (error.response) {
-            alert('Oooops, something went wrong!')
+            this.showNotif()
           }
         })
+    },
+
+    showNotif () {
+      this.$q.notify({
+        message: 'Oooops, something went wrong!',
+        icon: 'announcement'
+      })
     }
   },
-
   computed: {
     ...mapGetters('preferences', ['getPreferences'])
   },
