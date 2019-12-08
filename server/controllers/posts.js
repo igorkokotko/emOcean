@@ -28,9 +28,29 @@ const savePost = asyncMiddleware(async (req, res, next) => {
 
 
 const searchPosts = function(req, res) {
-  const value  = req.body
-  let message = searchService.findByTag(value)
-  res.send(message)
+  if (!req.query.tag) {
+    res.status(400).send('no tag specified!')
+    return
+  }
+  const value  = req.query.tag
+
+  let postsDocsPromise = searchService.findByTag(value)
+  postsDocsPromise.then(snapshot => {
+    if (snapshot.empty) {
+      console.log('No matching documents.');
+      return;
+
+    } else {
+      posts = [];
+      snapshot.forEach(doc => {
+        posts.push(doc.data());
+      });
+      res.json(posts)
+    }     
+  })
+  .catch(err => {
+    console.log('Error getting documents', err);
+  });
 }
 
 module.exports = {

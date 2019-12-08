@@ -9,7 +9,7 @@ const { searchPosts } = require('../controllers/posts')
 
 router.post('/save-post', protected, savePost)
 router.post('/upload-video', protected, upload.single('file'), uploadVideo)
-router.get('/search-posts', searchPosts)
+router.get('/search', searchPosts)
 
 // TODO
 
