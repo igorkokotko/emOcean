@@ -27,7 +27,7 @@ const savePost = asyncMiddleware(async (req, res, next) => {
 })
 
 
-const searchPost = function(req, res) {
+const searchPosts = function(req, res) {
   const value  = req.body
   let message = searchService.findByTag(value)
   res.send(message)
@@ -36,5 +36,5 @@ const searchPost = function(req, res) {
 module.exports = {
   savePost,
   uploadVideo,
-  searchPost
+  searchPosts
 }

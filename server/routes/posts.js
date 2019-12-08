@@ -5,11 +5,11 @@ const storage = multer.memoryStorage()
 const upload = multer({ storage })
 const protected = require('../middleware/protectRoute')
 const { savePost, uploadVideo } = require('../controllers/posts')
-const { searchPost } = require('../controllers/posts')
+const { searchPosts } = require('../controllers/posts')
 
 router.post('/save-post', protected, savePost)
 router.post('/upload-video', protected, upload.single('file'), uploadVideo)
-router.get('/search-post', searchPost)
+router.get('/search-posts', searchPosts)
 
 // TODO
 

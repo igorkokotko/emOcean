@@ -36,10 +36,12 @@ const findByTag = (val) => {
     if (snapshot.empty) {
       console.log('No matching documents.');
       return;
+
+    } else {
+      snapshot.forEach(doc => {
+        console.log(doc.id, '=>', doc.data());
+      });
     }    
-    snapshot.forEach(doc => {
-      console.log(doc.id, '=>', doc.data());
-    });
   })
   .catch(err => {
     console.log('Error getting documents', err);
@@ -47,6 +49,8 @@ const findByTag = (val) => {
 
   return query
 }
+
+findByTag('#nature')
 
 module.exports = {
   searchByNick,
