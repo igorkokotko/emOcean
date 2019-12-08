@@ -30,7 +30,7 @@ const searchByNick = (nickname) => {
 
 const findByTag = (val) => {
   let postsRef = db.collection('posts');
-  return postsRef.where('tag', '==', val).get()
+  return postsRef.where('tag', 'array-contains', val).get()
 }
 
 
