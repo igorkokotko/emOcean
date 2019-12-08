@@ -45,7 +45,7 @@ const searchPosts = function(req, res) {
       snapshot.forEach(doc => {
         posts.push(doc.data());
       });
-      res.json(posts)
+      res.json({posts})
     }     
   })
   .catch(err => {
