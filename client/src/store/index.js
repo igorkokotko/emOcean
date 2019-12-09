@@ -13,6 +13,6 @@ export default new Vuex.Store({
     profile,
     auth,
     posts,
-    preferences: preferences
+    preferences
   }
 })

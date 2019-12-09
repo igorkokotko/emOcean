@@ -45,7 +45,9 @@ import {
   QBar,
   QDialog,
   ClosePopup,
-  QVirtualScroll
+  QVirtualScroll,
+  QBanner,
+  QScrollObserver
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -89,7 +91,9 @@ Vue.use(Quasar, {
     QToggle,
     QBar,
     QDialog,
-    QVirtualScroll
+    QBanner,
+    QVirtualScroll,
+    QScrollObserver
   },
   directives: {
     Ripple,

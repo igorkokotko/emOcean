@@ -2,7 +2,7 @@
   <q-avatar
     :size="size"
     :font-size="size"
-    color="primary"
+    color="grey-13"
     text-color="white"
     :icon="img.length === 0 ? 'account_circle' : null"
   >

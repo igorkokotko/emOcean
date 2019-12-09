@@ -3,6 +3,10 @@ const apiAuth = '/api/auth'
 const apiProfiles = '/api/profiles'
 
 module.exports = {
+  setApiAuthorizationHeaders (token) {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+  },
+
   login (data) {
     return axios.post(`${apiAuth}/login`, data)
   },

@@ -47,6 +47,7 @@ const login = asyncMiddleware(async (req, res, next) => {
   if (validatedPasswordError !== undefined) {
     return next(new CustomError(validatedPasswordError))
   }
+
   const currentUser = await authService.loginWithEmailAndPassword(
     email,
     password

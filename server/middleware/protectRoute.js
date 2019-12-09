@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken')
-
 const CustomError = require('../common/CustomError')
 
 const protected = (req, res, next) => {
@@ -10,6 +9,7 @@ const protected = (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     // Set token from header
+
     token = req.headers.authorization.split(' ')[1]
   }
   // Make sure token exists
