@@ -37,8 +37,7 @@ const searchPosts = function(req, res) {
   let postsDocsPromise = searchService.findByTag(value)
   postsDocsPromise.then(snapshot => {
     if (snapshot.empty) {
-      console.log('No matching documents.');
-      return;
+      res.send(400).send('No matching documents.')
 
     } else {
       posts = [];
@@ -50,6 +49,7 @@ const searchPosts = function(req, res) {
   })
   .catch(err => {
     console.log('Error getting documents', err);
+    res.status(500).send(err)
   });
 }
 
