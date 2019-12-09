@@ -53,12 +53,25 @@
 <script>
 import PageComments from '../Comments/PageComments'
 import { mapGetters, mapActions } from 'vuex'
+import axios from 'axios'
+
 export default {
   name: 'Feed',
   data () {
     return {
       isModelVisible: false
     }
+  },
+  created () {
+    console.log('createrd')
+    axios.get('/api/feed')
+      .then((response) => {
+      })
+      .catch(error => {
+        if (error.response) {
+          this.showNotif()
+        }
+      })
   },
   methods: {
     ...mapActions('posts', ['updateLikes']),
@@ -80,7 +93,7 @@ export default {
   },
   components: {
     'v-comments': PageComments
-  }
+  }  
 }
 </script>
 
