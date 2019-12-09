@@ -23,21 +23,15 @@ const routes = [
     component: AddPost
   },
   {
-    path: '/profile/:id',
+    path: '/profile/:nickname',
     name: 'profile',
     props: true,
     component: () => import('../views/Profile/index.vue')
-    // children: [
-    //   {
-    //     path: 'follow',
-    //     name: 'followPage',
-    //     component: () => import('../views/FollowList/index.vue')
-    //   }
-    // ]
   },
   {
-    path: '/profile/follow',
+    path: '/profile/:nickname/follow',
     name: 'followPage',
+    props: true,
     component: () => import('../views/FollowList/index.vue')
   },
   {
