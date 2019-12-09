@@ -3,7 +3,6 @@
     <div class="profile-header" :style="{ backgroundImage: userBackground }">
       <div class="view-counter" v-if="profileGetter.counters">
         <i class="fas fa-eye"></i>
-        {{profileGetter.counters.views}}
       </div>
     </div>
     <div class="row">
@@ -30,7 +29,7 @@ export default {
     switchVideo
   },
   computed: {
-    ...mapGetters(['profileGetter']),
+    ...mapGetters({ profileGetter: 'profile/profileGetter' }),
     userBackground () {
       return this.profileGetter.user_background ? 'url(' + this.profileGetter.user_background + ')' : 'url(https://i.ytimg.com/vi/DiS7ZMwTA0I/maxresdefault.jpg)'
     }
@@ -38,7 +37,7 @@ export default {
   mounted () {
     this.uploadProfile()
   },
-  methods: mapActions(['uploadProfile'])
+  methods: mapActions({ uploadProfile: 'profile/uploadProfile' })
 }
 </script>
 

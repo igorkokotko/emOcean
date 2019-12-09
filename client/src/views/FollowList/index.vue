@@ -50,7 +50,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['followingGetter', 'followersGetter']),
+    ...mapGetters({
+      followingGetter: 'followingGetter',
+      followersGetter: 'followersGetter'
+    }),
     tab () {
       return this.$route.query.p
     }
@@ -59,7 +62,10 @@ export default {
     this.uploadFollowers('profileId')
     this.uploadFollowings('profileId')
   },
-  methods: mapActions(['uploadFollowers', 'uploadFollowings'])
+  methods: mapActions({
+    uploadFollowers: 'uploadFollowers',
+    uploadFollowings: 'uploadFollowings'
+  })
 }
 </script>
 

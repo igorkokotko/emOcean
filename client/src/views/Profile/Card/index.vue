@@ -33,11 +33,6 @@ export default {
   components: {
     CardFooter,
     FollowButton
-  },
-  computed: {
-    popularAccount () {
-      return this.profile.counters.views > this.popularAccountLimit
-    }
   }
 }
 </script>

@@ -34,16 +34,10 @@ export default {
   },
   data () {
     return {
-      // need to save this item to localStorage when u authorization
-      // for ex. localStorage.currentUserId = user.id
-      currentUserId: localStorage.getItem('currentUserId')
     }
   },
-  computed: mapGetters(['followingIdsGetter']),
-  mounted () {
-    this.uploadFollowings(this.currentUserId)
-  },
-  methods: mapActions(['uploadFollowings'])
+  computed: mapGetters({ followingIdsGetter: 'followingIdsGetter' }),
+  methods: mapActions({ uploadFollowings: 'uploadFollowings' })
 }
 </script>
 
