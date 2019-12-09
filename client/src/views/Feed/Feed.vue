@@ -62,10 +62,10 @@ export default {
       isModelVisible: false
     }
   },
-  created () {
-    console.log('createrd')
+   created () {
     axios.get('/api/feed')
       .then((response) => {
+        this.updateState(response.data.posts)
       })
       .catch(error => {
         if (error.response) {
@@ -74,11 +74,12 @@ export default {
       })
   },
   methods: {
-    ...mapActions('posts', ['updateLikes']),
+    ...mapActions('posts', ['updateLikes', 'updateState']),
     closePopup (visibility) {
       // close | open
       this.isModelVisible = visibility
     },
+    
     play: function (event) {
       let currentVideo = event.target
       if (currentVideo.paused) {
@@ -88,12 +89,18 @@ export default {
       }
     }
   },
+  showNotif () {
+    this.$q.notify({
+      message: 'Oooops, something went wrong',
+      icon: 'announcement'
+    })
+  },
   computed: {
     ...mapGetters('posts', ['getPosts'])
   },
   components: {
     'v-comments': PageComments
-  }  
+  }
 }
 </script>
 

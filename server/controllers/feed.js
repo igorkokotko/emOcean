@@ -8,7 +8,7 @@ let getFeed = function (req, res) {
             querySnapshot.docs.forEach((doc) => {
                 posts[doc.id] = doc.data();
             })
-            console.log(posts)
+            res.json({posts})
         })
     } catch (error) {
         res.status(500).send('Error - ' + error)
