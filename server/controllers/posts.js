@@ -4,14 +4,13 @@ const postsService = require('../services/PostsService')
 const { validateVideo } = require('../validation/posts')
 
 const uploadVideo = asyncMiddleware(async (req, res, next) => {
-  const uploadedVideo = req.fie
+  const uploadedVideo = req.file
 
   // second arg means max image size in mb
   const validatedVideoError = validateVideo(uploadedVideo, 20)
   if (validatedVideoError !== undefined) {
     return next(new CustomError(validatedVideoError))
   }
-
   const postVideoUrl = await postsService.uploadVideo(
     uploadedVideo,
     req.userId,

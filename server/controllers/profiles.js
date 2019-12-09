@@ -102,6 +102,7 @@ const getFollowingsById = asyncMiddleware(async (req, res) => {
 
   res.status(200).json({ followings })
 })
+
 const profileAction = asyncMiddleware(async (req, res) => {
   const actionsList = ['follow', 'unfollow', 'block', 'unblock']
   const { action, id } = req.query

@@ -5,6 +5,7 @@
       <router-view></router-view>
     </q-page-container>
     <Footer/>
+    <v-auth-banner />
   </q-layout>
 </template>
 
@@ -13,13 +14,15 @@ import Footer from './layouts/Footer.vue'
 import vHeader from '@/layouts/Header.vue'
 import ApiService from '@/utilities/ApiService.js'
 import Authorized from '@/views/Authentication/Authorized.js'
+import AuthBanner from './views/Authentication/AuthBanner.vue'
 
 export default {
   name: 'LayoutDefault',
 
   components: {
     Footer,
-    vHeader
+    vHeader,
+    'v-auth-banner': AuthBanner
   },
 
   data () {
