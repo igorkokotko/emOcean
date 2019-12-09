@@ -11,7 +11,7 @@
           <div class="text-h6">Avatar</div>
         </q-card-section>
         <q-card-section>
-          <template v-if="photoUrl===''">
+          <template v-if="!isNewAvatarSelected">
             <div class="row justify-center">
               <avatar :img="photoUrl" />
             </div>
@@ -32,7 +32,7 @@
                 type="file"
                 id="inputAvatar"
                 accept="image/*"
-                @input="uploadPhotoUrl"
+                @input="uploadImageUrl($event, 'avatar')"
                 class="uploadImage"
               >
               <q-btn
@@ -58,7 +58,7 @@
           <div class="text-h6">Cover photo</div>
         </q-card-section>
         <q-card-section>
-          <template v-if="backgroundUrl===''">
+          <template v-if="!isNewCoverPhotoSelected">
             <div class="row justify-center">
               <img
                 src="@/assets/img/cover_photo.jpg"
@@ -70,7 +70,7 @@
             <edit-image
               class="backgroundImage"
               :src="backgroundUrl"
-              :aspectRatio="16 / 9"
+              :aspectRatio="aspectRatioRectangle"
             />
           </template>
           <div class="row justify-center q-mt-sm">
@@ -83,7 +83,7 @@
                 type="file"
                 id="inputImage"
                 accept="image/*"
-                @input="uploadBackgroundUrl"
+                @input="uploadImageUrl($event, 'background')"
                 class="uploadImage"
               >
               <q-btn
@@ -210,6 +210,7 @@ import {
   checkURL
 } from '@/utilities/validation.js'
 import authService from '@/services/auth.js'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
@@ -231,6 +232,8 @@ export default {
       }
     }
     return {
+      aspectRatioRectangle: 16 / 9,
+      uploadPhotoMaxSize: 2097152,
       photoUrl: '',
       backgroundUrl: '',
       profile: { ...emptyProfile },
@@ -244,8 +247,16 @@ export default {
   },
 
   computed: {
-    profileGetter () {
-      return this.$store.getters['profile/myProfile']
+    ...mapGetters({
+      profileGetter: 'profile/myProfile'
+    }),
+
+    isNewAvatarSelected () {
+      return this.photoUrl !== ''
+    },
+
+    isNewCoverPhotoSelected () {
+      return this.backgroundUrl !== ''
     }
   },
 
@@ -256,27 +267,13 @@ export default {
   },
 
   created () {
-    this.$store.dispatch('profile/getMyProfile')
+    this.getMyProfile()
   },
 
   methods: {
-    uploadPhotoUrl (val) {
-      if (val.target.files[0].size > 2097152) {
-        this.$q.notify({
-          ...this.notifyParameters,
-          color: 'negative',
-          message: 'File is too big.'
-        })
-        this.$refs.avatar.val = ""
-        return
-      }
-      this.profile.avatar_url = val.target.files[0]
-      const reader = new FileReader()
-      reader.onload = () => {
-        this.photoUrl = reader.result
-      }
-      reader.readAsDataURL(val.target.files[0])
-    },
+    ...mapActions({
+      getMyProfile: 'profile/getMyProfile'
+    }),
 
     btnUploadPhotoUrl () {
       this.$refs.photoUrlLabel.click()
@@ -287,20 +284,32 @@ export default {
       this.profile.avatar_url = ""
     },
 
-    uploadBackgroundUrl (val) {
-      if (val.target.files[0].size > 2097152) {
+    uploadImageUrl (val, imageType) {
+      if (val.target.files[0].size > this.uploadPhotoMaxSize) {
         this.$q.notify({
           ...this.notifyParameters,
           color: 'negative',
           message: 'File is too big.'
         })
-        this.$refs.background.val = ""
+        if (imageType === 'background') {
+          this.$refs.background.val = ""
+        } else {
+          this.$refs.avatar.val = ""
+        }
         return
       }
-      this.profile.user_background = val.target.files[0]
+      if (imageType === 'background') {
+        this.profile.user_background = val.target.files[0]
+      } else {
+        this.profile.avatar_url = val.target.files[0]
+      }
       const reader = new FileReader()
       reader.onload = () => {
-        this.backgroundUrl = reader.result
+        if (imageType === 'background') {
+          this.backgroundUrl = reader.result
+        } else {
+          this.photoUrl = reader.result
+        }
       }
       reader.readAsDataURL(val.target.files[0])
     },
