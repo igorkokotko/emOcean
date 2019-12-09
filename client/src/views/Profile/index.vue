@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="profile-header" :style="{ backgroundImage: `${(profileGetter.user_background) ? 'url('+profileGetter.user_background + ')' : 'url(https://i.ytimg.com/vi/DiS7ZMwTA0I/maxresdefault.jpg)'}`}">
+    <div class="profile-header" :style="{ backgroundImage: userBackground }">
       <div class="view-counter" v-if="profileGetter.counters">
         <i class="fas fa-eye"></i>
         {{profileGetter.counters.views}}
@@ -25,15 +25,20 @@ import ProfileCard from './Card/index'
 import switchVideo from './Card/switchVideo'
 
 export default {
-  computed: mapGetters(['profileGetter']),
-  methods: mapActions(['uploadProfile']),
-  mounted () {
-    this.uploadProfile()
-  },
   components: {
     ProfileCard,
     switchVideo
-  }
+  },
+  computed: {
+    ...mapGetters(['profileGetter']),
+    userBackground () {
+      return this.profileGetter.user_background ? 'url(' + this.profileGetter.user_background + ')' : 'url(https://i.ytimg.com/vi/DiS7ZMwTA0I/maxresdefault.jpg)'
+    }
+  },
+  mounted () {
+    this.uploadProfile()
+  },
+  methods: mapActions(['uploadProfile'])
 }
 </script>
 

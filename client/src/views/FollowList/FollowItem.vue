@@ -20,8 +20,10 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import FollowButton from '../Profile/Card/followBtn'
 import Avatar from '../../components/Avatar'
+
 export default {
   components: {
     FollowButton,
@@ -29,9 +31,21 @@ export default {
   },
   props: {
     item: Object
-  }
+  },
+  data () {
+    return {
+      // need to save this item to localStorage when u authorization
+      // for ex. localStorage.currentUserId = user.id
+      currentUserId: localStorage.getItem('currentUserId')
+    }
+  },
+  computed: mapGetters(['followingIdsGetter']),
+  mounted () {
+    this.uploadFollowings(this.currentUserId)
+  },
+  methods: mapActions(['uploadFollowings'])
 }
 </script>
 
-<style lang="scss">
+<style>
 </style>

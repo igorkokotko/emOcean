@@ -41,19 +41,25 @@
 import { mapActions, mapGetters } from 'vuex'
 import FollowList from './FollowList'
 export default {
-  methods: mapActions(['uploadProfile']),
-  computed: mapGetters(['followingGetter', 'followersGetter']),
-  mounted () {
-    this.uploadProfile()
+  components: {
+    FollowList
   },
   data () {
     return {
-      tab: this.$route.query.p
+      profileId: localStorage.getItem('lastProfileId')
     }
   },
-  components: {
-    FollowList
-  }
+  computed: {
+    ...mapGetters(['followingGetter', 'followersGetter']),
+    tab () {
+      return this.$route.query.p
+    }
+  },
+  mounted () {
+    this.uploadFollowers('profileId')
+    this.uploadFollowings('profileId')
+  },
+  methods: mapActions(['uploadFollowers', 'uploadFollowings'])
 }
 </script>
 
