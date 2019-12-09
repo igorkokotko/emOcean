@@ -1,5 +1,6 @@
 const axios = require('axios')
 const apiAuth = '/api/auth'
+const apiProfiles = '/api/profiles'
 
 module.exports = {
   setApiAuthorizationHeaders (token) {
@@ -20,5 +21,8 @@ module.exports = {
   },
   resetPass (data) {
     return axios.post(`${apiAuth}/reset-password`, data)
+  },
+  searchByNick (data) {
+    return axios.post(`${apiProfiles}/search-by-nick`, data)
   }
 }

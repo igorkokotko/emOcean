@@ -1,7 +1,7 @@
 const { db } = require("../config/databaseConfig");
 const CustomError = require("../common/CustomError");
 
-const findByNickname = (nickname) => {
+const searchByNick = (nickname) => {
   return new Promise((resolve, reject) => {
     const userRef = db.collection("users");
     userRef
@@ -29,5 +29,5 @@ const findByNickname = (nickname) => {
 };
 
 module.exports = {
-  findByNickname
+  searchByNick
 };
