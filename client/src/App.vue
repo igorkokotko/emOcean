@@ -4,7 +4,7 @@
     <q-page-container>
       <router-view></router-view>
     </q-page-container>
-    <Footer/>
+    <Footer v-if="!$route.fullPath.includes('/comments')" />
     <v-auth-banner />
   </q-layout>
 </template>
@@ -58,7 +58,10 @@ body {
   line-height: 1.5;
   letter-spacing: 0.5px;
 }
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   line-height: normal;
   margin: 0;
 }

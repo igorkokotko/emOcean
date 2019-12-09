@@ -1,9 +1,6 @@
 <template>
   <div class="header" @click="visible">
-    <q-header
-      bordered
-      class="bg-white text-primary"
-    >
+    <q-header bordered class="bg-white text-primary">
       <q-toolbar ref="toolbar">
         <router-link
           :to="{path: '/'}"
@@ -40,30 +37,18 @@
           <q-menu>
             <q-list style="min-width: 100px">
               <template v-if="isAuthenticated">
-                <q-item
-                  to="/settings"
-                  clickable
-                >
+                <q-item to="/settings" clickable>
                   <q-item-section>Settings</q-item-section>
                 </q-item>
-                <q-item
-                  clickable
-                  @click="logOut"
-                >
+                <q-item clickable @click="logOut">
                   <q-item-section>Log out</q-item-section>
                 </q-item>
               </template>
               <template v-else>
-                <q-item
-                  to="/login"
-                  clickable
-                >
+                <q-item to="/login" clickable>
                   <q-item-section>Login</q-item-section>
                 </q-item>
-                <q-item
-                  to="/register"
-                  clickable
-                >
+                <q-item to="/register" clickable>
                   <q-item-section>Register</q-item-section>
                 </q-item>
               </template>
@@ -152,22 +137,22 @@ export default {
 </script>
 
 <style>
-  .logo {
-    height: 100%;
-    margin: 0;
-  }
-  .homeRouterLink {
-    height: 60px;
-    display: block;
-    padding: 8px 0;
-  }
+.logo {
+  height: 100%;
+  margin: 0;
+}
+.homeRouterLink {
+  height: 60px;
+  display: block;
+  padding: 8px 0;
+}
 
-  #input-search .q-field__control {
-    height: 24px;
-    position: relative;
-  }
+#input-search .q-field__control {
+  height: 24px;
+  position: relative;
+}
 
-  #search-result {
-    position: absolute;
-  }
+#search-result {
+  position: absolute;
+}
 </style>

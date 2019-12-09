@@ -51,8 +51,7 @@ import {
 } from 'quasar'
 
 Vue.use(Quasar, {
-  config: {
-  },
+  config: {},
   components: {
     QLayout,
     QHeader,
@@ -88,7 +87,7 @@ Vue.use(Quasar, {
     QSelect,
     QSlider,
     QSeparator,
-    QToggle,   
+    QToggle,
     QDialog,
     QBanner,
     QVirtualScroll,

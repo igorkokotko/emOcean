@@ -19,12 +19,13 @@
         </div>
         <div class="content-wrapper">
           <div class="heart-and-comments">
-            <div
-              class="heart"
-              @click="updateLikes({ key: key, updates: ({ hasBeenLiked : post.hasBeenLiked, likes: post.likes })  })"
-            >
-              <i class="far fa-heart fa-lg" :class="{'fas': post.hasBeenLiked}"></i>
-              <p class="likes">{{post.likes}}</p>
+            <div class="heart">
+              <i class="far fa-heart fa-lg"
+                :class="{'fas': post.hasBeenLiked}"
+                 @click="updateLikes({ key: key, updates: ({ hasBeenLiked : post.hasBeenLiked, likes: post.likes })  })"
+              >
+              </i>
+              <p class="likes" @click="likesInfo.show=true; play">{{post.likes}}</p>
             </div>
             <div class="comments-icon" @click="closePopup(true)">
               <i class="far fa-comment-alt fa-md"></i>
@@ -46,12 +47,14 @@
       <div class="big-btn" @click="$router.push('/addpost')">
         <i class="fas fa-2x fa-plus"></i>
       </div>
+      <LikesList v-bind:info="likesInfo" />
     </div>
   </div>
 </template>
 
 <script>
 import PageComments from '../Comments/PageComments'
+import LikesList from '../../components/LikesList.vue'
 import { mapGetters, mapActions } from 'vuex'
 import axios from 'axios'
 
@@ -61,7 +64,10 @@ export default {
   name: 'Feed',
   data () {
     return {
-      isModelVisible: false
+      isModelVisible: false,
+      likesInfo: {
+        show: false
+      }
     }
   },
   created () {
@@ -107,6 +113,7 @@ export default {
   },
   components: {
     'v-comments': PageComments
+    LikesList
   }
 }
 </script>
