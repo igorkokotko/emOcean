@@ -83,7 +83,7 @@ const getProfileById = function(userId) {
 
 const getProfileByNickname = function(userNickname) {
   const profilesRef = db.collection('users')
-
+  let profile;
   return profilesRef
     .where('nickname', '==', userNickname)
     .get()
@@ -96,8 +96,9 @@ const getProfileByNickname = function(userNickname) {
         })
       }
       profile.forEach(doc => {
-        return doc.data()
+        profile= doc.data()
       })
+      return profile
     })
 }
 
