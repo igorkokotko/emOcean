@@ -63,7 +63,8 @@ export default {
     ...mapActions({
       signIn: 'auth/signin',
       notifyRegisterAction: 'auth/notifyRegistered',
-      notifyResetAction: 'auth/notifyReset'
+      notifyResetAction: 'auth/notifyReset',
+      updateMyProfileId: 'profile/updateMyProfileId'
     }),
     login () {
       this.loading = true
@@ -71,6 +72,10 @@ export default {
       ApiService.login({ password, email })
         .then(res => {
           const token = res.data.token
+          const profileId = res.data.myProfileId
+          this.updateMyProfileId(profileId)
+          window.localStorage.setItem('profileId', profileId)
+          ApiService.setApiAuthorizationHeaders(token)
           this.signIn({ token: token, user: res.data.user })
           window.localStorage.setItem('token', token)
           this.loading = false
