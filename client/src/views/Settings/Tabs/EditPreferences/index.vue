@@ -15,7 +15,7 @@
             'text-subtitle1',
             'text-center']"
           >
-          {{preference.title}}
+          {{preference.hashtag | sliceHash}}
           </div>
       </q-avatar>
     </q-btn>
@@ -23,7 +23,8 @@
       size="40px"
       round
       color="teal"
-      to="/feed"
+      @click="savePreferences(getPreferences)"
+
     > go
     </q-btn>
   </div>
@@ -31,14 +32,53 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import axios from 'axios'
 
 export default {
   name: 'EditPreferences',
+  data: function () {
+    return {
+      tags: []
+    }
+  },
   methods: {
-    ...mapActions('preferences', ['updatePreference'])
+    ...mapActions('preferences', ['updatePreference', 'rollbackChanges']),
+    getChosenTags: function (state) {
+      for (let obj in state) {
+        if (state[obj].chosen) {
+          this.tags.push(state[obj].hashtag)
+        }
+      }
+    },
+
+    savePreferences: function (state) {
+      this.getChosenTags(state)
+      axios.post('/api/preferences/save', this.tags)
+        .then((response) => {
+        })
+        .catch(error => {
+          this.rollbackChanges(this.tags)
+          if (error.response) {
+            this.showNotif()
+          }
+        })
+    },
+
+    showNotif () {
+      this.$q.notify({
+        message: 'Oooops, something went wrong!',
+        icon: 'announcement'
+      })
+    }
   },
   computed: {
     ...mapGetters('preferences', ['getPreferences'])
+  },
+
+  filters: {
+    sliceHash: function (value) {
+      return value.slice(1)
+    }
   }
 }
 </script>

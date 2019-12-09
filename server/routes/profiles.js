@@ -5,7 +5,7 @@ const storage = multer.memoryStorage()
 const upload = multer({ storage })
 const protected = require('../middleware/protectRoute')
 const {
-  search,
+  searchByNick,
   getProfile,
   saveProfile,
   uploadImage,
@@ -35,7 +35,7 @@ router.get('/get-followers/:id', protected, getFollowersById)
 router.get('/get-followings/:id', protected, getFollowingsById)
 
 // Search logic
-router.post('/search', search)
+router.post('/search-by-nick', searchByNick)
 
 // TODO
 

@@ -29,7 +29,6 @@ export default {
   methods: mapActions(['uploadProfile']),
   mounted () {
     this.uploadProfile()
-    // this.getUser(2)
   },
   components: {
     ProfileCard,

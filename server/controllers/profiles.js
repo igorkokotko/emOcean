@@ -1,12 +1,12 @@
 const CustomError = require('../common/CustomError')
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const profilesService = require('../services/ProfilesService')
+const searchService = require('../services/SearchService')
 const { validateImage } = require('../validation/profiles')
 
-const search = asyncMiddleware(async (req, res, next) => {
+const searchByNick = asyncMiddleware(async (req, res, next) => {
   const { nickname } = req.body
-  // db logic
-  const message = await searchService.findByNickname(nickname)
+  const message = await searchService.searchByNick(nickname)
   res.status(200).json({ message })
 })
 
@@ -129,7 +129,7 @@ const profileAction = asyncMiddleware(async (req, res) => {
 })
 
 module.exports = {
-  search,
+  searchByNick,
   getProfile,
   saveProfile,
   uploadImage,
