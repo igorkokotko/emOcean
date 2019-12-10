@@ -6,8 +6,8 @@ const state = {
     id_1: {
       username: 'socleansofreshh',
       userImage: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1211695/me_3.jpg',
-      postVideo: 'https://firebasestorage.googleapis.com/v0/b/emocean-74133.appspot.com/o/profiles%2Fvideoplayback.mp4?alt=media&token=1595d9f7-9e0c-459b-ae25-06ee4ac19cb2',
-      likes: 36,
+      postVideo: '',
+      likes: 3632,
       hasBeenLiked: false,
       caption: "When you're ready for summer '18 ☀️",
       comments: []
@@ -15,8 +15,8 @@ const state = {
     id_2: {
       username: 'djirdehh',
       userImage: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1211695/me2.png',
-      postVideo: 'https://firebasestorage.googleapis.com/v0/b/emocean-74133.appspot.com/o/profiles%2Fvideoplayback.mp4?alt=media&token=1595d9f7-9e0c-459b-ae25-06ee4ac19cb2',
-      likes: 20,
+      postVideo: '',
+      likes: 124,
       hasBeenLiked: false,
       caption: "Views from the six...",
       comments: []
@@ -24,7 +24,7 @@ const state = {
     id_3: {
       username: 'puppers',
       userImage: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1211695/pug_personal.jpg',
-      postVideo: 'https://firebasestorage.googleapis.com/v0/b/emocean-74133.appspot.com/o/profiles%2Fvideoplayback.mp4?alt=media&token=1595d9f7-9e0c-459b-ae25-06ee4ac19cb2',
+      postVideo: '',
       likes: 49,
       hasBeenLiked: false,
       caption: "Current mood 🐶",

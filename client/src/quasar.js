@@ -43,6 +43,7 @@ import {
   QToggle,
   Ripple,
   QBar,
+  QResizeObserver,
   QDialog,
   ClosePopup,
   QVirtualScroll,
@@ -91,6 +92,7 @@ Vue.use(Quasar, {
     QToggle,
     QBar,
     QDialog,
+    QResizeObserver,
     QBanner,
     QVirtualScroll,
     QScrollObserver

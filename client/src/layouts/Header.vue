@@ -23,13 +23,15 @@
           <q-input v-model='nickname' @input="searchByNick" />
           <nickname-search v-if="list" id="search-result" :results="nicknameSearchResults"/>
         </div>
-        <q-btn
-          flat
-          round
-          dense
-          icon="search"
-          @click="visible"
-          class="q-mr-xs text-cyan" />
+        <div id="search-wrapper" ref="searchWrapper">
+          <q-btn
+            flat
+            round
+            dense
+            icon="search"
+            @click="visible"
+            class="q-mr-xs text-cyan" />
+        </div>
         <q-btn
           flat
           round
@@ -125,7 +127,9 @@ export default {
     visible (e) {
       if (e.target === this.$refs.toolbar.$el) {
         this.$refs.search.style.visibility = 'hidden'
-      } else this.$refs.search.style.visibility = 'visible'
+      } else if (e.target.textContent === this.$refs.searchWrapper.textContent) {
+        this.$refs.search.style.visibility = 'visible'
+      }
     },
 
     logOut () {

@@ -23,13 +23,23 @@
                 name="file"
                 id="file"
                 class="inputfile"
-                @change="uploadImage"
+                @change="uploadVideo"
                 />
               </q-card-section>
             </q-card>
           </q-dialog>
         </div>
     </template>
+    <div id="chip" ref="chip" :style="{ display: 'none' }">
+        <template>
+          <q-banner
+            inline-actions
+            dense
+            class="text-white bg-red">
+            File format that you want to download is incorrect. Please select a video file.
+          </q-banner>
+        </template>
+      </div>
         <div class="step-buttons">
             <a class="cancel-btn"
               @click="$router.push('/feed')">
@@ -44,7 +54,8 @@
         <div class="wrapper">
         <div class="adder-wrapper">
           <div class="selected-video">
-      <video ref="video" width="480"  max-height="270" controls>
+      <video ref="video" width="480" controls>
+        <q-resize-observer @resize="onResize" />
           <source
         :src="post.postVideo"
         type="video/mp4">
@@ -69,6 +80,8 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import axios from 'axios'
+
 export default {
   name: 'AddPost',
   data () {
@@ -82,32 +95,75 @@ export default {
         postVideo: '',
         likes: 0,
         hasBeenLiked: false,
+        tag: [],
         caption: '',
         comments: []
       }
     }
   },
+  updated () {
+    if (!this.dialog && this.post.postVideo === "") {
+      this.$router.push('/feed')
+    }
+  },
   methods: {
     ...mapActions('posts', ['addPost']),
-    addToFeed () {
+    async addToFeed () {
+      let valueArr = this.$refs.textarea.value.split(" ")
+      valueArr.filter((word) => {
+        if (word.match(/#\w+/)) {
+          word = word.slice(1)
+          this.post.tag.push(word)
+        }
+      })
       this.post.caption = this.$refs.textarea.value
       this.addPost(this.post)
+      axios.post('/api/posts/save-post', this.post)
+        .then((response) => {
+        })
+        .catch(error => {
+          console.log(error)
+        })
       this.$router.push('/feed')
     },
-    uploadImage (e) {
+    async uploadVideo (e) {
       const files = e.target.files
       if (!files.length) return
-      const reader = new FileReader()
-      reader.readAsDataURL(files[0])
-      reader.onload = e => {
-        this.post.postVideo = e.target.result
-        this.$refs.video.src = this.post.postVideo
-        this.dialog = false
+      if (files[0].type.match(/video..../gi)) {
+        const reader = new FileReader()
+        reader.readAsDataURL(files[0])
+        const formData = new FormData()
+        formData.append('file', files[0])
+        try {
+          const videoUrl = await axios.post('https://emocean.dev/api/posts/upload-videos?type=single-video', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          })
+
+          this.post.postVideo = videoUrl.data.videoUrl
+          this.$refs.video.src = this.post.postVideo
+          this.dialog = false
+        } catch (err) {
+          console.log(err)
+        }
+      } else {
+        this.$refs.chip.style.display = "block"
+        setTimeout(() => {
+          this.$refs.chip.style.display = "none"
+          this.$refs.input.value = ""
+        }, 5000)
+      }
+    },
+    onResize () {
+      if (this.$refs.video.videoHeight > this.$refs.video.videoWidth) {
+        this.$refs.video.height = "270"
       }
     }
   },
   computed: {
-    ...mapGetters('posts', ['getPosts'])
+    ...mapGetters('posts', ['getPosts']),
+    ...mapGetters('authentication', ['getToken'])
   }
 }
 </script>
@@ -137,6 +193,19 @@ body{
 .inputfile{
   display: none;
 }
+
+#chip .q-banner{
+  z-index: 9999;
+    position: absolute;
+    width: 100%;
+    top: 0
+}
+
+#chip .q-banner__content{
+    padding: 3px;
+    text-align: center;
+}
+
 #modal-window .q-card__section{
   height: 70px;
 }
@@ -167,7 +236,8 @@ body{
 .selected-video{
    max-width: 480px;
    video{
-     width: 100%;
+    width: 100%;
+    background: #000;
    }
 }
 .step-buttons{

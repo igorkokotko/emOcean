@@ -5,13 +5,15 @@
         v-for="(post, key) in getPosts"
         :key="key"
       >
-        <div class="image-container"
+        <div class="video-container"
         @dblclick="updateLikes({ key: key, updates: ({ hasBeenLiked : post.hasBeenLiked, likes: post.likes })  })"
         @click="play">
-        <figure class="image is-32x32">
+        <div class="test-wrapper">
+          <figure class="image is-32x32">
             <img :src="post.userImage" />
           </figure>
-          <video ref="videoElm" width="480"  max-height="270" >
+          <video ref="videoElm" width="480">
+            <q-resize-observer @resize="onResize" />
             <source
               :src="post.postVideo"
               type="video/mp4">
@@ -22,6 +24,7 @@
               :src="post.postVideo"
               type="video/webm">
           </video>
+          </div>
         </div>
         <div class="content-wrapper">
           <div class="heart-and-comments">
@@ -31,9 +34,9 @@
               <i class="far fa-heart fa-lg"
                 :class="{'fas': post.hasBeenLiked}">
               </i>
-              <p class="likes">{{post.likes}}</p>
+              <p ref="likes" class="likes">{{post.likes}}</p>
             </div>
-            <div class="comments-icon">
+            <div class="comments-icon" @click="$router.push('/comments')">
               <i class="far fa-comment-alt fa-md"></i>
               <p>{{post.comments.length}}</p>
             </div>
@@ -46,7 +49,7 @@
       </div>
       </div>
         <div class="big-btn" @click="$router.push('/addpost')">
-              <i class="fas fa-2x fa-plus" ></i>
+          <i class="fas fa-2x fa-plus" ></i>
         </div>
     </div>
  </div>
@@ -60,6 +63,15 @@ export default {
     return {
     }
   },
+  mounted () {
+  // If value more than 999, function replaces thousends to "k"
+    for (let i = 0; i < this.$refs.likes.length; i++) {
+      if (this.$refs.likes[i].textContent.length > 3) {
+        let len = this.$refs.likes[i].textContent.length
+        this.$refs.likes[i].textContent = this.$refs.likes[i].textContent.slice(0, len - 3) + "k"
+      }
+    }
+  },
   methods: {
     ...mapActions('posts', ['updateLikes']),
 
@@ -69,6 +81,13 @@ export default {
         currentVideo.play()
       } else {
         currentVideo.pause()
+      }
+    },
+    onResize () {
+      for (let i = 0; i < this.$refs.videoElm.length; i++) {
+        if (this.$refs.videoElm[i].videoHeight > this.$refs.videoElm[i].videoWidth) {
+          this.$refs.videoElm[i].height = "270"
+        }
       }
     }
   },
@@ -95,11 +114,11 @@ export default {
       top: 23px;
     }
 }
-.feed-post {
-    padding-top: 50px;
-    height: fit-content;
-    padding: 6px 0px;
-}
+// .feed-post {
+//     padding-top: 50px;
+//     height: fit-content;
+//     padding: 6px 0px;
+// }
 .heart-and-comments {
     flex-direction: column;
     position: absolute;
@@ -167,7 +186,11 @@ export default {
 .content p{
     color: #DBE4E2;
 }
-.image-container{
+.test-wrapper{
+    background: #000;
+}
+.video-container{
+    padding: 7px;
     max-width: 800px;
     position: relative;
     background: #87e0f5;
@@ -195,8 +218,9 @@ export default {
       margin: 7.5px 10px;
     }
     video{
-      max-width:100%;
-      padding: 7px 7px 2px 7px;
+      max-width: 100%;
+      padding: 0px;
+      margin-bottom: -6px;
     }
     .fas.fa-heart {
       color: #f06595;
