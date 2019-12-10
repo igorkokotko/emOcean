@@ -29,6 +29,12 @@ const routes = [
     component: () => import('../views/Profile/index.vue')
   },
   {
+    path: '/profile/:nickname/follow',
+    name: 'followPage',
+    props: true,
+    component: () => import('../views/FollowList/index.vue')
+  },
+  {
     path: "/comments",
     name: "comments",
     component: () => import("../views/Comments/PageComments.vue")

@@ -81,7 +81,7 @@ const getProfileById = function (userId) {
 
 const getProfileByNickname = function (userNickname) {
   const profilesRef = db.collection('users')
-
+  let profile;
   return profilesRef
     .where('nickname', '==', userNickname)
     .get()

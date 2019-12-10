@@ -14,17 +14,17 @@ export default {
       default: false
     }
   },
-  methods: {
-    changeFollowStatus () {
-      this.following = !this.following
-    }
-  },
   computed: {
     btnClasses () {
       return {
         'button-orange': !this.following,
         'button-blue': this.following
       }
+    }
+  },
+  methods: {
+    changeFollowStatus () {
+      this.following = !this.following
     }
   }
 }
