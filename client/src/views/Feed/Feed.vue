@@ -87,7 +87,6 @@ export default {
       // close | open
       this.isModelVisible = visibility
     },
-    
     play: function (event) {
       let currentVideo = event.target
       if (currentVideo.paused) {
