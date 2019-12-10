@@ -36,21 +36,7 @@ export default {
   data () {
     return {}
   },
-  props: ['results'],
-  computed: {
-    myLink () {
-      if (window.location.host === 'localhost:8080') {
-        return 'http://' + window.location.host
-      } else {
-        return 'https://' + window.location.host
-      }
-    }
-  },
-  methods: {
-    zhas () {
-      console.log('works')
-    }
-  }
+  props: ['results']
 }
 </script>
 
