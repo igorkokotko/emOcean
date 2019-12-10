@@ -3,9 +3,10 @@
     <div class="profile-header" :style="{ backgroundImage: userBackground }">
       <div class="view-counter" v-if="profileGetter.counters">
         <i class="fas fa-eye"></i>
+<!--        {{profileGetter.counters.views}}-->
       </div>
     </div>
-    <div class="row">
+    <div class="row wrapp">
       <div class="col-12 col-md-3 profile-card" >
         <profile-card :profile="profileGetter"/>
       </div>
@@ -28,6 +29,11 @@ export default {
     ProfileCard,
     switchVideo
   },
+  data () {
+    return {
+      pId: localStorage.getItem('lastProfileId')
+    }
+  },
   computed: {
     ...mapGetters({ profileGetter: 'profile/profileGetter' }),
     userBackground () {
@@ -40,11 +46,16 @@ export default {
   mounted () {
     this.uploadProfile(this.nickname)
   },
-  methods: mapActions({ uploadProfile: 'profile/uploadProfile' })
+  methods: {
+    ...mapActions({ uploadProfile: 'profile/uploadProfile' })
+  }
 }
 </script>
 
 <style lang="scss" scoped>
+  .wrapp {
+    height: 500px;
+  }
   .profile-header {
     background-position: center;
     background-size: cover;

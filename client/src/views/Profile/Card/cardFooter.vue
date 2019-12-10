@@ -3,8 +3,8 @@
     <nav class="stats row">
       <router-link :to="{ name: 'followPage', params: { nickname: nickname }, query: { p: 'followers' }}">
         <a href="#" class="stat">
-          <div class="stat-count" v-if="footerCountInfo">
-            {{ footerCountInfo.followersCount }}
+          <div class="stat-count">
+            {{ followers.length }}
           </div>
           <div class="stat-title">
             Followers
@@ -12,8 +12,8 @@
         </a>
       </router-link>
         <a href="#" class="stat">
-          <div class="stat-count" v-if="footerCountInfo">
-            {{ footerCountInfo.postsCount }}
+          <div class="stat-count">
+           {{ 0 }}
           </div>
           <div class="stat-title">
             Posts
@@ -21,8 +21,8 @@
         </a>
       <router-link :to="{ name: 'followPage', params: { nickname: nickname }, query: { p: 'following' }}">
         <a href="#" class="stat">
-          <div class="stat-count" v-if="footerCountInfo">
-            {{ footerCountInfo.followingCount }}
+          <div class="stat-count">
+            {{ following.length }}
           </div>
           <div class="stat-title">
             Following
@@ -41,8 +41,19 @@
 <script>
 export default {
   props: {
-    footerCountInfo: Object,
-    socialAccounts: Array
+    socialAccounts: Array,
+    following: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    },
+    followers: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    }
   },
   computed: {
     nickname () {

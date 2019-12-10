@@ -2,48 +2,61 @@
   <div class="profile-card">
       <div class="user-avatar">
         <img :src="profile.avatar_url" alt="avatar"/>
-        <i v-if="popularAccount" class="fas fa-star" title="Popular account"></i>
+<!--        <i v-if="popularAccount" class="fas fa-star" title="Popular account"></i>-->
       </div>
     <div class="card-content">
       <h2 class="name">
         {{profile.nickname}}
       </h2>
-      <follow-button :following="profile.is_following"></follow-button>
+      <follow-button v-if="currentUserId !== profile.profile_id" :following="followingIdsGetter.includes(profile.profile_id)" :id="profile.profile_id"></follow-button>
       <p class="decription">
         {{profile.status}}
       </p>
-      <card-footer :footerCountInfo="profile.counters" :socialAccounts="profile.socialAccounts"></card-footer>
+      <card-footer :following="profile.followings" :followers="profile.followers" :socialAccounts="profile.socialAccounts"></card-footer>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import CardFooter from './cardFooter'
 import FollowButton from './followBtn'
 
 export default {
-  components: {
-    CardFooter,
-    FollowButton
+  computed: {
+    ...mapGetters({ followingIdsGetter: 'profile/followingIdsGetter' }),
+    lastProfileId () {
+      return localStorage.getItem('lastProfileId')
+    },
+    currentUserId () {
+      return localStorage.getItem('profileId')
+    }
+  },
+  methods: mapActions(
+    { uploadCurrentFollowings: 'profile/uploadCurrentFollowings' }
+  ),
+  data () {
+    return {
+      popularAccountLimit: 100,
+      isFollowing: false
+    }
   },
   props: {
     profile: Object
   },
-  data () {
-    return {
-      popularAccountLimit: 10
-    }
+  components: {
+    CardFooter,
+    FollowButton
   },
-  computed: {
-    popularAccount () {
-      return this.profile.counters.followersCount > this.popularAccountLimit
-    }
+  mounted () {
+    this.uploadCurrentFollowings(this.currentUserId)
   }
 }
 </script>
 
 <style lang="scss" scoped>
   .profile-card {
+    height: 100%;
     position: relative;
     .user-avatar {
       position: absolute;

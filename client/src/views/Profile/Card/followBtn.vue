@@ -1,30 +1,46 @@
 <template>
   <div>
      <button class="profile-card-button" :class="btnClasses" @click="changeFollowStatus">
-       {{ following ? 'Unfollow' : 'Follow' }}
+       {{ this.isFollowing ? 'Unfollow' : 'Follow' }}
      </button>
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 export default {
   props: {
     following: {
-      type: Boolean,
-      default: false
+      type: Boolean
+    },
+    id: String
+  },
+  methods: { ...mapActions({ uploadProfileAction: 'profile/uploadProfileAction' }),
+    changeFollowStatus () {
+      let action = this.isFollowing ? 'unfollow' : 'follow'
+      this.uploadProfileAction({ action: action, id: this.profileId })
+      this.isFollowing = !this.isFollowing
+    }
+  },
+  data () {
+    return {
+      isFollowing: this.following
     }
   },
   computed: {
     btnClasses () {
       return {
-        'button-orange': !this.following,
-        'button-blue': this.following
+        'button-orange': !this.isFollowing,
+        'button-blue': this.isFollowing
       }
+    },
+    profileId () {
+      return this.id
     }
   },
-  methods: {
-    changeFollowStatus () {
-      this.following = !this.following
+  watch: {
+    'following' (to) {
+      this.isFollowing = to
     }
   }
 }
