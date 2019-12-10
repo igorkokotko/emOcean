@@ -46,7 +46,8 @@ import {
   ClosePopup,
   QVirtualScroll,
   QBanner,
-  QScrollObserver
+  QScrollObserver,
+  QChatMessage
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -92,7 +93,8 @@ Vue.use(Quasar, {
     QDialog,
     QBanner,
     QVirtualScroll,
-    QScrollObserver
+    QScrollObserver,
+    QChatMessage
   },
   directives: {
     Ripple,
