@@ -19,7 +19,7 @@ module.exports = {
     loaderOptions: {
       sass: {
         prependData: `
-          @import "@/assets/styles/variables.scss";
+          @import "quasar/dist/quasar.sass";
         `
       }
     }
