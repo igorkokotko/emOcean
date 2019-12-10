@@ -1,7 +1,7 @@
 const { db, storage } = require('../config/databaseConfig')
 const CustomError = require('../common/CustomError')
 
-const uploadPhoto = function(photo, userId, dest) {
+const uploadPhoto = function (photo, userId, dest) {
   const metaData = {
     contentType: photo.mimetype
   }
@@ -12,13 +12,12 @@ const uploadPhoto = function(photo, userId, dest) {
   })
 }
 
-const saveProfile = function(profile, userId) {
+const saveProfile = function (profile, userId) {
   const profilesRef = db.collection('users')
   const profileRef = db.collection('users').doc(userId)
 
   return profileRef.get().then(doc => {
     const prevNickname = doc.data().nickname
-    // if user didn't change nickname, everything is ok
     if (prevNickname === profile.nickname) {
       return profileRef
         .update({
@@ -33,7 +32,6 @@ const saveProfile = function(profile, userId) {
           return 'Profile edited successfully'
         })
     } else {
-      // but if user changed nickname, we need to check if new nickname is unique and only then update data
       return profilesRef
         .where('nickname', '==', profile.nickname)
         .get()
@@ -66,7 +64,7 @@ const saveProfile = function(profile, userId) {
   })
 }
 
-const getProfileById = function(userId) {
+const getProfileById = function (userId) {
   const profileRef = db.collection('users').doc(userId)
 
   return profileRef.get().then(doc => {
@@ -81,7 +79,7 @@ const getProfileById = function(userId) {
   })
 }
 
-const getProfileByNickname = function(userNickname) {
+const getProfileByNickname = function (userNickname) {
   const profilesRef = db.collection('users')
 
   return profilesRef
@@ -95,13 +93,15 @@ const getProfileByNickname = function(userNickname) {
           status: 404
         })
       }
+      let profileData
       profile.forEach(doc => {
-        return doc.data()
+        profileData = doc.data()
       })
+      return profileData
     })
 }
 
-const setPreferences = function(preferences, userId) {
+const setPreferences = function (preferences, userId) {
   const profileRef = db.collection('users').doc(userId)
 
   return profileRef.get().then(doc => {
@@ -119,7 +119,7 @@ const setPreferences = function(preferences, userId) {
   })
 }
 
-const getFollowersById = function(id) {
+const getFollowersById = function (id) {
   const profileRef = db.collection('users').doc(id)
 
   return profileRef.get().then(doc => {
@@ -130,15 +130,19 @@ const getFollowersById = function(id) {
         status: 404
       })
     }
-    const { followers } = doc.data()
+    const followers = doc.data().followers
     if (!followers || followers.length === 0) {
-      return 'This profile doesnt have followers'
+      throw new CustomError({
+        name: 'DatabaseError',
+        message: 'This profile doesnt have followers',
+        status: 404
+      })
     }
     return followers
   })
 }
 
-const followProfile = function(myUserId, followId) {
+const followProfile = function (myUserId, followId) {
   const myProfileRef = db.collection('users').doc(myUserId)
   const followProfileRef = db.collection('users').doc(followId)
 
@@ -146,7 +150,7 @@ const followProfile = function(myUserId, followId) {
     .runTransaction(t => {
       return t.get(myProfileRef).then(docMyProfile => {
         return t.get(followProfileRef).then(docFollowProfile => {
-          const { followings } = docMyProfile.data()
+          const followings = docMyProfile.data().followings
           const myProfileData = [
             {
               nickname: docMyProfile.data().nickname,
@@ -154,7 +158,7 @@ const followProfile = function(myUserId, followId) {
               id: myUserId
             }
           ]
-          const { followers } = docFollowProfile.data()
+          const followers = docFollowProfile.data().followers
           const followProfileData = [
             {
               nickname: docFollowProfile.data().nickname,
@@ -221,7 +225,7 @@ const followProfile = function(myUserId, followId) {
     })
 }
 
-const unfollowProfile = function(myUserId, followId) {
+const unfollowProfile = function (myUserId, followId) {
   const myProfileRef = db.collection('users').doc(myUserId)
   const followProfileRef = db.collection('users').doc(followId)
 
@@ -266,10 +270,8 @@ const unfollowProfile = function(myUserId, followId) {
     })
 }
 
-const blockProfile = function(myId, blockedProfileId) {
-  // Profile of user which wants to block someone
+const blockProfile = function (myId, blockedProfileId) {
   const profileRef = db.collection('users').doc(myId)
-  // Profile of user which would be blocked
   const blockedProfileRef = db.collection('users').doc(blockedProfileId)
 
   return db.runTransaction(t => {
@@ -282,8 +284,9 @@ const blockProfile = function(myId, blockedProfileId) {
             status: 404
           })
         }
-        const { followers, blockedProfiles } = myProfileDocument.data()
-        const { followings } = blockedProfileDocument.data()
+        const followers = myProfileDocument.data().followers
+        const blockedProfiles = myProfileDocument.data().blockedProfiles
+        const followings = blockedProfileDocument.data().followings
         const blockedProfileData = [
           {
             id: blockedProfileId,
@@ -349,7 +352,7 @@ const blockProfile = function(myId, blockedProfileId) {
   })
 }
 
-const unblockProfile = function(myId, blockedProfileId) {
+const unblockProfile = function (myId, blockedProfileId) {
   const profileRef = db.collection('users').doc(myId)
 
   return profileRef.get().then(doc => {
@@ -360,7 +363,7 @@ const unblockProfile = function(myId, blockedProfileId) {
         status: 404
       })
     }
-    const { blockedProfiles } = doc.data()
+    const blockedProfiles = doc.data().blockedProfiles
 
     if (
       !blockedProfiles ||
@@ -384,7 +387,7 @@ const unblockProfile = function(myId, blockedProfileId) {
   })
 }
 
-const getFollowingsById = function(profileId) {
+const getFollowingsById = function (profileId) {
   const profileRef = db.collection('users').doc(profileId)
 
   return profileRef.get().then(doc => {
@@ -395,7 +398,7 @@ const getFollowingsById = function(profileId) {
         status: 404
       })
     }
-    const { followings } = doc.data()
+    const followings = doc.data().followings
     if (!followings || followings.length === 0) {
       throw new CustomError({
         name: 'DatabaseError',
