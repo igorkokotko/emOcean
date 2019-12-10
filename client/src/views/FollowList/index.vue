@@ -51,8 +51,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      followingGetter: 'followingGetter',
-      followersGetter: 'followersGetter'
+      followingGetter: 'profile/followingGetter',
+      followersGetter: 'profile/followersGetter'
     }),
     tab () {
       return this.$route.query.p
