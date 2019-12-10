@@ -18,14 +18,13 @@ let getFeedAnonimus = function (req, res) {
 let getFeedByPreferences = function (req, res) {
     try {
         const userDoc = db.collection('users').doc(req.userId)        
-        let preferences = userDoc
+        userDoc
             .get()
             .then(doc => {
-                console.log(doc.data().preferences);
                 let pref = doc.data().preferences
 
-                const docs = db.collection('posts')
-                const postsCollection = docs.where('tag', 'in', pref).get()
+                const postsDocs = db.collection('posts')
+                const postsCollection = postsDocs.where('tag', 'array-contains-any', pref).get()
                 postsCollection.then((querySnapshot) => {
                     let posts = {}
                     querySnapshot.docs.forEach((doc) => {
@@ -34,9 +33,6 @@ let getFeedByPreferences = function (req, res) {
                     res.json({posts})
                 })
           })
-        
-
-        
     } catch (error) {
         res.status(500).send('Error - ' + error)
     }    
