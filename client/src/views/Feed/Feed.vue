@@ -64,9 +64,8 @@ export default {
       isModelVisible: false
     }
   },
-   created () {
+  created () {
     let route = ''
-    // console.log(Authorized.isAuthorized())
     if (Authorized.isAuthorized()) {
       route = '/api/feed/authorized'
     } else {
@@ -78,7 +77,7 @@ export default {
       })
       .catch(error => {
         if (error.response) {
-          // this.showNotif()
+          this.showNotif()
         }
       })
   },
@@ -109,7 +108,7 @@ export default {
   },
   components: {
     'v-comments': PageComments
-  } 
+  }
 }
 </script>
 
