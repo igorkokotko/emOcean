@@ -23,7 +23,8 @@ const routes = [
     component: AddPost
   },
   {
-    path: '/profile/:id',
+    path: '/profile/:nickname',
+    props: true,
     name: 'profile',
     component: () => import('../views/Profile/index.vue')
   },

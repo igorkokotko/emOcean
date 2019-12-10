@@ -21,7 +21,7 @@
         <q-space ></q-space>
         <div id="input-search" ref="search" class="fixed-top-center" :style="{ visibility: 'hidden'}">
           <q-input v-model='nickname' @input="searchByNick" />
-          <nickname-search v-if="list" id="search-result" :results="nicknameSearchResults"/>
+          <nickname-search v-if="showSearch" id="search-result" :results="nicknameSearchResults" @closeSearch="showSearch=false"/>
         </div>
         <q-btn
           flat
@@ -88,7 +88,7 @@ export default {
   data () {
     return {
       nickname: '',
-      list: true,
+      showSearch: true,
       nicknameSearchResults: []
     }
   },
@@ -102,7 +102,7 @@ export default {
   methods: {
     searchByNick: debounce(function (value) {
       if (!/^#/.test(value) && value !== '') {
-        this.list = true
+        this.showSearch = true
         ApiService.searchByNick({ nickname: value })
           .then(res => {
             this.nicknameSearchResults = this.nicknameSearchResults = []
@@ -118,7 +118,7 @@ export default {
             }
           })
       } else {
-        this.list = false
+        this.showSearch = false
         this.nicknameSearchResults = []
       }
     }, 300),
