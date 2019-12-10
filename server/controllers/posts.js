@@ -33,8 +33,9 @@ const searchPosts = function(req, res) {
   }
   const tagName = req.query.tag
 
-  let postsDocsPromise = searchService.findByTag(tagName)
-  postsDocsPromise.then(snapshot => {
+  let postsDocs = searchService.findByTag(tagName)
+  postsDocs
+  .then(snapshot => {
     if (snapshot.empty) {
       return res.send(400).send('No matching documents.')
     }
