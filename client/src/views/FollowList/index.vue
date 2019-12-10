@@ -59,12 +59,12 @@ export default {
     }
   },
   mounted () {
-    this.uploadFollowers('profileId')
-    this.uploadFollowings('profileId')
+    this.uploadFollowers(this.profileId)
+    this.uploadFollowings(this.profileId)
   },
   methods: mapActions({
-    uploadFollowers: 'uploadFollowers',
-    uploadFollowings: 'uploadFollowings'
+    uploadFollowers: 'profile/uploadFollowers',
+    uploadFollowings: 'profile/uploadFollowings'
   })
 }
 </script>

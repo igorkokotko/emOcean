@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import FollowButton from '../Profile/Card/followBtn'
 import Avatar from '../../components/Avatar'
 
@@ -36,8 +36,7 @@ export default {
     return {
     }
   },
-  computed: mapGetters({ followingIdsGetter: 'followingIdsGetter' }),
-  methods: mapActions({ uploadFollowings: 'uploadFollowings' })
+  methods: mapActions({ uploadFollowings: 'profile/uploadFollowings' })
 }
 </script>
 

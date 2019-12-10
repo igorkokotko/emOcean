@@ -32,10 +32,13 @@ export default {
     ...mapGetters({ profileGetter: 'profile/profileGetter' }),
     userBackground () {
       return this.profileGetter.user_background ? 'url(' + this.profileGetter.user_background + ')' : 'url(https://i.ytimg.com/vi/DiS7ZMwTA0I/maxresdefault.jpg)'
+    },
+    nickname () {
+      return this.$route.params.nickname
     }
   },
   mounted () {
-    this.uploadProfile()
+    this.uploadProfile(this.nickname)
   },
   methods: mapActions({ uploadProfile: 'profile/uploadProfile' })
 }

@@ -22,17 +22,22 @@ import CardFooter from './cardFooter'
 import FollowButton from './followBtn'
 
 export default {
-  data () {
-    return {
-      popularAccountLimit: 100
-    }
+  components: {
+    CardFooter,
+    FollowButton
   },
   props: {
     profile: Object
   },
-  components: {
-    CardFooter,
-    FollowButton
+  data () {
+    return {
+      popularAccountLimit: 10
+    }
+  },
+  computed: {
+    popularAccount () {
+      return this.profile.counters.followersCount > this.popularAccountLimit
+    }
   }
 }
 </script>
