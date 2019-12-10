@@ -26,6 +26,7 @@
                 id="file"
                 class="inputfile"
                 @change="uploadVideo"
+<<<<<<< HEAD
               />
             </q-card-section>
           </q-card>
@@ -68,6 +69,57 @@
         </div>
         <div class="caption-container">
           <textarea ref="textarea" maxlength="128" placeholder="Write a caption..." type="text"></textarea>
+=======
+                />
+              </q-card-section>
+            </q-card>
+          </q-dialog>
+        </div>
+    </template>
+    <div id="chip" ref="chip" :style="{ display: 'none' }">
+        <template>
+          <q-banner
+            inline-actions
+            dense
+            class="text-white bg-red">
+            File format that you want to download is incorrect. Please select a video file.
+          </q-banner>
+        </template>
+      </div>
+        <div class="step-buttons">
+            <a class="cancel-btn"
+              @click="$router.push('/feed')">
+                Cancel
+            </a>
+            <a class="share-btn"
+            @click="addToFeed"
+              >
+                Share
+            </a>
+          </div>
+        <div class="wrapper">
+        <div class="adder-wrapper">
+          <div class="selected-video">
+      <video ref="video" width="480" controls>
+        <q-resize-observer @resize="onResize" />
+          <source
+        :src="post.postVideo"
+        type="video/mp4">
+      <source
+        :src="post.postVideo"
+        type="video/ogg">
+      <source
+        :src="post.postVideo"
+        type="video/webm">
+        </video>
+            </div>
+          <div class="caption-container">
+            <textarea ref="textarea" maxlength="128"
+              placeholder="Write a caption..."
+              type="text">
+            </textarea>
+          </div>
+>>>>>>> add some features and fixes
         </div>
       </div>
     </div>
@@ -76,8 +128,12 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+<<<<<<< HEAD
 import { uploadMedia } from '../../services/posts'
 import VEmojiPicker from 'v-emoji-picker'
+=======
+import axios from 'axios'
+>>>>>>> add some features and fixes
 
 export default {
   name: 'AddPost',
@@ -86,8 +142,18 @@ export default {
       dialog: true,
       showEmojiBool: false,
       post: {
+<<<<<<< HEAD
         videoUrl: '',
         tags: [],
+=======
+        createdOn: new Date(),
+        username: 'fullstack_vue',
+        userImage: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1211695/vue_lg_bg.png',
+        postVideo: '',
+        likes: 0,
+        hasBeenLiked: false,
+        tag: [],
+>>>>>>> add some features and fixes
         caption: '',
         emoji: '',
         likes: [],
@@ -95,15 +161,21 @@ export default {
       }
     }
   },
+<<<<<<< HEAD
   components: {
     VEmojiPicker
   },
   updated () {
     if (!this.dialog && this.post.videoUrl === '') {
+=======
+  updated () {
+    if (!this.dialog && this.post.postVideo === "") {
+>>>>>>> add some features and fixes
       this.$router.push('/feed')
     }
   },
   methods: {
+<<<<<<< HEAD
     ...mapActions({
       addPostAction: 'posts/addPostAction'
     }),
@@ -142,11 +214,32 @@ export default {
       this.post.caption = this.$refs.textarea.value
       this.addPostAction(this.post)
       this.$router.push('/feed?tab=followings')
+=======
+    ...mapActions('posts', ['addPost']),
+    async addToFeed () {
+      let valueArr = this.$refs.textarea.value.split(" ")
+      valueArr.filter((word) => {
+        if (word.match(/#\w+/)) {
+          word = word.slice(1)
+          this.post.tag.push(word)
+        }
+      })
+      this.post.caption = this.$refs.textarea.value
+      this.addPost(this.post)
+      axios.post('/api/posts/save-post', this.post)
+        .then((response) => {
+        })
+        .catch(error => {
+          console.log(error)
+        })
+      this.$router.push('/feed')
+>>>>>>> add some features and fixes
     },
     async uploadVideo (e) {
       const files = e.target.files
       if (!files.length) return
       if (files[0].type.match(/video..../gi)) {
+<<<<<<< HEAD
         const formData = new FormData()
         formData.append('file', files[0])
         try {
@@ -155,21 +248,47 @@ export default {
           const videoUrl = await uploadMedia(formData, type)
           this.post.videoUrl = videoUrl.data.videoUrl
           this.$refs.video.src = this.post.videoUrl
+=======
+        const reader = new FileReader()
+        reader.readAsDataURL(files[0])
+        const formData = new FormData()
+        formData.append('file', files[0])
+        try {
+          const videoUrl = await axios.post('https://emocean.dev/api/posts/upload-videos?type=single-video', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          })
+
+          this.post.postVideo = videoUrl.data.videoUrl
+          this.$refs.video.src = this.post.postVideo
+>>>>>>> add some features and fixes
           this.dialog = false
         } catch (err) {
           console.log(err)
         }
       } else {
+<<<<<<< HEAD
         this.$refs.chip.style.display = 'block'
         setTimeout(() => {
           this.$refs.chip.style.display = 'none'
           this.$refs.input.value = ''
+=======
+        this.$refs.chip.style.display = "block"
+        setTimeout(() => {
+          this.$refs.chip.style.display = "none"
+          this.$refs.input.value = ""
+>>>>>>> add some features and fixes
         }, 5000)
       }
     },
     onResize () {
       if (this.$refs.video.videoHeight > this.$refs.video.videoWidth) {
+<<<<<<< HEAD
         this.$refs.video.height = '270'
+=======
+        this.$refs.video.height = "270"
+>>>>>>> add some features and fixes
       }
     }
   },
@@ -209,6 +328,7 @@ export default {
 .inputfile {
   display: none;
 }
+<<<<<<< HEAD
 #hour-glass {
   position: absolute;
   left: 43%;
@@ -233,6 +353,22 @@ export default {
 }
 
 #modal-window .q-card__section {
+=======
+
+#chip .q-banner{
+  z-index: 9999;
+    position: absolute;
+    width: 100%;
+    top: 0
+}
+
+#chip .q-banner__content{
+    padding: 3px;
+    text-align: center;
+}
+
+#modal-window .q-card__section{
+>>>>>>> add some features and fixes
   height: 70px;
 }
 #modal-window .q-bar {
@@ -266,6 +402,7 @@ export default {
     background: #000;
   }
 }
+<<<<<<< HEAD
 .step-buttons {
   margin-top: 20px;
   display: flex;
@@ -273,6 +410,22 @@ export default {
   justify-content: space-between;
   .cancel-btn,
   .share-btn {
+=======
+.selected-video{
+   max-width: 480px;
+   video{
+    width: 100%;
+    background: #000;
+   }
+}
+.step-buttons{
+    margin-top: 20px;
+    display: flex;
+    padding: 0 66px;
+    justify-content: space-between;
+ .cancel-btn,
+ .share-btn{
+>>>>>>> add some features and fixes
     padding: 7px;
     font-size: 1rem;
     background: #87e0f5;

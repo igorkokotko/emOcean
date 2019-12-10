@@ -1,6 +1,7 @@
 const CustomError = require('../common/CustomError')
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const postsService = require('../services/PostsService')
+<<<<<<< HEAD
 const VideoHandler = require('../videoHandling/videoHandler')
 const clearTempFiles = require('../common/clearTempFiles')
 const searchService = require("../services/SearchService")
@@ -20,6 +21,26 @@ const uploadVideos = asyncMiddleware(async (req, res, next) => {
 }
 )
 
+=======
+const { validateVideo } = require('../validation/posts')
+const { db } = require("../config/databaseConfig");
+
+const uploadVideo = asyncMiddleware(async(req, res, next) => {
+    const uploadedVideo = req.file
+        // second arg means max image size in mb
+    const validatedVideoError = validateVideo(uploadedVideo, 20)
+    if (validatedVideoError !== undefined) {
+        return next(new CustomError(validatedVideoError))
+    }
+    const postVideoUrl = await postsService.uploadVideo(
+        uploadedVideo,
+        req.userId,
+        'videos'
+    )
+
+    res.status(200).json({ postVideoUrl })
+})
+>>>>>>> add some features and fixes
 
 const savePost = asyncMiddleware(async(req, res, next) => {
     try {
@@ -62,7 +83,13 @@ const searchPosts = function(req, res) {
 }
 
 module.exports = {
+<<<<<<< HEAD
   savePost,
   uploadVideos,
   searchPosts
 }
+=======
+    savePost,
+    uploadVideo
+}
+>>>>>>> add some features and fixes
