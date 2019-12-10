@@ -17,9 +17,9 @@
           </q-avatar>
         </q-item-section>
         <!-- change after deployment !!! -->
-        <a :href="'http://localhost:8080/profile/' + user.id" class='row'>
-        <q-item-section class="col">{{ user.nickname }}</q-item-section>
-        </a>
+        <router-link :to="{ name: 'profile', params: {nickname: user.nickname}}">
+        <q-item-section class="col" @click="$emit('closeSearch')">{{ user.nickname }}</q-item-section>
+        </router-link>
       </q-item>
       <q-item v-else>
         <q-item-section>

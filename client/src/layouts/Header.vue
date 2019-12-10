@@ -21,7 +21,7 @@
         <q-space ></q-space>
         <div id="input-search" ref="search" class="fixed-top-center" :style="{ visibility: 'hidden'}">
           <q-input v-model='nickname' @input="searchByNick" />
-          <nickname-search v-if="list" id="search-result" :results="nicknameSearchResults"/>
+          <nickname-search v-if="showSearch" id="search-result" :results="nicknameSearchResults" @closeSearch="closeSearchComponent"/>
         </div>
         <q-btn
           flat
@@ -88,7 +88,7 @@ export default {
   data () {
     return {
       nickname: '',
-      list: true,
+      showSearch: true,
       nicknameSearchResults: []
     }
   },
@@ -102,10 +102,11 @@ export default {
   methods: {
     searchByNick: debounce(function (value) {
       if (!/^#/.test(value) && value !== '') {
-        this.list = true
+        this.nicknameSearchResults = []
+        this.showSearch = true
         ApiService.searchByNick({ nickname: value })
           .then(res => {
-            this.nicknameSearchResults = this.nicknameSearchResults = []
+            this.nicknameSearchResults = []
             res.data.message.forEach(element => {
               this.nicknameSearchResults.push({ id: element.profileId, nickname: element.nickname, avatar: element.avatar_url })
             })
@@ -118,7 +119,7 @@ export default {
             }
           })
       } else {
-        this.list = false
+        this.showSearch = false
         this.nicknameSearchResults = []
       }
     }, 300),
@@ -140,6 +141,11 @@ export default {
         message: 'You logged out.'
       })
       this.$router.push('/feed')
+    },
+
+    closeSearchComponent () {
+      this.showSearch = false
+      this.nickname = ''
     }
   }
 }

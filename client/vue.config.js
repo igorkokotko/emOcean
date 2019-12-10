@@ -2,7 +2,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/api/': {
-        target: 'http://localhost:5000',
+        target: 'https://emocean.dev',
         ws: true,
         changeOrigin: true
       }
@@ -14,5 +14,14 @@ module.exports = {
       treeShake: true
     }
   },
-  transpileDependencies: [/[\\/]node_modules[\\/]quasar[\\/]/]
+  transpileDependencies: [/[\\/]node_modules[\\/]quasar[\\/]/],
+  css: {
+    loaderOptions: {
+      sass: {
+        prependData: `
+          @import "quasar/dist/quasar.sass";
+        `
+      }
+    }
+  }
 }

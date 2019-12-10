@@ -24,8 +24,8 @@ const routes = [
   },
   {
     path: '/profile/:nickname',
-    name: 'profile',
     props: true,
+    name: 'profile',
     component: () => import('../views/Profile/index.vue')
   },
   {
@@ -33,6 +33,11 @@ const routes = [
     name: 'followPage',
     props: true,
     component: () => import('../views/FollowList/index.vue')
+  },
+  {
+    path: "/comments",
+    name: "comments",
+    component: () => import("../views/Comments/PageComments.vue")
   },
   {
     path: '/settings',
