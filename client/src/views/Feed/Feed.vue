@@ -2,20 +2,30 @@
   <div id="feed">
     <v-comments :isModelVisible="isModelVisible" :closePopup="closePopup" />
     <div class="feed-wrapper">
-      <div class="feed-post" v-for="(post, key) in getPosts" :key="key">
-        <div
-          class="image-container"
-          @dblclick="updateLikes({ key: key, updates: ({ hasBeenLiked : post.hasBeenLiked, likes: post.likes })  })"
-          @click="play"
-        >
+      <div class="feed-post"
+        v-for="(post, key) in getPosts"
+        :key="key"
+      >
+        <div class="video-container"
+        @dblclick="updateLikes({ key: key, updates: ({ hasBeenLiked : post.hasBeenLiked, likes: post.likes })  })"
+        @click="play">
+        <div class="test-wrapper">
           <figure class="image is-32x32">
             <img :src="post.userImage" />
           </figure>
-          <video ref="videoElm" width="480" max-height="270">
-            <source :src="post.postVideo" type="video/mp4" />
-            <source :src="post.postVideo" type="video/ogg" />
-            <source :src="post.postVideo" type="video/webm" />
+          <video ref="videoElm" width="480">
+            <q-resize-observer @resize="onResize" />
+            <source
+              :src="post.postVideo"
+              type="video/mp4">
+            <source
+              :src="post.postVideo"
+              type="video/ogg">
+            <source
+              :src="post.postVideo"
+              type="video/webm">
           </video>
+          </div>
         </div>
         <div class="content-wrapper">
           <div class="heart-and-comments">
@@ -23,8 +33,10 @@
               class="heart"
               @click="updateLikes({ key: key, updates: ({ hasBeenLiked : post.hasBeenLiked, likes: post.likes })  })"
             >
-              <i class="far fa-heart fa-lg" :class="{'fas': post.hasBeenLiked}"></i>
-              <p class="likes">{{post.likes}}</p>
+              <i class="far fa-heart fa-lg"
+                :class="{'fas': post.hasBeenLiked}">
+              </i>
+              <p ref="likes" class="likes">{{post.likes}}</p>
             </div>
             <div class="comments-icon" @click="closePopup(true)">
               <i class="far fa-comment-alt fa-md"></i>
@@ -81,6 +93,15 @@ export default {
         }
       })
   },
+  mounted () {
+  // If value more than 999, function replaces thousends to "k"
+    for (let i = 0; i < this.$refs.likes.length; i++) {
+      if (this.$refs.likes[i].textContent.length > 3) {
+        let len = this.$refs.likes[i].textContent.length
+        this.$refs.likes[i].textContent = this.$refs.likes[i].textContent.slice(0, len - 3) + "k"
+      }
+    }
+  },
   methods: {
     ...mapActions('posts', ['updateLikes', 'updateState']),
     closePopup (visibility) {
@@ -93,6 +114,13 @@ export default {
         currentVideo.play()
       } else {
         currentVideo.pause()
+      }
+    },
+    onResize () {
+      for (let i = 0; i < this.$refs.videoElm.length; i++) {
+        if (this.$refs.videoElm[i].videoHeight > this.$refs.videoElm[i].videoWidth) {
+          this.$refs.videoElm[i].height = "270"
+        }
       }
     }
   },
@@ -127,11 +155,6 @@ export default {
     left: 25px;
     top: 23px;
   }
-}
-.feed-post {
-  padding-top: 50px;
-  height: fit-content;
-  padding: 6px 0px;
 }
 .heart-and-comments {
   flex-direction: column;
@@ -200,12 +223,16 @@ export default {
 .content p {
   color: #dbe4e2;
 }
-.image-container {
-  max-width: 800px;
-  position: relative;
-  background: #87e0f5;
-  border-radius: 11px;
-  box-shadow: 1px 1px 18px;
+.test-wrapper{
+    background: #000;
+}
+.video-container{
+    padding: 7px;
+    max-width: 800px;
+    position: relative;
+    background: #87e0f5;
+    border-radius: 11px;
+    box-shadow: 1px 1px 18px;
   img {
     border-radius: 99px;
     top: 17%;
@@ -222,18 +249,19 @@ export default {
   }
 }
 .feed-post {
-  position: relative;
-  padding: 10px;
-  .content-wrapper {
-    margin: 7.5px 10px;
-  }
-  video {
-    max-width: 100%;
-    padding: 7px 7px 2px 7px;
-  }
-  .fas.fa-heart {
-    color: #f06595;
-  }
+    position: relative;
+    padding: 10px;
+    .content-wrapper {
+      margin: 7.5px 10px;
+    }
+    video{
+      max-width: 100%;
+      padding: 0px;
+      margin-bottom: -6px;
+    }
+    .fas.fa-heart {
+      color: #f06595;
+    }
 }
 body,
 html {
