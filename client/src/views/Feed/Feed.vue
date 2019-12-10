@@ -55,6 +55,8 @@ import PageComments from '../Comments/PageComments'
 import { mapGetters, mapActions } from 'vuex'
 import axios from 'axios'
 
+const Authorized = require('../Authentication/Authorized.js')
+
 export default {
   name: 'Feed',
   data () {
@@ -63,13 +65,20 @@ export default {
     }
   },
    created () {
-    axios.get('/api/feed')
+    let route = ''
+    // console.log(Authorized.isAuthorized())
+    if (Authorized.isAuthorized()) {
+      route = '/api/feed/authorized'
+    } else {
+      route = '/api/feed/anonimus'
+    }
+    axios.get(route)
       .then((response) => {
         this.updateState(response.data.posts)
       })
       .catch(error => {
         if (error.response) {
-          this.showNotif()
+          // this.showNotif()
         }
       })
   },
@@ -100,7 +109,7 @@ export default {
   },
   components: {
     'v-comments': PageComments
-  }
+  } 
 }
 </script>
 
