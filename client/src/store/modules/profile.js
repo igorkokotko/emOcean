@@ -32,7 +32,11 @@ export default {
       axios
         .get('/api/profiles/get-followers/' + id)
         .then(response => {
-          commit('updateFollowers', response.data)
+          if (response.data.followers === "This profile doesnt have followers") {
+            commit('updateFollowers', [])
+          } else {
+            commit('updateFollowers', response.data.followers)
+          }
         })
         .catch(error => console.log(error))
     },
@@ -40,9 +44,35 @@ export default {
       axios
         .get('/api/profiles/get-followings/' + id)
         .then(response => {
-          commit('updateFollowings', response.data)
+          commit('updateFollowings', response.data.followings)
         })
-        .catch(error => console.log(error))
+        .catch(error => {
+          if (error.response.data === "User with given id doesnt have followings") {
+            commit('updateFollowings', [])
+          }
+        })
+    },
+    uploadCurrentFollowings ({ commit }, id) {
+      axios
+        .get('/api/profiles/get-followings/' + id)
+        .then(response => {
+          commit('updateCurrentFollowings', response.data.followings)
+        })
+        .catch(error => {
+          if (error.response.data === "User with given id doesnt have followings") {
+            commit('updateCurrentFollowings', [])
+          }
+        })
+    },
+    // action for follow/unfollow, block/unblock user
+    uploadProfileAction ({ commit }, data) {
+      axios
+        .get('/api/profiles/profile-action?action=' + data.action + '&id=' + data.id)
+        .then(response => {
+          console.log(response)
+          commit('', response.data)
+        })
+        .catch(error => console.log(error.response.data))
     }
   },
 
@@ -57,32 +87,46 @@ export default {
       state.profile = profileData
     },
     updateFollowers (state, profileData) {
-      state.profile.followers = profileData
+      state.profileFollowers = profileData
     },
     updateFollowings (state, profileData) {
-      state.profile.following = profileData
+      state.profileFollowings = profileData
+    },
+    updateCurrentFollowings (state, profileData) {
+      state.currentProfileFollowings = profileData
     }
   },
 
   state: {
     myProfile: {},
     myProfileId: '',
-    profile: {}
+    profile: {},
+    profileFollowers: [],
+    profileFollowings: [],
+    currentProfileFollowings: []
   },
 
   getters: {
     profileGetter (state) {
-      localStorage.lastProfileId = state.profile.profileId
+      // localStorage.lastProfileId = state.profile.profile_id
+      window.localStorage.setItem('lastProfileId', state.profile.profile_id)
       return state.profile
     },
     followingGetter (state) {
-      return state.profile.following
+      return state.profileFollowings
     },
     followersGetter (state) {
-      return state.profile.followers
+      return state.profileFollowers
     },
     myProfile (state) {
       return state.myProfile
+    },
+    followingIdsGetter (state) {
+      let followingIds = []
+      state.currentProfileFollowings.map(function (value, key) {
+        followingIds.push(value.id)
+      })
+      return followingIds
     }
   }
 }
