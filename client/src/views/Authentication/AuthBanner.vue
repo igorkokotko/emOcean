@@ -1,22 +1,24 @@
 <template>
   <q-banner v-if="showBanner" inline-actions dark class="text-white auth-banner fixed-bottom">
-      <div class="row items-center q-ml-md">
-        <q-icon name="sentiment_satisfied" size="40px" class="q-mr-sm" />
-        <p
-          class="banner-text"
-        >Sign in to watch videos from friends and find other accounts you may like.</p>
+    <div class="row items-center q-ml-md">
+      <q-icon name="sentiment_satisfied" size="40px" class="q-mr-sm" />
+      <p
+        class="banner-text"
+      >Sign in to watch videos from friends and find other accounts you may like.</p>
+    </div>
+    <template v-slot:action>
+      <div class="column q-mr-lg">
+        <q-btn flat color="white" label="Sign in" to="/login" @click="closeBanner" size="20px" />
+        <q-btn flat color="white" label="Register" to="/register" @click="closeBanner" size="20px" />
       </div>
-      <template v-slot:action>
-        <div class="column q-mr-lg">
-          <q-btn flat color="white" label="Sign in" to="/login" @click="closeBanner" size="20px" />
-          <q-btn flat color="white" label="Register" to="/register" @click="closeBanner" size="20px" />
-        </div>
-      </template>
-      <q-btn flat round icon="close" class="absolute-top-right" size="10px" @click="closeBanner" />
-    </q-banner>
+    </template>
+    <q-btn flat round icon="close" class="absolute-top-right" size="10px" @click="closeBanner" />
+  </q-banner>
 </template>
 
 <script>
+const Authorized = require('./Authorized.js')
+
 export default {
   data () {
     return {
@@ -27,6 +29,9 @@ export default {
     closeBanner () {
       this.showBanner = false
     }
+  },
+  created () {
+    if (Authorized.isAuthorized) this.showBanner = false
   }
 }
 </script>
@@ -38,9 +43,9 @@ export default {
     font-size: 20px;
   }
 }
-@media screen and (max-width: 767px){
+@media screen and (max-width: 767px) {
   .auth-banner {
-    display:none;
+    display: none;
   }
 }
 </style>

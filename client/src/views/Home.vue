@@ -9,6 +9,7 @@
 import AuthModal from './Authentication/AuthModal.vue'
 import { authModalMixin } from '../utilities/authModalMixin.js'
 
+
 export default {
   mixins: [authModalMixin],
   name: 'home',
