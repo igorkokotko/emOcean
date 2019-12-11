@@ -343,6 +343,9 @@ export default {
           this.isNewAvatarUploaded = true
           this.sendProfile()
         })
+        .catch(() => {
+          this.loading = false
+        })
     },
 
     onCreatedCoverPhotoBlob (blob) {
@@ -354,6 +357,9 @@ export default {
           this.profile.user_background = res.data.imageUrl
           this.isNewCoverPhotoUploaded = true
           this.sendProfile()
+        })
+        .catch(() => {
+          this.loading = false
         })
     },
 
