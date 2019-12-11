@@ -24,7 +24,7 @@
       round
       color="teal"
       @click="savePreferences(getPreferences)"
-
+      to="/feed"
     > go
     </q-btn>
   </div>
@@ -55,19 +55,27 @@ export default {
       this.getChosenTags(state)
       axios.post('/api/preferences/save', this.tags)
         .then((response) => {
+          this.showNotifSaveData()
         })
         .catch(error => {
           this.rollbackChanges(this.tags)
           if (error.response) {
-            this.showNotif()
+            this.showNotifErr()
           }
         })
     },
 
-    showNotif () {
+    showNotifErr () {
       this.$q.notify({
         message: 'Oooops, something went wrong!',
         icon: 'announcement'
+      })
+    },
+    showNotifSaveData () {
+      this.$q.notify({
+        message: 'Your preferences were saved. Enjoy your new feed ',
+        icon: 'announcement',
+        color: 'primary'
       })
     }
   },

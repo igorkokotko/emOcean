@@ -73,11 +73,10 @@ export default {
     }
     axios.get(route)
       .then((response) => {
-        this.updateState(response.data.posts)
+        this.updateState(response.data)
       })
       .catch(error => {
         if (error.response) {
-          this.showNotif()
         }
       })
   },
