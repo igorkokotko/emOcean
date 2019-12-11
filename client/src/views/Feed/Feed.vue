@@ -77,6 +77,10 @@ export default {
       })
       .catch(error => {
         if (error.response) {
+          this.$q.notify({
+            message: 'Oooops, something went wrong',
+            icon: 'announcement'
+          })
         }
       })
   },
@@ -94,12 +98,6 @@ export default {
         currentVideo.pause()
       }
     }
-  },
-  showNotif () {
-    this.$q.notify({
-      message: 'Oooops, something went wrong',
-      icon: 'announcement'
-    })
   },
   computed: {
     ...mapGetters('posts', ['getPosts'])
