@@ -88,6 +88,12 @@ export default {
 
     rotate (deg) {
       this.$refs.cropper.rotate(deg)
+    },
+
+    getCroppedData () {
+      this.$refs.cropper.getCroppedCanvas().toBlob((blob) => {
+        this.$emit('on-created-blob', blob)
+      })
     }
   },
 
