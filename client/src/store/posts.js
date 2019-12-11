@@ -4,30 +4,12 @@ import { uid } from 'quasar'
 const state = {
   posts: {
     id_1: {
-      username: 'socleansofreshh',
-      userImage: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1211695/me_3.jpg',
+      username: '',
+      userImage: '',
       postVideo: '',
-      likes: 3632,
+      likes: 0,
       hasBeenLiked: false,
-      caption: "When you're ready for summer '18 ☀️",
-      comments: []
-    },
-    id_2: {
-      username: 'djirdehh',
-      userImage: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1211695/me2.png',
-      postVideo: '',
-      likes: 124,
-      hasBeenLiked: false,
-      caption: "Views from the six...",
-      comments: []
-    },
-    id_3: {
-      username: 'puppers',
-      userImage: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1211695/pug_personal.jpg',
-      postVideo: '',
-      likes: 49,
-      hasBeenLiked: false,
-      caption: "Current mood 🐶",
+      caption: "",
       comments: []
     }
   }

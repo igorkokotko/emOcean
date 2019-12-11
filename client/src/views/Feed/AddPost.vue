@@ -10,6 +10,13 @@
             <q-card class="bg-white text-black h-70" id="modal-window">
               <q-bar>
                 <q-space />
+                <div id="hour-glass" ref="hourGlass" :style="{ display: 'none' }">
+                <q-tooltip :offset="[0, 8]">QSpinnerHourglass</q-tooltip>
+                <q-spinner-hourglass
+                  color="primary"
+                  size="2em"
+                />
+                </div>
                 <q-btn dense flat icon="close" v-close-popup></q-btn>
               </q-bar>
               <q-card-section>
@@ -87,7 +94,6 @@ export default {
   data () {
     return {
       dialog: true,
-      display: 'block',
       post: {
         createdOn: new Date(),
         username: 'fullstack_vue',
@@ -135,12 +141,12 @@ export default {
         const formData = new FormData()
         formData.append('file', files[0])
         try {
+          this.$refs.hourGlass.style = "block"
           const videoUrl = await axios.post('https://emocean.dev/api/posts/upload-videos?type=single-video', formData, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }
           })
-
           this.post.postVideo = videoUrl.data.videoUrl
           this.$refs.video.src = this.post.postVideo
           this.dialog = false
@@ -204,6 +210,11 @@ body{
 #chip .q-banner__content{
     padding: 3px;
     text-align: center;
+}
+#hour-glass {
+  position: absolute;
+  left: 43%;
+  right: 57%;
 }
 
 #modal-window .q-card__section{

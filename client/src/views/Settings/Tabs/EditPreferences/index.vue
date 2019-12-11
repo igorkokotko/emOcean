@@ -24,7 +24,7 @@
       round
       color="teal"
       @click="savePreferences(getPreferences)"
-
+      to="/feed"
     > go
     </q-btn>
   </div>

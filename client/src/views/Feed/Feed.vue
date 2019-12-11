@@ -76,7 +76,8 @@ export default {
       isModelVisible: false
     }
   },
-  created () {
+
+  mounted () {
     let route = ''
     if (Authorized.isAuthorized()) {
       route = '/api/feed/authorized'
@@ -85,16 +86,14 @@ export default {
     }
     axios.get(route)
       .then((response) => {
-        this.updateState(response.data.posts)
+        this.updateState(response.data)
       })
       .catch(error => {
         if (error.response) {
           this.showNotif()
         }
       })
-  },
-  mounted () {
-  // If value more than 999, function replaces thousends to "k"
+    // If value more than 999, function replaces thousends to "k"
     for (let i = 0; i < this.$refs.likes.length; i++) {
       if (this.$refs.likes[i].textContent.length > 3) {
         let len = this.$refs.likes[i].textContent.length
@@ -105,7 +104,6 @@ export default {
   methods: {
     ...mapActions('posts', ['updateLikes', 'updateState']),
     closePopup (visibility) {
-      // close | open
       this.isModelVisible = visibility
     },
     play: function (event) {

@@ -47,6 +47,7 @@ import {
   ClosePopup,
   QVirtualScroll,
   QBanner,
+  QSpinnerHourglass,
   QScrollObserver,
   QChatMessage
 } from 'quasar'
@@ -89,7 +90,8 @@ Vue.use(Quasar, {
     QSelect,
     QSlider,
     QSeparator,
-    QToggle,   
+    QSpinnerHourglass,
+    QToggle,
     QDialog,
     QResizeObserver,
     QBanner,

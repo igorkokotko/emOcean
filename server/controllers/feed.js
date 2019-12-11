@@ -1,8 +1,8 @@
-const {db} = require("../config/databaseConfig");
+const { db } = require("../config/databaseConfig");
 
-let getFeedAnonimus = function (req, res) {
+let getFeedAnonimus = function(req, res) {
     try {
-        const collection = db.collection('posts').get()  
+        const collection = db.collection('posts').get()
         collection.then((querySnapshot) => {
             if (querySnapshot.empty) {
                 return res.status(400).send('No matching documents.')
@@ -15,33 +15,42 @@ let getFeedAnonimus = function (req, res) {
         })
     } catch (error) {
         res.status(500).send('Error - ' + error)
-    }    
+    }
 }
 
-let getFeedByPreferences = function (req, res) {
+let getFeedByPreferences = function(req, res) {
     try {
-        const userDoc = db.collection('users').doc(req.userId)        
+        const userDoc = db.collection('users').doc(req.userId)
         userDoc
             .get()
             .then(doc => {
+                let posts = {}
                 let pref = doc.data().preferences
-
+                if(pref === undefined){
+                        const collection = db.collection('posts').get()
+                        collection.then((querySnapshot) => {
+                            querySnapshot.docs.forEach((doc) => {
+                                posts[doc.id] = doc.data();
+                            })
+                            res.json(posts)
+                        })
+                } else {
                 const postsDocs = db.collection('posts')
                 const postsCollection = postsDocs.where('tag', 'array-contains-any', pref).get()
                 postsCollection.then((querySnapshot) => {
                     if (querySnapshot.empty) {
                         return res.status(400).send('No matching tags.')
                     }
-                    let posts = {}
                     querySnapshot.docs.forEach((doc) => {
                         posts[doc.id] = doc.data();
                     })
                     res.json(posts)
                 })
-          })
+             }
+            })
     } catch (error) {
         res.status(500).send('Error - ' + error)
-    }    
+    }
 }
 
 module.exports = {
