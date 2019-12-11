@@ -19,6 +19,7 @@
           <q-input v-model='nickname' @input="searchByNick" />
           <nickname-search v-if="list" id="search-result" :results="nicknameSearchResults"/>
         </div>
+<<<<<<< HEAD
         <div id="search-wrapper" ref="searchWrapper">
           <q-btn
             flat
@@ -28,6 +29,8 @@
             @click="visible"
             class="q-mr-xs text-cyan" />
         </div>
+=======
+>>>>>>> fixed
         <q-btn
           flat
           round
