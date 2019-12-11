@@ -53,6 +53,10 @@
 <script>
 import PageComments from '../Comments/PageComments'
 import { mapGetters, mapActions } from 'vuex'
+import axios from 'axios'
+
+const Authorized = require('../Authentication/Authorized.js')
+
 export default {
   name: 'Feed',
   data () {
@@ -60,8 +64,25 @@ export default {
       isModelVisible: false
     }
   },
+  created () {
+    let route = ''
+    if (Authorized.isAuthorized()) {
+      route = '/api/feed/authorized'
+    } else {
+      route = '/api/feed/anonimus'
+    }
+    axios.get(route)
+      .then((response) => {
+        this.updateState(response.data.posts)
+      })
+      .catch(error => {
+        if (error.response) {
+          this.showNotif()
+        }
+      })
+  },
   methods: {
-    ...mapActions('posts', ['updateLikes']),
+    ...mapActions('posts', ['updateLikes', 'updateState']),
     closePopup (visibility) {
       // close | open
       this.isModelVisible = visibility
@@ -74,6 +95,12 @@ export default {
         currentVideo.pause()
       }
     }
+  },
+  showNotif () {
+    this.$q.notify({
+      message: 'Oooops, something went wrong',
+      icon: 'announcement'
+    })
   },
   computed: {
     ...mapGetters('posts', ['getPosts'])
