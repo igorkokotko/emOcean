@@ -17,21 +17,17 @@
       transition-next="scale"
     >
       <q-tab-panel name="followers">
-        <followList
-          :followList="followersGetter"
-        />
         <p v-if="!followersGetter.length" class="notification">
           no followers found...
         </p>
+        <followList v-else :followList="followersGetter"/>
       </q-tab-panel>
 
       <q-tab-panel name="following">
-        <followList
-          :followList="followingGetter"
-        />
         <p v-if="!followingGetter.length" class="notification">
-          no following found...
+          no followings found...
         </p>
+        <followList v-else :followList="followingGetter"/>
       </q-tab-panel>
     </q-tab-panels>
   </div>
@@ -44,28 +40,28 @@ export default {
   components: {
     FollowList
   },
-  data () {
-    return {
-      profileId: localStorage.getItem('lastProfileId')
+  computed: {
+    ...mapGetters(
+      { followingGetter: 'profile/followingGetter',
+        followersGetter: 'profile/followersGetter' }
+    ),
+    profileId () {
+      return localStorage.getItem('lastProfileId')
     }
   },
-  computed: {
-    ...mapGetters({
-      followingGetter: 'profile/followingGetter',
-      followersGetter: 'profile/followersGetter'
-    }),
-    tab () {
-      return this.$route.query.p
+  methods: { ...mapActions(
+    { uploadFollowers: 'profile/uploadFollowers',
+      uploadFollowings: 'profile/uploadFollowings' })
+  },
+  data () {
+    return {
+      tab: this.$route.query.p
     }
   },
   mounted () {
-    this.uploadFollowers(this.profileId)
     this.uploadFollowings(this.profileId)
-  },
-  methods: mapActions({
-    uploadFollowers: 'profile/uploadFollowers',
-    uploadFollowings: 'profile/uploadFollowings'
-  })
+    this.uploadFollowers(this.profileId)
+  }
 }
 </script>
 

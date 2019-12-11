@@ -6,7 +6,7 @@
       class="q-my-sm"
       clickable
     >
-      <follow-item :item="item"></follow-item>
+        <follow-item :item="item"></follow-item>
     </div>
   </q-list>
 </template>
