@@ -1,4 +1,4 @@
-const { isAuthorized } = require('./Authorized.js')
+import { isAuthorized } from '../views/Authentication/Authorized'
 
 export const authModalMixin = {
   data () {
