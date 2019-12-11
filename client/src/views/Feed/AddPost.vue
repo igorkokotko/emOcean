@@ -226,6 +226,11 @@ export default {
   padding: 3px;
   text-align: center;
 }
+#hour-glass {
+  position: absolute;
+  left: 43%;
+  right: 57%;
+}
 
 #modal-window .q-card__section {
   height: 70px;

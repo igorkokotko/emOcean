@@ -48,6 +48,7 @@ import {
   ClosePopup,
   QVirtualScroll,
   QBanner,
+  QSpinnerHourglass,
   QScrollObserver,
   QChatMessage,
   QResizeObserver,
