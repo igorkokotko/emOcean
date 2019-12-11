@@ -19,12 +19,11 @@
         </div>
         <div class="content-wrapper">
           <div class="heart-and-comments">
-            <div class="heart">
-              <i class="far fa-heart fa-lg"
-                :class="{'fas': post.hasBeenLiked}"
-                 @click="updateLikes({ key: key, updates: ({ hasBeenLiked : post.hasBeenLiked, likes: post.likes })  })"
-              >
-              </i>
+            <div
+              class="heart"
+              @click="updateLikes({ key: key, updates: ({ hasBeenLiked : post.hasBeenLiked, likes: post.likes })  })"
+            >
+              <i class="far fa-heart fa-lg" :class="{'fas': post.hasBeenLiked}"></i>
               <p class="likes" @click="likesInfo.show=true; play">{{post.likes}}</p>
             </div>
             <div class="comments-icon" @click="closePopup(true)">
@@ -47,7 +46,7 @@
       <div class="big-btn" @click="$router.push('/addpost')">
         <i class="fas fa-2x fa-plus"></i>
       </div>
-      <LikesList v-bind:info="likesInfo" />
+      <LikesList v-bind:info="likesInfo" v-if="likesInfo.show"/>
     </div>
   </div>
 </template>
@@ -55,6 +54,7 @@
 <script>
 import PageComments from '../Comments/PageComments'
 import LikesList from '../../components/LikesList.vue'
+import PageComments from '../Comments/PageComments'
 import { mapGetters, mapActions } from 'vuex'
 import axios from 'axios'
 

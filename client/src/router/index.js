@@ -3,11 +3,13 @@ import VueRouter from 'vue-router'
 import Error404 from '../views/Error404/Error404.vue'
 import Feed from '../views/Feed/Feed'
 import AddPost from '../views/Feed/AddPost'
+import Notifications from '../views/Notifications/index.vue'
+
 Vue.use(VueRouter)
 
 const routes = [{
   path: '/',
-  name: 'feed',
+  name: 'home',
   component: Feed
 },
 {
@@ -21,10 +23,21 @@ const routes = [{
   component: AddPost
 },
 {
-  path: '/profile',
+  path: '/notifications',
+  name: 'Notifications',
+  component: Notifications
+},
+{
+  path: '/profile/:nickname',
+  props: true,
   name: 'profile',
   component: () => import('../views/Profile/index.vue')
 },
+// {
+//   path: "/comments",
+//   name: "comments",
+//   component: () => import("../views/Comments/PageComments.vue")
+// },
 {
   path: '/settings',
   name: 'Settings',
@@ -34,10 +47,15 @@ const routes = [{
     component: () => import('../views/Settings/Tabs/EditProfile/index.vue')
   },
   {
+<<<<<<< HEAD
     path: '/profile/:nickname',
     props: true,
     name: 'profile',
     component: () => import('../views/Profile/index.vue')
+=======
+    path: 'editPreferences',
+    component: () => import('../views/Settings/Tabs/EditPreferences/index.vue')
+>>>>>>> Modified footer, added new feature LikesList and Notification page, added Moments.js
   },
   {
     path: '/profile/:nickname/follow',
