@@ -7,7 +7,6 @@ const { db } = require("../config/databaseConfig");
 
 const uploadVideo = asyncMiddleware(async(req, res, next) => {
     const uploadedVideo = req.file
-    console.log(uploadedVideo)
         // second arg means max image size in mb
     const validatedVideoError = validateVideo(uploadedVideo, 20)
     if (validatedVideoError !== undefined) {
