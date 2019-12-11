@@ -1,25 +1,24 @@
 const CustomError = require('../common/CustomError')
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const postsService = require('../services/PostsService')
-const { validateVideo } = require('../validation/posts')
+const VideoHandler = require('../videoHandling/videoHandler')
+const clearTempFiles = require('../common/clearTempFiles')
 const searchService = require("../services/SearchService")
 
-const uploadVideo = asyncMiddleware(async (req, res, next) => {
-  const uploadedVideo = req.file
 
-  // second arg means max image size in mb
-  const validatedVideoError = validateVideo(uploadedVideo, 20)
-  if (validatedVideoError !== undefined) {
-    return next(new CustomError(validatedVideoError))
-  }
-  const postVideoUrl = await postsService.uploadVideo(
-    uploadedVideo,
-    req.userId,
-    'videos'
-  )
+const uploadVideos = asyncMiddleware(async (req, res, next) => {
+  const { type } = req.query
+  const media = req.files
+  const id = req.userId
+  const videoHandler = new VideoHandler(media, type, id)
+  videoHandler.apply().then(videoUrl => {
+    res.status(200).json({ videoUrl })
+  }).finally(() => {
+    clearTempFiles('uploads', id)
+  })
+}
+)
 
-  res.status(200).json({ postVideoUrl })
-})
 
 const savePost = asyncMiddleware(async (req, res, next) => {
   // TODO
@@ -53,6 +52,6 @@ const searchPosts = function(req, res) {
 
 module.exports = {
   savePost,
-  uploadVideo,
+  uploadVideos,
   searchPosts
 }

@@ -1,27 +1,30 @@
-const express = require('express')
+const express = require("express")
 const router = express.Router()
-const multer = require('multer')
-const storage = multer.memoryStorage()
-const upload = multer({ storage })
-const protected = require('../middleware/protectRoute')
-const { savePost, uploadVideo } = require('../controllers/posts')
-const { searchPosts } = require('../controllers/posts')
+const protected = require("../middleware/protectRoute")
+const mediaValidation = require("../middleware/mediaValidation")
+const upload = require('../config/multerConfig')
+const {
+  savePost,
+  uploadVideos,
+  searchPosts
+} = require("../controllers/posts")
 
 router.post('/save-post', protected, savePost)
-router.post('/upload-video', protected, upload.single('file'), uploadVideo)
 router.get('/search', searchPosts)
 
-// TODO
+router.post("/upload-videos", protected, upload.array("file", 2), mediaValidation, uploadVideos)
+
+// /api/posts/upload-videos?type=single-video
+// /api/posts/upload-videos?type=two-videos
+// /api/posts/upload-videos?type=video-and-audio
 
 // get popular posts (by likes) with pagination
 // get recommended posts from feed with pagination
 // get posts from my followers feed with pagination
-// show popular posts with pagination
 // edit my post
-// delete my posts
 // get post by id
 // get posts by userId
-// like/unlike  post 
 // like/unlike  post
 
-module.exports = router
+
+module.exports = router;

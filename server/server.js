@@ -3,10 +3,10 @@ const dotenv = require('dotenv')
 const bodyParser = require('body-parser')
 const XMLHttpRequest = require('xhr2')
 const errorHandler = require('./middleware/errorHandler')
+const cors = require('cors')
 
 dotenv.config({ path: './config/config.env' })
 
-// without this firebase storage would throw Reference Error
 global.XMLHttpRequest = XMLHttpRequest
 
 const auth = require('./routes/auth')
@@ -17,6 +17,8 @@ const feed = require('./routes/feed')
 
 // Run server
 const app = express()
+
+app.use(cors())
 
 app.use(bodyParser.json())
 

@@ -1,6 +1,6 @@
 const { db, storage } = require('../config/databaseConfig')
 
-const uploadVideo = function(video, userId, dest) {
+const uploadVideo = function (video, userId, dest) {
   const metaData = {
     contentType: video.mimetype
   }
