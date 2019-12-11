@@ -1,4 +1,4 @@
-const Authorized = require('./Authorized.js')
+const { isAuthorized } = require('./Authorized.js')
 
 export const authModalMixin = {
   data () {
@@ -9,7 +9,7 @@ export const authModalMixin = {
   },
   methods: {
     onScroll (info) {
-      if (info.position > 1000 && !Authorized.isAuthorized) {
+      if (info.position > 1000 && !isAuthorized()) {
         this.showLoginPage = true
       }
     }

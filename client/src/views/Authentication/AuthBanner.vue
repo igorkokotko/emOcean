@@ -17,7 +17,7 @@
 </template>
 
 <script>
-const Authorized = require('./Authorized.js')
+import { isAuthorized } from './Authorized.js'
 
 export default {
   data () {
@@ -31,7 +31,7 @@ export default {
     }
   },
   created () {
-    if (Authorized.isAuthorized) this.showBanner = false
+    if (isAuthorized()) this.showBanner = false
   }
 }
 </script>
