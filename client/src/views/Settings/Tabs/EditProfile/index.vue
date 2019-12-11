@@ -201,6 +201,7 @@
           type="reset"
           color="secondary"
           flat
+          rounded
           class="q-ml-sm"
         />
       </div>
@@ -403,6 +404,8 @@ export default {
 
     onReset () {
       this.loadDataFromStore()
+      this.backgroundUrl = ""
+      this.photoUrl = ""
     },
 
     loadDataFromStore () {
