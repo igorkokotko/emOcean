@@ -13,7 +13,7 @@
         <q-card-section>
           <template v-if="!isNewAvatarSelected">
             <div class="row justify-center">
-              <avatar :img="photoUrl" />
+              <avatar :img="profile.avatar_url" />
             </div>
           </template>
           <template v-else>
@@ -63,7 +63,7 @@
           <template v-if="!isNewCoverPhotoSelected">
             <div class="row justify-center">
               <img
-                src="@/assets/img/cover_photo.jpg"
+                :src="profile.user_background !== '' ? profile.user_background : DefaultCoverPhoto"
                 class="coverPhoto"
               />
             </div>
@@ -128,7 +128,6 @@
             autogrow
             counter
             :rules="[checkUserDescriptionField]"
-            lazy-rules
           />
           <q-input
             label="Status"
@@ -138,7 +137,6 @@
             autogrow
             counter
             :rules="[checkUserDescriptionField]"
-            lazy-rules
           />
         </q-card-section>
       </q-card>
@@ -190,7 +188,14 @@
           type="submit"
           rounded
           color="secondary"
-        />
+        >
+          <q-spinner-bars
+            class='q-ml-md'
+            color='primary'
+            size='1em'
+            v-show='loading'
+          />
+        </q-btn>
         <q-btn
           label="Reset"
           type="reset"
@@ -205,6 +210,7 @@
 </template>
 
 <script>
+import DefaultCoverPhoto from '@/assets/img/cover_photo.jpg'
 import Avatar from '@/components/Avatar.vue'
 import EditImage from './EditImage.vue'
 import {
@@ -227,8 +233,8 @@ export default {
       nickname: '',
       bio: '',
       status: '',
-      avatar_url: null,
-      user_background: null,
+      avatar_url: '',
+      user_background: '',
       socialAccounts: {
         youtube: '',
         instagram: '',
@@ -248,7 +254,9 @@ export default {
         timeout: 3000
       },
       isNewAvatarUploaded: false,
-      isNewCoverPhotoUploaded: false
+      isNewCoverPhotoUploaded: false,
+      DefaultCoverPhoto,
+      loading: false
     }
   },
 
@@ -304,11 +312,6 @@ export default {
         }
         return
       }
-      if (imageType === 'background') {
-        this.profile.user_background = val.target.files[0]
-      } else {
-        this.profile.avatar_url = val.target.files[0]
-      }
       const reader = new FileReader()
       reader.onload = () => {
         if (imageType === 'background') {
@@ -354,12 +357,13 @@ export default {
     },
 
     onSubmit () {
+      this.loading = true
       this.isNewAvatarUploaded = false
       this.isNewCoverPhotoUploaded = false
-      if (this.profileGetter.avatar_url !== this.profile.avatar_url && this.profile.avatar_url !== "") {
+      if (this.isNewAvatarSelected) {
         this.$refs.avatarEditor.getCroppedData()
       }
-      if (this.profileGetter.user_background !== this.profile.user_background && this.profile.user_background !== "") {
+      if (this.isNewCoverPhotoSelected) {
         this.$refs.coverPhotoEditor.getCroppedData()
       }
       this.sendProfile()
@@ -382,6 +386,8 @@ export default {
             color: 'primary',
             message: 'Your profile was edited.'
           })
+          this.photoUrl = ""
+          this.backgroundUrl = ""
         })
         .catch(err => {
           this.$q.notify({
@@ -389,6 +395,9 @@ export default {
             color: 'negative',
             message: err && err.response && err.response.data ? err.response.data.error : 'Unknown error.'
           })
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
 
@@ -404,11 +413,11 @@ export default {
         })
       }
       this.profile = { ...this.emptyProfile, ...this.profileGetter, socialAccounts }
-      if (this.profile.avatar_url && JSON.stringify(this.profile.avatar_url) !== JSON.stringify({})) {
-        this.photoUrl = this.profile.avatar_url
+      if (this.profile.avatar_url && JSON.stringify(this.profile.avatar_url) === JSON.stringify({})) {
+        this.profile.avatar_url = ""
       }
-      if (this.profile.user_background && JSON.stringify(this.profile.user_background) !== JSON.stringify({})) {
-        this.backgroundUrl = this.profile.user_background
+      if (this.profile.user_background && JSON.stringify(this.profile.user_background) === JSON.stringify({})) {
+        this.profile.user_background = ""
       }
     },
 
