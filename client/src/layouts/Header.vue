@@ -32,18 +32,6 @@
             @click="visible"
             class="q-mr-xs text-cyan" />
         </div>
-<<<<<<< HEAD
-=======
-        <div id="search-wrapper" ref="searchWrapper">
-          <q-btn
-            flat
-            round
-            dense
-            icon="search"
-            @click="visible"
-            class="q-mr-xs text-cyan" />
-        </div>
->>>>>>> 452f24911cbb2c628f97427c9429f03c3542b97d
         <q-btn
           flat
           round
