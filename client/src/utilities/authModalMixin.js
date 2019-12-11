@@ -1,3 +1,5 @@
+import { isAuthorized } from '../views/Authentication/Authorized'
+
 export const authModalMixin = {
   data () {
     return {
@@ -7,7 +9,7 @@ export const authModalMixin = {
   },
   methods: {
     onScroll (info) {
-      if (info.position > 1000) {
+      if (info.position > 1000 && !isAuthorized()) {
         this.showLoginPage = true
       }
     }
