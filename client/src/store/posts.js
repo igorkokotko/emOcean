@@ -41,6 +41,9 @@ const mutations = {
   },
   addPost (state, payload) {
     Vue.set(state.posts, payload.id, payload.post)
+  },
+  updateState (state, payload) {
+    state.posts = payload
   }
 }
 
@@ -55,6 +58,9 @@ const actions = {
       post: post
     }
     commit('addPost', payload)
+  },
+  updateState ({ commit }, payload) {
+    commit('updateState', payload)
   }
 }
 
