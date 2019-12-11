@@ -78,7 +78,7 @@ export default {
       .catch(error => {
         if (error.response) {
           this.$q.notify({
-            message: 'Oooops, something went wrong',
+            message: 'Failed to fetch the feed!',
             icon: 'announcement'
           })
         }

@@ -67,7 +67,7 @@ export default {
 
     showNotifErr () {
       this.$q.notify({
-        message: 'Oooops, something went wrong!',
+        message: 'Failed to save preferences!',
         icon: 'announcement'
       })
     },
