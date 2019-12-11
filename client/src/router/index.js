@@ -23,9 +23,21 @@ const routes = [
     component: AddPost
   },
   {
-    path: '/profile/:id',
+    path: '/profile/:nickname',
+    props: true,
     name: 'profile',
     component: () => import('../views/Profile/index.vue')
+  },
+  {
+    path: '/profile/:nickname/follow',
+    name: 'followPage',
+    props: true,
+    component: () => import('../views/FollowList/index.vue')
+  },
+  {
+    path: "/comments",
+    name: "comments",
+    component: () => import("../views/Comments/PageComments.vue")
   },
   {
     path: '/settings',

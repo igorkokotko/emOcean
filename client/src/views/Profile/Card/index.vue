@@ -22,21 +22,21 @@ import CardFooter from './cardFooter'
 import FollowButton from './followBtn'
 
 export default {
-  data () {
-    return {
-      popularAccountLimit: 100
-    }
-  },
-  props: {
-    profile: Object
-  },
   components: {
     CardFooter,
     FollowButton
   },
+  props: {
+    profile: Object
+  },
+  data () {
+    return {
+      popularAccountLimit: 10
+    }
+  },
   computed: {
     popularAccount () {
-      return this.profile.counters.views > this.popularAccountLimit
+      return this.profile.counters.followersCount > this.popularAccountLimit
     }
   }
 }
@@ -72,6 +72,8 @@ export default {
     .card-content {
       padding: 50px 15px 0;
       text-align: center;
+      background-color: white;
+      height: 100%;
       & > * {
         margin-bottom: 15px;
       }

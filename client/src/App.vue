@@ -45,7 +45,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
   /*reset*/
 * {
   padding: 0;
@@ -57,7 +57,6 @@ body {
   font-size: 16px;
   line-height: 1.5;
   letter-spacing: 0.5px;
-  background-color: white;
 }
 h1, h2, h3, h4 {
   line-height: normal;
@@ -69,5 +68,24 @@ a {
 }
 li {
   list-style: none;
+}
+
+.follow-item {
+  .q-item__section {
+    .follow-avatar {
+      @media only screen and (min-width: 768px) {
+        font-size: 70px;
+      }
+    }
+    .follow-btn {
+      .profile-card-button {
+        @media only screen and (max-width: 767px) {
+          min-width: 80px;
+          padding: 2px 15px;
+          font-size: 13px;
+        }
+      }
+    }
+  }
 }
 </style>

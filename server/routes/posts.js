@@ -5,10 +5,12 @@ const mediaValidation = require("../middleware/mediaValidation")
 const upload = require('../config/multerConfig')
 const {
   savePost,
-  uploadVideos
+  uploadVideos,
+  searchPosts
 } = require("../controllers/posts")
 
-router.post("/save-post", savePost)
+router.post('/save-post', protected, savePost)
+router.get('/search', searchPosts)
 
 router.post("/upload-videos", protected, upload.array("file", 2), mediaValidation, uploadVideos)
 
