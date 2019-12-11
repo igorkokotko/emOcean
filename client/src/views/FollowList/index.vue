@@ -49,10 +49,10 @@ export default {
       return localStorage.getItem('lastProfileId')
     }
   },
-  methods: mapActions(
+  methods: { ...mapActions(
     { uploadFollowers: 'profile/uploadFollowers',
-      uploadFollowings: 'profile/uploadFollowings' }
-  ),
+      uploadFollowings: 'profile/uploadFollowings' })
+  },
   data () {
     return {
       tab: this.$route.query.p

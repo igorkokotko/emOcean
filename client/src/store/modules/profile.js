@@ -26,19 +26,24 @@ export default {
         .then(response => {
           commit('updateProfile', response.data.profile)
         })
-        .catch(error => console.log(error))
+        .catch(error => {
+          if (error) {
+            commit('updateProfile', [])
+          }
+        })
     },
     uploadFollowers ({ commit }, id) {
       axios
         .get('/api/profiles/get-followers/' + id)
         .then(response => {
-          if (response.data.followers === "This profile doesnt have followers") {
+          commit('updateFollowers', response.data.followers)
+        })
+        .catch(error => {
+          console.log(error)
+          if (error) {
             commit('updateFollowers', [])
-          } else {
-            commit('updateFollowers', response.data.followers)
           }
         })
-        .catch(error => console.log(error))
     },
     uploadFollowings ({ commit }, id) {
       axios
@@ -47,7 +52,7 @@ export default {
           commit('updateFollowings', response.data.followings)
         })
         .catch(error => {
-          if (error.response.data === "User with given id doesnt have followings") {
+          if (error) {
             commit('updateFollowings', [])
           }
         })
@@ -59,7 +64,8 @@ export default {
           commit('updateCurrentFollowings', response.data.followings)
         })
         .catch(error => {
-          if (error.response.data === "User with given id doesnt have followings") {
+          console.log(error)
+          if (error) {
             commit('updateCurrentFollowings', [])
           }
         })

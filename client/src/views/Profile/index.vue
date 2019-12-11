@@ -29,11 +29,6 @@ export default {
     ProfileCard,
     switchVideo
   },
-  data () {
-    return {
-      pId: localStorage.getItem('lastProfileId')
-    }
-  },
   computed: {
     ...mapGetters({ profileGetter: 'profile/profileGetter' }),
     userBackground () {
