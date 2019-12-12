@@ -44,16 +44,14 @@ export default {
     }
   },
   beforeMount () {
-    console.log(Authorized.isAuthorized())
     if (Authorized.isAuthorized()) {
       axios.get('/api/preferences/get')
         .then((response) => {
-          console.log(response.data)
           this.updateTagState(response.data)
         })
         .catch(error => {
           if (error.response) {
-            console.log(error)
+            this.showNotifErr('Failed to retrieve preferences!')
           }
         })
     }
@@ -78,14 +76,14 @@ export default {
         .catch(error => {
           this.rollbackChanges(this.tags)
           if (error.response) {
-            this.showNotifErr()
+            this.showNotifErr('Failed to save preferences!')
           }
         })
     },
 
-    showNotifErr () {
+    showNotifErr (message) {
       this.$q.notify({
-        message: 'Failed to save preferences!',
+        message: message,
         icon: 'announcement'
       })
     },
