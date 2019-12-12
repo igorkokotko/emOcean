@@ -89,7 +89,7 @@ Vue.use(Quasar, {
     QSelect,
     QSlider,
     QSeparator,
-    QToggle,   
+    QToggle,
     QDialog,
     QBanner,
     QVirtualScroll,

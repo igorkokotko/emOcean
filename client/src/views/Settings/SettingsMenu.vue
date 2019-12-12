@@ -48,9 +48,6 @@ export default {
       routeItems: [
         { to: '/settings/editProfile', title: 'Edit profile', show: true },
         { to: '/settings/editPreferences', title: 'Preferences', show: true },
-        { to: '/settings/editFollowers', title: 'Followers', show: true },
-        { to: '/settings/editSaved', title: 'Saved', show: true },
-        { to: '/settings/editLiked', title: 'Liked', show: true },
         { to: '/settings/editPrivacy', title: 'Privacy', show: true },
         { to: '/settings/changePassword', title: 'Change password', show: true },
         { to: '/settings/deleteAccount', title: 'Delete account', show: true }

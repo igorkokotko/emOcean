@@ -25,7 +25,6 @@ let getFeedByPreferences = function (req, res) {
             .get()
             .then(doc => {
                 let pref = doc.data().preferences
-
                 const postsDocs = db.collection('posts')
                 const postsCollection = postsDocs.where('tag', 'array-contains-any', pref).get()
                 postsCollection.then((querySnapshot) => {

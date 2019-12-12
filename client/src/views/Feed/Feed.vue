@@ -73,11 +73,14 @@ export default {
     }
     axios.get(route)
       .then((response) => {
-        this.updateState(response.data.posts)
+        this.updateState(response.data)
       })
       .catch(error => {
         if (error.response) {
-          this.showNotif()
+          this.$q.notify({
+            message: 'Failed to fetch the feed!',
+            icon: 'announcement'
+          })
         }
       })
   },
@@ -95,12 +98,6 @@ export default {
         currentVideo.pause()
       }
     }
-  },
-  showNotif () {
-    this.$q.notify({
-      message: 'Oooops, something went wrong',
-      icon: 'announcement'
-    })
   },
   computed: {
     ...mapGetters('posts', ['getPosts'])

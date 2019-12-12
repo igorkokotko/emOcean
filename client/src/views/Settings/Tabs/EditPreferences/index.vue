@@ -24,7 +24,7 @@
       round
       color="teal"
       @click="savePreferences(getPreferences)"
-
+      to="/feed"
     > go
     </q-btn>
   </div>
@@ -34,6 +34,8 @@
 import { mapGetters, mapActions } from 'vuex'
 import axios from 'axios'
 
+const Authorized = require('../../../Authentication/Authorized.js')
+
 export default {
   name: 'EditPreferences',
   data: function () {
@@ -41,8 +43,22 @@ export default {
       tags: []
     }
   },
+  beforeMount () {
+    if (Authorized.isAuthorized()) {
+      axios.get('/api/preferences/get')
+        .then((response) => {
+          this.updateTagState(response.data)
+        })
+        .catch(error => {
+          if (error.response) {
+            this.showNotifErr('Failed to retrieve preferences!')
+          }
+        })
+    }
+  },
+
   methods: {
-    ...mapActions('preferences', ['updatePreference', 'rollbackChanges']),
+    ...mapActions('preferences', ['updatePreference', 'rollbackChanges', 'updateTagState']),
     getChosenTags: function (state) {
       for (let obj in state) {
         if (state[obj].chosen) {
@@ -55,19 +71,27 @@ export default {
       this.getChosenTags(state)
       axios.post('/api/preferences/save', this.tags)
         .then((response) => {
+          this.showNotifSaveData()
         })
         .catch(error => {
           this.rollbackChanges(this.tags)
           if (error.response) {
-            this.showNotif()
+            this.showNotifErr('Failed to save preferences!')
           }
         })
     },
 
-    showNotif () {
+    showNotifErr (message) {
       this.$q.notify({
-        message: 'Oooops, something went wrong!',
+        message: message,
         icon: 'announcement'
+      })
+    },
+    showNotifSaveData () {
+      this.$q.notify({
+        message: 'Your preferences were saved. Enjoy your new feed ',
+        icon: 'announcement',
+        color: 'primary'
       })
     }
   },
