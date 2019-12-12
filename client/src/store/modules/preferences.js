@@ -85,6 +85,15 @@ const mutations = {
         }
       }
     }
+  },
+  updateTagState (state, tags) {
+    for (let tag of tags) {
+      for (let obj in state.preferences) {
+        if (state.preferences[obj].hashtag === tag) {
+          state.preferences[obj].chosen = true
+        }
+      }
+    }
   }
 }
 
@@ -94,6 +103,9 @@ const actions = {
   },
   rollbackChanges ({ commit }, tags) {
     commit('rollbackChanges', tags)
+  },
+  updateTagState ({ commit }, tags) {
+    commit('updateTagState', tags)
   }
 }
 

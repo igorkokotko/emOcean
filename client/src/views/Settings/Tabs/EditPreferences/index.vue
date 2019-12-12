@@ -34,6 +34,8 @@
 import { mapGetters, mapActions } from 'vuex'
 import axios from 'axios'
 
+const Authorized = require('../../../Authentication/Authorized.js')
+
 export default {
   name: 'EditPreferences',
   data: function () {
@@ -41,8 +43,24 @@ export default {
       tags: []
     }
   },
+  beforeMount () {
+    console.log(Authorized.isAuthorized())
+    if (Authorized.isAuthorized()) {
+      axios.get('/api/preferences/get')
+        .then((response) => {
+          console.log(response.data)
+          this.updateTagState(response.data)
+        })
+        .catch(error => {
+          if (error.response) {
+            console.log(error)
+          }
+        })
+    }
+  },
+
   methods: {
-    ...mapActions('preferences', ['updatePreference', 'rollbackChanges']),
+    ...mapActions('preferences', ['updatePreference', 'rollbackChanges', 'updateTagState']),
     getChosenTags: function (state) {
       for (let obj in state) {
         if (state[obj].chosen) {
