@@ -95,7 +95,7 @@ Vue.use(Quasar, {
     QVirtualScroll,
     QScrollObserver,
     QChatMessage,
-    QBar
+    QBar 
   },
   directives: {
     Ripple,
