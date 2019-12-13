@@ -12,7 +12,7 @@
 <script>
 import Footer from './layouts/Footer.vue'
 import vHeader from '@/layouts/Header.vue'
-import ApiService from '@/utilities/ApiService.js'
+import { setApiAuthorizationHeaders } from '@/services/auth.js'
 import Authorized from '@/views/Authentication/Authorized.js'
 import AuthBanner from './views/Authentication/AuthBanner.vue'
 
@@ -34,7 +34,7 @@ export default {
     if (Authorized.isAuthorized()) {
       const token = window.localStorage.getItem('token')
       this.$store.commit('auth/signin', { token })
-      ApiService.setApiAuthorizationHeaders(token)
+      setApiAuthorizationHeaders(token)
     }
 
     if (window.localStorage.getItem('profileId') && window.localStorage.getItem('profileId') !== '') {

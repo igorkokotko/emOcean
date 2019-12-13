@@ -56,7 +56,7 @@
 <script>
 import { validationMixin } from '../../utilities/validationMixin.js'
 import { mapActions } from 'vuex'
-const ApiService = require('../../utilities/ApiService.js')
+import { register, googleSignIn, setApiAuthorizationHeaders } from '@/services/auth.js'
 const Authorized = require('./Authorized.js')
 
 export default {
@@ -83,7 +83,7 @@ export default {
     register () {
       this.loading = true
       const { email, password, nickname } = this
-      ApiService.register({ email, password, nickname })
+      register({ email, password, nickname })
         .then(res => {
           this.loading = false
           this.notifyRegister(true)
@@ -100,9 +100,13 @@ export default {
       this.$gAuth
         .signIn()
         .then(GoogleUser => {
-          ApiService.googleSignIn(GoogleUser.getAuthResponse())
+          googleSignIn(GoogleUser.getAuthResponse())
             .then(res => {
               const token = res.data.token
+              const profileId = res.data.myProfileId
+              this.updateMyProfileId(profileId)
+              window.localStorage.setItem('profileId', profileId)
+              setApiAuthorizationHeaders(token)
               this.signIn({ token: token, user: res.data.user })
               window.localStorage.setItem('token', token)
               this.loading = false

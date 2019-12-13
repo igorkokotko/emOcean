@@ -1,23 +1,18 @@
 import axios from 'axios'
+const apiAuth = '/api/auth'
 
-export default {
-  changePassword (data) {
-    return axios.post('/api/auth/change-password', data)
-  },
-
-  updateProfile (editedData) {
-    return axios.post('/api/profiles/save-profile', editedData)
-  },
-
-  getProfile (params) {
-    return axios.get('/api/profiles/get-profile', { params })
-  },
-
-  uploadAvatar (avatar, params) {
-    return axios.post('/api/profiles/upload-image', avatar, { params })
-  },
-
-  uploadBackground (background, params) {
-    return axios.post('/api/profiles/upload-image', background, { params })
-  }
+export const setApiAuthorizationHeaders = function (token) {
+  axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
 }
+
+export const register = (data) => axios.post(`${apiAuth}/register`, data)
+
+export const login = (data) => axios.post(`${apiAuth}/login`, data)
+
+export const googleSignIn = (data) => axios.post(`${apiAuth}/login-with-google`, data)
+
+export const forgot = (data) => axios.post(`${apiAuth}/send-password-reset-code`, data)
+
+export const resetPass = (data) => axios.post(`${apiAuth}/reset-password`, data)
+
+export const changePassword = (data) => axios.post(`${apiAuth}/change-password`, data)

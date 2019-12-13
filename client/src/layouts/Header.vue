@@ -78,7 +78,7 @@
 <script>
 import NicknameSearch from '../components/NicknameSearch.vue'
 import debounce from 'lodash/debounce'
-const ApiService = require('../utilities/ApiService.js')
+import { searchByNick } from '@/services/profile.js'
 
 export default {
   name: 'Header',
@@ -104,13 +104,12 @@ export default {
       if (!/^#/.test(value) && value !== '') {
         this.nicknameSearchResults = []
         this.showSearch = true
-        ApiService.searchByNick({ nickname: value })
+        searchByNick({ nickname: value })
           .then(res => {
             this.nicknameSearchResults = []
             res.data.message.forEach(element => {
               this.nicknameSearchResults.push({ id: element.profileId, nickname: element.nickname, avatar: element.avatar_url })
             })
-            console.log(this.nicknameSearchResults)
           })
           .catch(err => {
             if (err.response.data.error === 'No user has been found') {

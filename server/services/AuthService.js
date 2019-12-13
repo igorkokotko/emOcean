@@ -43,7 +43,7 @@ const loginWithEmailAndPassword = function(email, password) {
   return auth()
     .signInWithEmailAndPassword(email, password)
     .then(({ user }) => {
-      return user
+      return { uid: user.uid, email: user.email }
     })
 }
 

@@ -33,7 +33,7 @@
 <script>
 import { validationMixin } from '../../utilities/validationMixin.js'
 import { notificationMixin } from '../../utilities/notificationMixin.js'
-const ApiService = require('../../utilities/ApiService.js')
+import { forgot } from '@/services/auth.js'
 
 export default {
   mixins: [validationMixin, notificationMixin],
@@ -52,7 +52,7 @@ export default {
     forgot () {
       this.loading = true
       const { email } = this
-      ApiService.forgot({ email })
+      forgot({ email })
         .then(res => {
           this.showNotif('A reset link has been sent to your email. Check your inbox!')
           this.loading = false

@@ -41,8 +41,8 @@
 <script>
 import { validationMixin } from '../../utilities/validationMixin.js'
 import { mapActions } from 'vuex'
+import { resetPass } from '@/services/auth.js'
 const Authorized = require('./Authorized.js')
-const ApiService = require('../../utilities/ApiService.js')
 
 export default {
   mixins: [validationMixin],
@@ -66,7 +66,7 @@ export default {
     resetPass () {
       this.loading = true
       const { password, oobCode } = this
-      ApiService.resetPass({ password, oobCode })
+      resetPass({ password, oobCode })
         .then(res => {
           this.loading = false
           this.notifyResetAction(true)
