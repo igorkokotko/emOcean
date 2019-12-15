@@ -28,9 +28,9 @@ const searchByNick = (nickname) => {
   })
 };
 
-const findByTag = (val) => {
+const searchByTag = (tag) => {
   let postsRef = db.collection('posts');
-  let query = postsRef.where('tag', '==', val).get()
+  let query = postsRef.where('tag', '==', tag).get()
 
   .then(snapshot => {
     if (snapshot.empty) {
@@ -51,6 +51,6 @@ const findByTag = (val) => {
 // findByTag('#nature')
 
 module.exports = {
-  findByNickname,
-  findByTag
+  searchByNick,
+  searchByTag
 };

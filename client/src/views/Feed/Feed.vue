@@ -66,6 +66,7 @@ export default {
   },
   created () {
     let route = ''
+    console.log(Authorized.isAuthorized())
     if (Authorized.isAuthorized()) {
       route = '/api/feed/authorized'
     } else {

@@ -20,7 +20,7 @@
         </router-link>
         <q-space ></q-space>
         <div id="input-search" ref="search" class="fixed-top-center" :style="{ visibility: 'hidden'}">
-          <q-input v-model='nickname' @input="searchByNick" />
+          <q-input v-model='nickname' @input="searchByNick" @keyup.enter="searchByTag"/>
           <nickname-search v-if="showSearch" id="search-result" :results="nicknameSearchResults" @closeSearch="closeSearchComponent"/>
         </div>
         <q-btn
@@ -122,6 +122,17 @@ export default {
         this.nicknameSearchResults = []
       }
     }, 300),
+    searchByTag: function (userInput) {
+      if (/^#/.test(userInput) && userInput !== '') {
+        axios.get(`/api/posts/search`, userInput)
+          .then(res => {
+            console.log('good')
+          })
+          .catch(err => {
+            console.log(err.message)
+          })
+      }
+    },
     visible (e) {
       if (e.target === this.$refs.toolbar.$el) {
         this.$refs.search.style.visibility = 'hidden'
