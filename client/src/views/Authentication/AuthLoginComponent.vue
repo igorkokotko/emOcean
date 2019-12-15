@@ -42,7 +42,7 @@
 import { validationMixin } from '../../utilities/validationMixin.js'
 import { notificationMixin } from '../../utilities/notificationMixin.js'
 import { mapActions, mapGetters } from 'vuex'
-const ApiService = require('../../utilities/ApiService.js')
+import { login, googleSignIn, setApiAuthorizationHeaders } from '@/services/auth.js'
 
 export default {
   mixins: [validationMixin, notificationMixin],
@@ -69,13 +69,13 @@ export default {
     login () {
       this.loading = true
       const { email, password } = this
-      ApiService.login({ password, email })
+      login({ password, email })
         .then(res => {
           const token = res.data.token
           const profileId = res.data.myProfileId
           this.updateMyProfileId(profileId)
           window.localStorage.setItem('profileId', profileId)
-          ApiService.setApiAuthorizationHeaders(token)
+          setApiAuthorizationHeaders(token)
           this.signIn({ token: token, user: res.data.user })
           window.localStorage.setItem('token', token)
           this.loading = false
@@ -90,9 +90,13 @@ export default {
       this.$gAuth
         .signIn()
         .then(GoogleUser => {
-          ApiService.googleSignIn(GoogleUser.getAuthResponse())
+          googleSignIn(GoogleUser.getAuthResponse())
             .then(res => {
               const token = res.data.token
+              const profileId = res.data.myProfileId
+              this.updateMyProfileId(profileId)
+              window.localStorage.setItem('profileId', profileId)
+              setApiAuthorizationHeaders(token)
               this.signIn({ token: token, user: res.data.user })
               window.localStorage.setItem('token', token)
               this.loading = false

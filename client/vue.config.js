@@ -2,7 +2,8 @@ module.exports = {
   devServer: {
     proxy: {
       '/api/': {
-        target: 'https://emocean.dev',
+        // target: 'https://emocean.dev',
+        target: 'http://localhost:5000',
         ws: true,
         changeOrigin: true
       }
