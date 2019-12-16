@@ -27,7 +27,7 @@
               ></i>
               <p
                 class="likes"
-                @click="likesInfo.show=true; likesInfo.postId = key; play"
+                @click="showLikesList(key)"
               >{{post.likes}}</p>
             </div>
             <div class="comments-icon" @click="closePopup(true)">
@@ -50,7 +50,7 @@
       <div class="big-btn" @click="$router.push('/addpost')">
         <i class="fas fa-2x fa-plus"></i>
       </div>
-      <LikesList v-bind:info="likesInfo" v-if="likesInfo.show" />
+      <likes-list v-bind:info="likesInfo" v-if="likesInfo.show" />
     </div>
   </div>
 </template>
@@ -106,6 +106,10 @@ export default {
       } else {
         currentVideo.pause()
       }
+    },
+    showLikesList (key) {
+      this.likesInfo.show = true
+      this.likesInfo.postId = key
     }
   },
   computed: {
@@ -113,7 +117,7 @@ export default {
   },
   components: {
     'v-comments': PageComments,
-    LikesList
+    'likes-list': LikesList
   }
 }
 </script>

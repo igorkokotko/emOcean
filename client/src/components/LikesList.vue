@@ -21,13 +21,14 @@
 
             <q-item-section @click="$router.push({ path: `/profile/${like.profile_id}` })">
               <q-item-label>{{ like.nickname }}</q-item-label>
+              <q-item-label caption lines="1">{{ $moment( parseInt(like.date) ).fromNow() }}</q-item-label>
             </q-item-section>
 
             <q-item-section side>
               <q-btn
                 class="follow-btn"
                 v-if="!like.followed"
-                @click="follow(like)"
+                @click="updateFollowStatus(like)"
                 unelevated
                 rounded
                 size="sm"
@@ -36,7 +37,7 @@
               <q-btn
                 class="unfollow-btn"
                 v-if="like.followed"
-                @click="unfollow(like)"
+                @click="updateFollowStatus(like)"
                 unelevated
                 outline
                 rounded
@@ -75,27 +76,16 @@ export default {
     ...mapGetters(['getLikes'])
   },
   created () {
-    console.log("Created")
-    console.log(this.info)
-    this.getLikedList('0kCAVkl8noht4sDbOf60')
-  },
-  watch: {
-    info: {
-      handler: (previous) => {
-        console.log(previous)
-      },
-      deep: true
-    }
+    this.getLikedList(this.info.postId)
   },
   methods: {
     ...mapActions(['getLikedList', 'updateList']),
-    follow: (follower) => {
-      console.log('follow')
-      follower.followed = true
-    },
-    unfollow: (follower) => {
-      console.log('unfollow')
-      follower.followed = false
+    updateFollowStatus (follower) {
+      if (follower.followed) {
+        follower.followed = false
+      } else {
+        follower.followed = true
+      }
     }
   }
 }

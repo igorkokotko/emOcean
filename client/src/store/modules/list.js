@@ -1,24 +1,13 @@
-import axios from 'axios'
-
+import postService from '../../services/post'
 export default {
   actions: {
     getLikedList (ctx, videoId) {
-      axios.get(`/api/posts/get-post-likes/${videoId}`)
-        .then((response) => {
-          console.log(response.data.result)
-          ctx.commit('updateLikedList', response.data.result)
-        })
-        .catch(error => {
-          console.log(error)
-        })
+      ctx.commit('updateLikedList', postService.getLikedList(videoId))
     }
   },
 
   mutations: {
     updateLikedList (state, list) {
-      list.sort((a, b) => {
-        return b.date - a.date
-      })
       state.list = list
     }
   },
