@@ -6,6 +6,7 @@ import Vuex from 'vuex'
 import profile from './modules/profile'
 import auth from './modules/authentication.js'
 import comments from './modules/comments.js'
+import list from './modules/list.js'
 
 Vue.use(Vuex)
 
@@ -15,6 +16,7 @@ export default new Vuex.Store({
     auth,
     posts,
     comments,
-    preferences
+    preferences,
+    list
   }
 })
