@@ -4,93 +4,97 @@ import Home from '../views/Home.vue'
 import Error404 from '../views/Error404/Error404.vue'
 import Feed from '../views/Feed/Feed'
 import AddPost from '../views/Feed/AddPost'
+import Notifications from '../views/Notifications/index.vue'
 Vue.use(VueRouter)
 
-const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: Home
+const routes = [{
+  path: '/',
+  name: 'home',
+  component: Home
+},
+{
+  path: '/feed',
+  name: 'Feed',
+  component: Feed
+},
+{
+  path: '/notifications',
+  name: 'Notifications',
+  component: Notifications
+},
+{
+  path: '/addpost',
+  name: 'Addpost',
+  component: AddPost
+},
+{
+  path: '/profile/:nickname',
+  props: true,
+  name: 'profile',
+  component: () => import('../views/Profile/index.vue')
+},
+{
+  path: '/profile/:nickname/follow',
+  name: 'followPage',
+  props: true,
+  component: () => import('../views/FollowList/index.vue')
+},
+{
+  path: "/comments",
+  name: "comments",
+  component: () => import("../views/Comments/PageComments.vue")
+},
+{
+  path: '/settings',
+  name: 'Settings',
+  component: () => import('../views/Settings/index.vue'),
+  children: [{
+    path: 'editProfile',
+    component: () => import('../views/Settings/Tabs/EditProfile/index.vue')
   },
   {
-    path: '/feed',
-    name: 'Feed',
-    component: Feed
+    path: 'editPreferences',
+    component: () => import('../views/Settings/Tabs/EditPreferences/index.vue')
   },
   {
-    path: '/addpost',
-    name: 'Addpost',
-    component: AddPost
+    path: 'changePassword',
+    component: () => import('../views/Settings/Tabs/ChangePassword/index.vue')
   },
   {
-    path: '/profile/:nickname',
-    props: true,
-    name: 'profile',
-    component: () => import('../views/Profile/index.vue')
+    path: 'editPrivacy',
+    component: () => import('../views/Settings/Tabs/EditPrivacy/index.vue')
   },
   {
-    path: '/profile/:nickname/follow',
-    name: 'followPage',
-    props: true,
-    component: () => import('../views/FollowList/index.vue')
-  },
-  {
-    path: "/comments",
-    name: "comments",
-    component: () => import("../views/Comments/PageComments.vue")
-  },
-  {
-    path: '/settings',
-    name: 'Settings',
-    component: () => import('../views/Settings/index.vue'),
-    children: [
-      {
-        path: 'editProfile',
-        component: () => import('../views/Settings/Tabs/EditProfile/index.vue')
-      },
-      {
-        path: 'editPreferences',
-        component: () => import('../views/Settings/Tabs/EditPreferences/index.vue')
-      },
-      {
-        path: 'changePassword',
-        component: () => import('../views/Settings/Tabs/ChangePassword/index.vue')
-      },
-      {
-        path: 'editPrivacy',
-        component: () => import('../views/Settings/Tabs/EditPrivacy/index.vue')
-      },
-      {
-        path: 'deleteAccount',
-        component: () => import('../views/Settings/Tabs/DeleteAccount/index.vue')
-      }
-    ]
-  },
-  {
-    path: '/register',
-    name: 'Register',
-    component: () => import('../views/Authentication/AuthRegister.vue')
-  },
-  {
-    path: '/login',
-    name: 'Login',
-    component: () => import('../views/Authentication/AuthLogin.vue')
-  },
-  {
-    path: '/forgotpassword',
-    name: 'Forgot Password',
-    component: () => import('../views/Authentication/AuthForgot.vue')
-  },
-  {
-    path: '/emailAction',
-    name: 'Reset Password',
-    component: () => import('../views/Authentication/AuthEmailAction.vue')
-  },
-  {
-    path: '*',
-    name: 'Error',
-    component: Error404
+    path: 'deleteAccount',
+    component: () => import('../views/Settings/Tabs/DeleteAccount/index.vue')
   }
+  ]
+},
+{
+  path: '/register',
+  name: 'Register',
+  component: () => import('../views/Authentication/AuthRegister.vue')
+},
+{
+  path: '/login',
+  name: 'Login',
+  component: () => import('../views/Authentication/AuthLogin.vue')
+},
+{
+  path: '/forgotpassword',
+  name: 'Forgot Password',
+  component: () => import('../views/Authentication/AuthForgot.vue')
+},
+{
+  path: '/emailAction',
+  name: 'Reset Password',
+  component: () => import('../views/Authentication/AuthEmailAction.vue')
+},
+{
+  path: '*',
+  name: 'Error',
+  component: Error404
+}
 ]
 
 const router = new VueRouter({
