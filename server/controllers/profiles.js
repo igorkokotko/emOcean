@@ -31,6 +31,7 @@ const getProfile = asyncMiddleware(async (req, res, next) => {
 const uploadImage = asyncMiddleware(async (req, res, next) => {
   const { type } = req.query
   const image = req.file
+  const id = req.userId
   if (type && image) {
     let validatedImageError, dest
     switch (type) {
@@ -58,8 +59,8 @@ const uploadImage = asyncMiddleware(async (req, res, next) => {
     if (validatedImageError !== undefined) {
       return next(new CustomError(validatedImageError))
     }
-    const imageUrl = await profilesService.uploadPhoto(image, req.userId, dest)
-    res.status(200).json({ imageUrl })
+    const result = await profilesService.uploadPhoto(image, id, dest)
+    res.status(200).json({ result })
   } else {
     return next(
       new CustomError({
@@ -72,35 +73,45 @@ const uploadImage = asyncMiddleware(async (req, res, next) => {
 })
 
 const saveProfile = asyncMiddleware(async (req, res) => {
+  const id = req.userId
   const userData = req.body
-  // TODO VALIDATION USERNAME, BIO, SOCIALS, INTERESTS, STATUS, BG AND URLS
-  const message = await profilesService.saveProfile(userData, req.userId)
+  const result = await profilesService.saveProfile(userData, id)
 
-  res.status(200).json({ message })
+  res.status(200).json({ result })
 })
 
 const setPreferences = asyncMiddleware(async (req, res) => {
   const { preferences } = req.body
+  const id = req.userId
+  const result = await profilesService.setPreferences(preferences, id)
 
-  const message = await profilesService.setPreferences(preferences, req.userId)
-
-  res.status(200).json({ message })
+  res.status(200).json({ result })
 })
 
 const getFollowersById = asyncMiddleware(async (req, res) => {
   const profileId = req.params.id
+  const paginationId = req.query.pagination
+  const usersLimit = 200
+  const result = await profilesService.getFollowersById(
+    profileId,
+    usersLimit,
+    paginationId
+  )
 
-  const followers = await profilesService.getFollowersById(profileId)
-
-  res.status(200).json({ followers })
+  res.status(200).json({ result })
 })
 
 const getFollowingsById = asyncMiddleware(async (req, res) => {
   const profileId = req.params.id
+  const paginationId = req.query.pagination
+  const usersLimit = 200
+  const result = await profilesService.getFollowingsById(
+    profileId,
+    usersLimit,
+    paginationId
+  )
 
-  const followings = await profilesService.getFollowingsById(profileId)
-
-  res.status(200).json({ followings })
+  res.status(200).json({ result })
 })
 
 const profileAction = asyncMiddleware(async (req, res) => {
