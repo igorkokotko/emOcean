@@ -20,7 +20,7 @@
         </router-link>
         <q-space ></q-space>
         <div id="input-search" ref="search" class="fixed-top-center" :style="{ visibility: 'hidden'}">
-          <q-input v-model='userInput' @input="search"/>
+          <q-input v-model='userInput' @input="searchByNick" @keyup.enter="searchTag"/>
           <nickname-search v-if="showSearch" id="search-result" :results="nicknameSearchResults" @closeSearch="closeSearchComponent"/>
         </div>
         <q-btn
@@ -101,7 +101,7 @@ export default {
   },
 
   methods: {
-    search: debounce(function (value) {
+    searchByNick: debounce(function (value) {
       if (!/^#/.test(value) && value !== '') {
         this.nicknameSearchResults = []
         this.showSearch = true
@@ -121,16 +121,23 @@ export default {
       } else {
         this.showSearch = false
         this.nicknameSearchResults = []
-        console.log(value.trim().slice(1))
-        searchByTag(value.trim().slice(1))
+      }
+    }, 300),
+
+    searchTag: function () {
+      console.log('enter')
+      console.log(this.userInput)
+      if (/^#/.test(this.userInput) && this.userInput !== '') {
+        let inputValue = this.userInput.trim().slice(1)
+        searchByTag(inputValue)
           .then(res => {
-            console.log(res.data)
+            console.log(res.data.message)
           })
           .catch(err => {
             console.log(err.message)
           })
       }
-    }, 300),
+    },
     visible (e) {
       if (e.target === this.$refs.toolbar.$el) {
         this.$refs.search.style.visibility = 'hidden'
