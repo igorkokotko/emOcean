@@ -1,30 +1,33 @@
-const express = require("express")
+const express = require('express')
 const router = express.Router()
-const protected = require("../middleware/protectRoute")
-const mediaValidation = require("../middleware/mediaValidation")
+const protected = require('../middleware/protectRoute')
+const mediaValidation = require('../middleware/mediaValidation')
 const upload = require('../config/multerConfig')
 const {
   savePost,
   uploadVideos,
-  searchPosts
-} = require("../controllers/posts")
+  getPostsByViews,
+  getPostsByFollowings,
+  getPostsByPreferences,
+  getPostsByTags,
+  editPost,
+  deletePost
+} = require('../controllers/posts')
 
+router.post(
+  '/upload-videos',
+  protected,
+  upload.array('file', 2),
+  mediaValidation,
+  uploadVideos
+)
 router.post('/save-post', protected, savePost)
-router.get('/search', searchPosts)
+router.delete('/delete-post/:postId', protected, deletePost)
+router.put('/edit-post/:postId', protected, editPost)
 
-router.post("/upload-videos", protected, upload.array("file", 2), mediaValidation, uploadVideos)
+router.get('/by-tags', getPostsByTags)
+router.get('/by-views', getPostsByViews)
+router.get('/by-followings', protected, getPostsByFollowings)
+router.get('/by-preferences', protected, getPostsByPreferences)
 
-// /api/posts/upload-videos?type=single-video
-// /api/posts/upload-videos?type=two-videos
-// /api/posts/upload-videos?type=video-and-audio
-
-// get popular posts (by likes) with pagination
-// get recommended posts from feed with pagination
-// get posts from my followers feed with pagination
-// edit my post
-// get post by id
-// get posts by userId
-// like/unlike  post
-
-
-module.exports = router;
+module.exports = router
