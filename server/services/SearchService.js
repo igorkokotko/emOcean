@@ -29,26 +29,31 @@ const searchByNick = (nickname) => {
 };
 
 const searchByTag = (tag) => {
-  let postsRef = db.collection('posts');
-  let query = postsRef.where('tag', '==', tag).get()
-
-  .then(snapshot => {
-    if (snapshot.empty) {
-      console.log('No matching documents.');
-      return;
-    }    
-    snapshot.forEach(doc => {
-      console.log(doc.id, '=>', doc.data());
-    });
+  return new Promise((resolve, reject) => {
+    let postsRef = db.collection('posts');
+  postsRef
+    .where('tag', 'array-contains', tag)
+    .get()
+    .then(snapshot => {
+      if (snapshot.empty) {
+        reject(
+          new CustomError({
+            name: "DatabaseError",
+            message: "No post has been found",
+            status: 404
+          })
+        )
+      }
+      console.log('serarchbeytag')
+      const posts = {}
+      snapshot.forEach(doc => {
+        posts[doc.id] = doc.data();
+      });
+      resolve(posts)
+    })
+    .catch(err => { reject(err) });
   })
-  .catch(err => {
-    console.log('Error getting documents', err);
-  });
-
-  return query
 }
-
-// findByTag('#nature')
 
 module.exports = {
   searchByNick,

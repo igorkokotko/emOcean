@@ -28,12 +28,12 @@ const savePost = asyncMiddleware(async (req, res, next) => {
 
 
 
-const search = function(req, res) {
-    const tag  = req.body
-    console.log(tag)
-    let message = searchService.searchByTag(tag)
-    res.send(message)
-  }
+const search = asyncMiddleware(async (req, res, next) => {
+  const tag = req.query.tag
+  console.log(tag)
+  const message = await searchService.searchByTag(tag)
+  res.status(200).json({ message })
+})
   
   module.exports = {
     search,

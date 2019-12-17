@@ -20,7 +20,7 @@
         </router-link>
         <q-space ></q-space>
         <div id="input-search" ref="search" class="fixed-top-center" :style="{ visibility: 'hidden'}">
-          <q-input v-model='nickname' @input="searchByNick" @keyup.enter="searchByTag"/>
+          <q-input v-model='userInput' @input="search"/>
           <nickname-search v-if="showSearch" id="search-result" :results="nicknameSearchResults" @closeSearch="closeSearchComponent"/>
         </div>
         <q-btn
@@ -79,6 +79,7 @@
 import NicknameSearch from '../components/NicknameSearch.vue'
 import debounce from 'lodash/debounce'
 import { searchByNick } from '@/services/profile.js'
+import { searchByTag } from '@/services/post.js'
 
 export default {
   name: 'Header',
@@ -87,7 +88,7 @@ export default {
   },
   data () {
     return {
-      nickname: '',
+      userInput: '',
       showSearch: true,
       nicknameSearchResults: []
     }
@@ -100,7 +101,7 @@ export default {
   },
 
   methods: {
-    searchByNick: debounce(function (value) {
+    search: debounce(function (value) {
       if (!/^#/.test(value) && value !== '') {
         this.nicknameSearchResults = []
         this.showSearch = true
@@ -120,19 +121,16 @@ export default {
       } else {
         this.showSearch = false
         this.nicknameSearchResults = []
-      }
-    }, 300),
-    searchByTag: function (userInput) {
-      if (/^#/.test(userInput) && userInput !== '') {
-        axios.get(`/api/posts/search`, userInput)
+        console.log(value.trim().slice(1))
+        searchByTag(value.trim().slice(1))
           .then(res => {
-            console.log('good')
+            console.log(res.data)
           })
           .catch(err => {
             console.log(err.message)
           })
       }
-    },
+    }, 300),
     visible (e) {
       if (e.target === this.$refs.toolbar.$el) {
         this.$refs.search.style.visibility = 'hidden'
