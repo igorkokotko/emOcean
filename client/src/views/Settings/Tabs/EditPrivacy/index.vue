@@ -75,21 +75,197 @@
         </q-item-section>
       </q-item>
 
+      <q-separator spaced />
+      <q-item-label header>Black list</q-item-label>
+      <div class="row justify-between">
+        <div
+          id="input-search"
+          ref="search"
+          class="col"
+          >
+          <q-input v-model="nickname" @input="searchByNick" />
+          <block-search
+            v-if="showSearch"
+            id="search-result"
+            :results="nicknameSearchResults"
+            @handleChoose="handleChoose"
+          />
+        </div>
+        <q-btn
+          @click="blockUser"
+          id="block-button"
+          class="col"
+          :disabled='!enableBlock'
+        >Block</q-btn>
+      </div>
+      <p v-if="userToBlockNick">{{userToBlockNick}}  <q-btn
+        round
+        color = 'teal'
+        size = 'xs'
+        icon = 'close'
+        @click = "userToBlockNick = ''"
+      /></p>
+      <p id="error-message" v-if="errorMessage">{{errorMessage}}  <q-btn
+        round
+        color = 'red'
+        size = 'xs'
+        icon = 'close'
+        @click = "errorMessage = ''"
+      /></p>
+      <blocked-list id="blocked-list" @unblock="unblockUser" :list="blockedProfilesList"></blocked-list>
     </q-list>
   </div>
 </template>
 
 <script>
+import BlockSearch from '@/components/BlockSearch.vue'
+import BlockedList from '@/components/BlockedList.vue'
+import debounce from 'lodash/debounce'
+import { searchByNick, profileAction, getProfile } from '@/services/profile.js'
+
 export default {
   name: 'EditPrivacy',
+  components: {
+    BlockSearch,
+    BlockedList
+  },
   data () {
     return {
       comment: true,
       like: true,
       reply: true,
       uploadPost: true,
-      hideOffencive: false
+      hideOffencive: false,
+      nickname: '',
+      showSearch: true,
+      myid: this.$store.state.profile.myProfileId,
+      nicknameSearchResults: [],
+      userToBlockNick: '',
+      userToBlockId: '',
+      errorMessage: '',
+      enableBlock: false,
+      blockedIdList: [],
+      blockedProfilesList: []
+    }
+  },
+  created () {
+    this.displayBlockedIds()
+  },
+  methods: {
+    searchByNick: debounce(function (value) {
+      if (value !== '') {
+        this.nicknameSearchResults = []
+        this.showSearch = true
+        searchByNick({ nickname: value })
+          .then(res => {
+            this.nicknameSearchResults = []
+            res.data.message.forEach(element => {
+              this.nicknameSearchResults.push({ id: element.userId, nickname: element.nickname, avatar: element.avatarUrl })
+            })
+          })
+          .catch(err => {
+            if (err.response.data.error === 'No user has been found') {
+              this.nicknameSearchResults = []
+              this.nicknameSearchResults.push({ error: 'No matches found' })
+            }
+          })
+      } else {
+        this.showSearch = false
+        this.nicknameSearchResults = []
+      }
+    }, 300),
+    handleChoose (id, nickname) {
+      this.errorMessage = ''
+      this.userToBlockNick = nickname
+      this.userToBlockId = id
+      this.showSearch = false
+      this.nickname = ''
+      this.enableBlock = true
+      if (this.userToBlockId === this.myid) {
+        this.errorMessage = 'You cannot block your own account.'
+        this.userToBlockNick = ''
+        this.userToBlockId = ''
+        this.enableBlock = false
+      }
+    },
+    blockUser () {
+      const action = 'block'
+      const id = this.userToBlockId
+      profileAction({ action, id })
+        .then(response => {
+          this.displayBlockedIds()
+          this.userToBlockNick = ''
+          this.userToBlockId = ''
+        })
+        .catch(error => {
+          this.enableBlock = false
+          if (error.response.data.error) {
+            this.errorMessage = error.response.data.error
+          } else {
+            this.errorMessage = 'Sorry, something went wrong...'
+          }
+        })
+    },
+    unblockUser (id) {
+      const action = 'unblock'
+      profileAction({ action, id })
+        .then(response => {
+          this.displayBlockedIds()
+        })
+        .catch(error => {
+          if (error.response.data.error) {
+            this.errorMessage = error.response.data.error
+          } else {
+            this.errorMessage = 'Sorry, something went wrong...'
+          }
+        })
+    },
+    displayBlockedIds () {
+      const id = this.myid
+      getProfile({ id })
+        .then(res => {
+          if (res.data.profile.blockedProfiles.length === 0) {
+            this.blockedProfilesList = []
+          } else {
+            this.blockedIdList = res.data.profile.blockedProfiles
+            this.getBlockedProfiles()
+          }
+        })
+        .catch(err => {
+          console.log(err)
+          this.errorMessage = 'Sorry, something went wrong...'
+        })
+    },
+    getBlockedProfiles () {
+      this.blockedIdList.forEach(element => {
+        getProfile({ id: element })
+          .then(res => {
+            const profile = res.data.profile
+            this.blockedProfilesList.push({ id: profile.userId, nickname: profile.nickname, avatar: profile.avatarUrl })
+          })
+          .catch(err => {
+            console.log(err)
+            this.errorMessage = 'Sorry, something went wrong...'
+          })
+      })
     }
   }
 }
 </script>
+<style scoped>
+  #input-search {
+    max-width: 200px;
+  }
+  #block-button {
+    max-width: 100px;
+  }
+  #error-message {
+    color: red;
+  }
+  #search-result {
+    z-index: 1;
+  }
+  #blocked-list {
+    margin-top: 80px;
+  }
+</style>

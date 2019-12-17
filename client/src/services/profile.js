@@ -3,7 +3,7 @@ const apiProfile = '/api/profiles'
 
 export const updateProfile = (editedData) => axios.post(`${apiProfile}/save-profile`, editedData)
 
-export const getProfile = (params) => axios.post(`${apiProfile}/get-profile`, { params })
+export const getProfile = (params) => axios.get(`${apiProfile}/get-profile`, { params })
 
 export const uploadAvatar = (avatar, params) => axios.post(`${apiProfile}/upload-image`, avatar, { params })
 
