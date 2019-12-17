@@ -1,7 +1,7 @@
 const { db, storage } = require('../config/databaseConfig')
 const CustomError = require('../common/CustomError')
 
-const uploadPhoto = function (photo, userId, dest) {
+const uploadPhoto = function(photo, userId, dest) {
   const metaData = {
     contentType: photo.mimetype
   }
@@ -12,44 +12,56 @@ const uploadPhoto = function (photo, userId, dest) {
   })
 }
 
-const saveProfile = function (profile, userId) {
+const saveProfile = function(profile, userId) {
   const profilesRef = db.collection('users')
   const profileRef = db.collection('users').doc(userId)
+  const userPostsRef = db.collection('users-posts').doc(userId)
 
   return profileRef.get().then(doc => {
     const prevNickname = doc.data().nickname
     if (prevNickname === profile.nickname) {
-      return profileRef
-        .update({
-          bio: profile.bio,
-          status: profile.status,
-          interests: profile.interests,
-          avatar_url: profile.avatar_url,
-          socialAccounts: profile.socialAccounts,
-          user_background: profile.user_background
+      return db.runTransaction(t => {
+        return t.get(profileRef).then(profileDoc => {
+          return t.get(userPostsRef).then(userPostsDoc => {
+            t.update(profileRef, {
+              bio: profile.bio,
+              status: profile.status,
+              avatarUrl: profile.avatarUrl,
+              preferences: profile.preferences,
+              socialAccounts: profile.socialAccounts,
+              backgroundUrl: profile.backgroundUrl
+            })
+            t.update(userPostsRef, { avatarUrl: profile.avatarUrl })
+            return 'Profile saved successfully'
+          })
         })
-        .then(() => {
-          return 'Profile edited successfully'
-        })
+      })
     } else {
       return profilesRef
         .where('nickname', '==', profile.nickname)
         .get()
         .then(snapshot => {
           if (snapshot.empty) {
-            return profileRef
-              .update({
-                nickname: profile.nickname,
-                bio: profile.bio,
-                status: profile.status,
-                interests: profile.interests,
-                avatar_url: profile.avatar_url,
-                socialAccounts: profile.socialAccounts,
-                user_background: profile.user_background
+            return db.runTransaction(t => {
+              return t.get(profileRef).then(profileDoc => {
+                return t.get(userPostsRef).then(userPostsDoc => {
+                  t.update(profileRef, {
+                    nickname: profile.nickname,
+                    bio: profile.bio,
+                    status: profile.status,
+                    preferences: profile.preferences,
+                    avatarUrl: profile.avatarUrl,
+                    socialAccounts: profile.socialAccounts,
+                    backgroundUrl: profile.backgroundUrl
+                  })
+                  t.update(userPostsRef, {
+                    nickname: profile.nickname,
+                    avatarUrl: profile.avatarUrl
+                  })
+                  return 'Profile saved successfully'
+                })
               })
-              .then(() => {
-                return 'Profile edited successfully'
-              })
+            })
           } else {
             {
               throw new CustomError({
@@ -64,7 +76,7 @@ const saveProfile = function (profile, userId) {
   })
 }
 
-const getProfileById = function (userId) {
+const getProfileById = function(userId) {
   const profileRef = db.collection('users').doc(userId)
 
   return profileRef.get().then(doc => {
@@ -79,13 +91,13 @@ const getProfileById = function (userId) {
   })
 }
 
-const getProfileByNickname = function (userNickname) {
+const getProfileByNickname = function(userNickname) {
   const profilesRef = db.collection('users')
-  let profile;
   return profilesRef
     .where('nickname', '==', userNickname)
     .get()
     .then(profile => {
+      console.log(profile)
       if (profile.empty) {
         throw new CustomError({
           name: 'DatabaseError',
@@ -101,7 +113,7 @@ const getProfileByNickname = function (userNickname) {
     })
 }
 
-const setPreferences = function (preferences, userId) {
+const setPreferences = function(preferences, userId) {
   const profileRef = db.collection('users').doc(userId)
 
   return profileRef.get().then(doc => {
@@ -112,37 +124,13 @@ const setPreferences = function (preferences, userId) {
         status: 404
       })
     }
-
-    return profileRef.update({ interests: preferences }).then(() => {
+    return profileRef.update({ preferences }).then(() => {
       return 'Preferences successfully set'
     })
   })
 }
 
-const getFollowersById = function (id) {
-  const profileRef = db.collection('users').doc(id)
-
-  return profileRef.get().then(doc => {
-    if (!doc.exists) {
-      throw new CustomError({
-        name: 'DatabaseError',
-        message: 'No profile with given id',
-        status: 404
-      })
-    }
-    const followers = doc.data().followers
-    if (!followers || followers.length === 0) {
-      throw new CustomError({
-        name: 'DatabaseError',
-        message: 'This profile doesnt have followers',
-        status: 404
-      })
-    }
-    return followers
-  })
-}
-
-const followProfile = function (myUserId, followId) {
+const followProfile = function(myUserId, followId) {
   const myProfileRef = db.collection('users').doc(myUserId)
   const followProfileRef = db.collection('users').doc(followId)
 
@@ -225,7 +213,7 @@ const followProfile = function (myUserId, followId) {
     })
 }
 
-const unfollowProfile = function (myUserId, followId) {
+const unfollowProfile = function(myUserId, followId) {
   const myProfileRef = db.collection('users').doc(myUserId)
   const followProfileRef = db.collection('users').doc(followId)
 
@@ -270,7 +258,7 @@ const unfollowProfile = function (myUserId, followId) {
     })
 }
 
-const blockProfile = function (myId, blockedProfileId) {
+const blockProfile = function(myId, blockedProfileId) {
   const profileRef = db.collection('users').doc(myId)
   const blockedProfileRef = db.collection('users').doc(blockedProfileId)
 
@@ -352,7 +340,7 @@ const blockProfile = function (myId, blockedProfileId) {
   })
 }
 
-const unblockProfile = function (myId, blockedProfileId) {
+const unblockProfile = function(myId, blockedProfileId) {
   const profileRef = db.collection('users').doc(myId)
 
   return profileRef.get().then(doc => {
@@ -387,27 +375,133 @@ const unblockProfile = function (myId, blockedProfileId) {
   })
 }
 
-const getFollowingsById = function (profileId) {
-  const profileRef = db.collection('users').doc(profileId)
-
-  return profileRef.get().then(doc => {
-    if (!doc.exists) {
-      throw new CustomError({
-        name: 'DatabaseError',
-        message: 'No profile with given id',
-        status: 404
+const getFollowingsById = function(profileId, followingsLimit, paginationId) {
+  const profilesRef = db.collection('users')
+  const followingsQueryRef = db
+    .collection('users')
+    .doc(profileId)
+    .collection('followings')
+    .limit(followingsLimit)
+    .orderBy('actionDate', 'desc')
+  if (paginationId) {
+    const paginateRef = db.collection('users').doc(profileId)
+    return paginateRef.get().then(snapshot => {
+      const next = followingsQueryRef.startAfter(snapshot)
+      return next.get().then(docSnapshots => {
+        const docsLength = docSnapshots.docs.length
+        if (docsLength > 0) {
+          const lastIndex =
+            docsLength >= followingsLimit
+              ? docSnapshots.docs[docSnapshots.docs.length - 1].id
+              : 'Last index'
+          const followingsProfiles = []
+          docSnapshots.forEach(doc => {
+            profilesRef
+              .doc(doc.id)
+              .get()
+              .then(doc => {
+                followingsProfiles.push(doc.data())
+              })
+          })
+          return Promise.all(followingsProfiles).then(values => {
+            return { data: values, lastIndex }
+          })
+        } else {
+          return 'No more users left'
+        }
       })
-    }
-    const followings = doc.data().followings
-    if (!followings || followings.length === 0) {
-      throw new CustomError({
-        name: 'DatabaseError',
-        message: 'User with given id doesnt have followings',
-        status: 404
+    })
+  } else {
+    return followingsQueryRef.get().then(docSnapshots => {
+      const docsLength = docSnapshots.docs.length
+      if (docsLength > 0) {
+        const lastIndex =
+          docsLength >= followingsLimit
+            ? docSnapshots.docs[docSnapshots.docs.length - 1].id
+            : 'Last query'
+        const followingsProfiles = []
+        docSnapshots.forEach(doc => {
+          followingsProfiles.push(
+            profilesRef
+              .doc(doc.id)
+              .get()
+              .then(doc => {
+                return doc.data()
+              })
+          )
+        })
+        return Promise.all(followingsProfiles).then(values => {
+          return { data: values, lastIndex }
+        })
+      } else {
+        return 'No more users left'
+      }
+    })
+  }
+}
+const getFollowersById = function(profileId, followersLimit, paginationId) {
+  const profilesRef = db.collection('users')
+  const followersQueryRef = db
+    .collection('users')
+    .doc(profileId)
+    .collection('followers')
+    .limit(followersLimit)
+    .orderBy('actionDate', 'desc')
+  if (paginationId) {
+    const paginateRef = db.collection('users').doc(profileId)
+    return paginateRef.get().then(snapshot => {
+      const next = followersQueryRef.startAfter(snapshot)
+      return next.get().then(docSnapshots => {
+        const docsLength = docSnapshots.docs.length
+        if (docsLength > 0) {
+          const lastIndex =
+            docsLength >= followersLimit
+              ? docSnapshots.docs[docSnapshots.docs.length - 1].id
+              : 'Last index'
+          const followersProfiles = []
+          docSnapshots.forEach(doc => {
+            profilesRef
+              .doc(doc.id)
+              .get()
+              .then(doc => {
+                followersProfiles.push(doc.data())
+              })
+          })
+          return Promise.all(followersProfiles).then(values => {
+            return { data: values, lastIndex }
+          })
+        } else {
+          return 'No more users left'
+        }
       })
-    }
-    return followings
-  })
+    })
+  } else {
+    return followersQueryRef.get().then(docSnapshots => {
+      const docsLength = docSnapshots.docs.length
+      if (docsLength > 0) {
+        const lastIndex =
+          docsLength >= followersLimit
+            ? docSnapshots.docs[docSnapshots.docs.length - 1].id
+            : 'Last query'
+        const followersProfiles = []
+        docSnapshots.forEach(doc => {
+          followersProfiles.push(
+            profilesRef
+              .doc(doc.id)
+              .get()
+              .then(doc => {
+                return doc.data()
+              })
+          )
+        })
+        return Promise.all(followersProfiles).then(values => {
+          return { data: values, lastIndex }
+        })
+      } else {
+        return 'No more users left'
+      }
+    })
+  }
 }
 
 module.exports = {
