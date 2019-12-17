@@ -3,10 +3,9 @@ const CustomError = require('../common/CustomError')
 const nicknameKeywords = require('../common/nicknameKeywords')
 
 const createUserWithEmailAndPassword = (email, password, nickname) => {
-  const usersRef = db.collection('users')
-  const avatarUrl =
-    'https://firebasestorage.googleapis.com/v0/b/emocean-74133.appspot.com/o/avatars%2Fno-profile-image.png?alt=media&token=f5825834-7e53-46e7-becd-f14559a73e331'
-  return usersRef
+  const userProfilesRef = db.collection('users')
+  const usersPostsRef = db.collection('users-posts')
+  return userProfilesRef
     .where('nickname', '==', nickname)
     .get()
     .then(snapshot => {
@@ -15,17 +14,32 @@ const createUserWithEmailAndPassword = (email, password, nickname) => {
         return auth()
           .createUserWithEmailAndPassword(email, password)
           .then(({ user }) => {
-            return usersRef
-              .doc(user.uid)
-              .set({
-                nickname,
-                profile_id: user.uid,
-                avatar_url: avatarUrl,
-                keywords
-              })
-              .then(() => {
-                return 'User created'
-              })
+            const batch = db.batch()
+            const userId = user.uid
+            const singleUserRef = userProfilesRef.doc(userId)
+            const singleUserPostsRef = usersPostsRef.doc(userId)
+            batch.set(singleUserRef, {
+              nickname,
+              email,
+              userId,
+              avatarUrl: '',
+              backgroundUrl: '',
+              preferences: [],
+              followingsCount: 0,
+              followersCount: 0,
+              followingsId: [],
+              blockedProfiles: [],
+              keywords
+            })
+            batch.set(singleUserPostsRef, {
+              nickname,
+              avatarUrl: '',
+              followers: [userId],
+              posts: []
+            })
+            return batch.commit().then(() => {
+              return 'User successfully added'
+            })
           })
       } else {
         {
@@ -83,7 +97,7 @@ const signInWithGoogle = function(token_id) {
   return auth()
     .signInWithCredential(credential)
     .then(({ user }) => {
-      return user
+      return { uid: user.uid, email: user.email }
     })
 }
 

@@ -4,11 +4,14 @@ const protected = require('../middleware/protectRoute')
 const {
   register,
   login,
+  checkToken,
   sendPasswordResetCode,
   resetPassword,
   signInWithGoogle,
   changePassword
 } = require('../controllers/auth')
+
+router.get('/check-token', protected, checkToken)
 
 router.post('/register', register)
 router.post('/login', login)

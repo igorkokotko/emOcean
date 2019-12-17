@@ -9,6 +9,9 @@ const {
   validatePassword
 } = require('../validation/auth')
 
+// @desc    Register user
+// @route   POST /api/auth/register
+// @access  Public
 const register = asyncMiddleware(async (req, res, next) => {
   const { email, password, nickname } = req.body
 
@@ -35,6 +38,9 @@ const register = asyncMiddleware(async (req, res, next) => {
   res.status(200).json({ message })
 })
 
+// @desc    Login user
+// @route   POST /api/auth/login
+// @access  Public
 const login = asyncMiddleware(async (req, res, next) => {
   const { email, password } = req.body
 
@@ -58,6 +64,9 @@ const login = asyncMiddleware(async (req, res, next) => {
   res.status(200).json({ token, myProfileId: currentUser.uid })
 })
 
+// @desc    Change user password
+// @route   POST /api/auth/change-password
+// @access  Private
 const changePassword = asyncMiddleware(async (req, res, next) => {
   const { oldPassword, newPassword } = req.body
   const token = req.headers.authorization.split(' ')[1]
@@ -77,6 +86,9 @@ const changePassword = asyncMiddleware(async (req, res, next) => {
   res.status(200).json({ message })
 })
 
+// @desc    Send reset password code if forgot password
+// @route   POST /api/auth/send-password-reset-code
+// @access  Public
 const sendPasswordResetCode = asyncMiddleware(async (req, res, next) => {
   const { email } = req.body
 
@@ -90,6 +102,9 @@ const sendPasswordResetCode = asyncMiddleware(async (req, res, next) => {
   res.status(200).json({ message })
 })
 
+// @desc    Reset password with new password and action oob Code
+// @route   POST /api/auth/change-password
+// @access  Public
 const resetPassword = asyncMiddleware(async (req, res, next) => {
   const { oobCode, password } = req.body
 
@@ -103,6 +118,9 @@ const resetPassword = asyncMiddleware(async (req, res, next) => {
   res.status(200).json({ message })
 })
 
+// @desc    Sign in with google account
+// @route   POST /api/auth/login-with-google
+// @access  Public
 const signInWithGoogle = asyncMiddleware(async (req, res) => {
   const { id_token } = req.body
 
@@ -113,8 +131,16 @@ const signInWithGoogle = asyncMiddleware(async (req, res) => {
   res.status(200).json({ token })
 })
 
+// @desc    Check if token correct
+// @route   GET /api/auth/check-token
+// @access  Private
+const checkToken = asyncMiddleware(async (req, res) => {
+  res.status(200).json({ id: req.userId })
+})
+
 module.exports = {
   register,
+  checkToken,
   login,
   sendPasswordResetCode,
   changePassword,
