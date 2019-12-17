@@ -139,7 +139,9 @@ export default {
         color: 'primary',
         message: 'You logged out.'
       })
-      this.$router.push('/feed')
+      if (this.$route.path !== '/feed') {
+        this.$router.push('/feed')
+      }
     },
 
     closeSearchComponent () {

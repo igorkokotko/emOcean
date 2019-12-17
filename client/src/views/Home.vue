@@ -14,6 +14,18 @@ export default {
   name: 'home',
   components: {
     'v-auth-login-modal': AuthModal
+  },
+  beforeRouteEnter: (to, from, next) => {
+    if (to.path === '/') {
+      return next('/feed')
+    }
+    next()
+  },
+  beforeRouteUpdate: (to, from, next) => {
+    if (to.path === '/') {
+      return next('/feed')
+    }
+    next()
   }
 }
 </script>

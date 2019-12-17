@@ -63,6 +63,7 @@
           <template v-if="!isNewCoverPhotoSelected">
             <div class="row justify-center">
               <img
+                v-if="isProfileLoaded"
                 :src="profile.user_background !== '' ? profile.user_background : DefaultCoverPhoto"
                 class="coverPhoto"
               />
@@ -220,7 +221,7 @@ import {
   checkUserDescriptionField,
   checkURL
 } from '@/utilities/validation.js'
-import authService from '@/services/auth.js'
+import { uploadAvatar, uploadBackground } from '@/services/profile.js'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -257,7 +258,8 @@ export default {
       isNewAvatarUploaded: false,
       isNewCoverPhotoUploaded: false,
       DefaultCoverPhoto,
-      loading: false
+      loading: false,
+      isProfileLoaded: false
     }
   },
 
@@ -278,6 +280,7 @@ export default {
   watch: {
     profileGetter (newValue) {
       this.loadDataFromStore()
+      this.isProfileLoaded = true
     }
   },
 
@@ -337,7 +340,7 @@ export default {
       const avatarFormData = new FormData()
       avatarFormData.append('file', blob)
 
-      authService.uploadAvatar(avatarFormData, { type: 'avatar' })
+      uploadAvatar(avatarFormData, { type: 'avatar' })
         .then((res) => {
           this.profile.avatar_url = res.data.imageUrl
           this.isNewAvatarUploaded = true
@@ -352,7 +355,7 @@ export default {
       const coverPhotoFormData = new FormData()
       coverPhotoFormData.append('file', blob)
 
-      authService.uploadBackground(coverPhotoFormData, { type: 'background' })
+      uploadBackground(coverPhotoFormData, { type: 'background' })
         .then((res) => {
           this.profile.user_background = res.data.imageUrl
           this.isNewCoverPhotoUploaded = true
@@ -438,13 +441,16 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .q-avatar__content, .q-avatar img:not(.q-icon) {
   width: auto;
 }
 
 .coverPhoto {
-  max-width: 500px;
+  max-width: 100%;
+  @media (min-width: 600px) {
+    max-width: 500px;
+  }
 }
 
 .uploadImage {
@@ -452,7 +458,7 @@ export default {
 }
 </style>
 
-<style>
+<style lang="scss">
 .inputFile {
   display: none;
 }
@@ -479,6 +485,9 @@ export default {
 }
 
 .backgroundImage .vueCropperWrapper {
-  max-width: 500px;
+  max-width: 100%;
+  @media (min-width: 600px) {
+    max-width: 500px;
+  }
 }
 </style>

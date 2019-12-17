@@ -17,6 +17,15 @@ export default {
     if (!Authorized.isAuthorized()) {
       return next('/login')
     }
+    if (to.path === '/settings') {
+      return next('/settings/editProfile')
+    }
+    next()
+  },
+  beforeRouteUpdate: (to, from, next) => {
+    if (to.path === '/settings') {
+      return next('/settings/editProfile')
+    }
     next()
   }
 }
