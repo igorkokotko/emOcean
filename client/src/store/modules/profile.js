@@ -132,6 +132,9 @@ export default {
     myProfile (state) {
       return state.myProfile
     },
+    myProfileId (state) {
+      return state.myProfileId
+    },
     followingIdsGetter (state) {
       let followingIds = []
       state.currentProfileFollowings.map(function (value, key) {

@@ -387,6 +387,17 @@ const unblockProfile = function(myId, blockedProfileId) {
   })
 }
 
+const deleteAccount = function (userId) {
+  const userProfile = db.collection('users').doc(userId).delete()
+  userProfile
+    .then(() => {
+      return 'User succesfully deleted'
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
 module.exports = {
   saveProfile,
   getFollowingsById,
@@ -398,5 +409,6 @@ module.exports = {
   unfollowProfile,
   getProfileByNickname,
   getFollowersById,
-  uploadPhoto
+  uploadPhoto,
+  deleteAccount
 }
