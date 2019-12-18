@@ -53,7 +53,8 @@
 <script>
 import PageComments from '../Comments/PageComments'
 import { mapGetters, mapActions } from 'vuex'
-import axios from 'axios'
+import { searchByTag } from '@/services/post.js'
+import { getFeedAnonimus, getFeedByPreferences } from '@/services/feed.js'
 
 const Authorized = require('../Authentication/Authorized.js')
 
@@ -65,31 +66,52 @@ export default {
     }
   },
   created () {
-    let route = ''
-    console.log(Authorized.isAuthorized())
-    if (Authorized.isAuthorized()) {
-      route = '/api/feed/authorized'
-    } else {
-      route = '/api/feed/anonimus'
+    this.load_feed_data(this.$route.query.tag)
+  },
+  watch: {
+    '$route.query.tag': function (tag) {
+      this.load_feed_data(tag)
     }
-    axios.get(route)
-      .then((response) => {
-        this.updateState(response.data)
-      })
-      .catch(error => {
-        if (error.response) {
-          this.$q.notify({
-            message: 'Failed to fetch the feed!',
-            icon: 'announcement'
-          })
-        }
-      })
   },
   methods: {
     ...mapActions('posts', ['updateLikes', 'updateState']),
     closePopup (visibility) {
       // close | open
       this.isModelVisible = visibility
+    },
+    load_feed_data (tag) {
+      if (tag === undefined) {
+        let query = ''
+        if (Authorized.isAuthorized()) {
+          query = getFeedByPreferences()
+        } else {
+          query = getFeedAnonimus()
+        }
+        query.then((response) => {
+          this.updateState(response.data)
+        })
+          .catch(error => {
+            if (error.response) {
+              this.$q.notify({
+                message: 'Failed to fetch the feed!',
+                icon: 'announcement'
+              })
+            }
+          })
+      } else {
+        searchByTag(tag)
+          .then(res => {
+            this.updateState(res.data.message)
+          })
+          .catch(error => {
+            if (error.response) {
+              this.$q.notify({
+                message: 'Failed to fetch the feed!',
+                icon: 'announcement'
+              })
+            }
+          })
+      }
     },
     play: function (event) {
       let currentVideo = event.target

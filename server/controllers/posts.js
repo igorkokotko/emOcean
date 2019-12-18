@@ -30,7 +30,6 @@ const savePost = asyncMiddleware(async (req, res, next) => {
 
 const search = asyncMiddleware(async (req, res, next) => {
   const tag = req.query.tag
-  console.log(tag)
   const message = await searchService.searchByTag(tag)
   res.status(200).json({ message })
 })

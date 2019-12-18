@@ -79,7 +79,6 @@
 import NicknameSearch from '../components/NicknameSearch.vue'
 import debounce from 'lodash/debounce'
 import { searchByNick } from '@/services/profile.js'
-import { searchByTag } from '@/services/post.js'
 
 export default {
   name: 'Header',
@@ -125,17 +124,9 @@ export default {
     }, 300),
 
     searchTag: function () {
-      console.log('enter')
-      console.log(this.userInput)
       if (/^#/.test(this.userInput) && this.userInput !== '') {
         let inputValue = this.userInput.trim().slice(1)
-        searchByTag(inputValue)
-          .then(res => {
-            console.log(res.data.message)
-          })
-          .catch(err => {
-            console.log(err.message)
-          })
+        this.$router.push(`/feed?tag=${inputValue}`)
       }
     },
     visible (e) {

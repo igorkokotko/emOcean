@@ -44,7 +44,6 @@ const searchByTag = (tag) => {
           })
         )
       }
-      console.log('serarchbeytag')
       const posts = {}
       snapshot.forEach(doc => {
         posts[doc.id] = doc.data();
