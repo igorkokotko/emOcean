@@ -5,20 +5,10 @@
       <q-item clickable v-ripple>
         <q-item-section>
           <q-item-label>Accounts you follow</q-item-label>
-          <q-item-label caption>
-            Manage followings
-          </q-item-label>
+          <q-item-label caption>Manage followings</q-item-label>
         </q-item-section>
       </q-item>
 
-      <q-item clickable v-ripple>
-        <q-item-section>
-          <q-item-label>Blocked accounts</q-item-label>
-          <q-item-label caption>
-            Block and unblock user accounts
-          </q-item-label>
-        </q-item-section>
-      </q-item>
       <q-separator spaced />
       <q-item-label header>Notifications</q-item-label>
 
@@ -27,7 +17,7 @@
           <q-item-label>Comment to video</q-item-label>
           <q-item-label caption>Allow notification</q-item-label>
         </q-item-section>
-        <q-item-section side >
+        <q-item-section side>
           <q-toggle color="teal" v-model="comment" />
         </q-item-section>
       </q-item>
@@ -70,7 +60,7 @@
           <q-item-label>Hide offensive comments</q-item-label>
           <q-item-label caption>Hide comments</q-item-label>
         </q-item-section>
-        <q-item-section side >
+        <q-item-section side>
           <q-toggle color="blue" v-model="hideOffencive" />
         </q-item-section>
       </q-item>
@@ -78,11 +68,7 @@
       <q-separator spaced />
       <q-item-label header>Black list</q-item-label>
       <div class="row justify-between">
-        <div
-          id="input-search"
-          ref="search"
-          class="col"
-          >
+        <div id="input-search" ref="search" class="col">
           <q-input v-model="nickname" @input="searchByNick" />
           <block-search
             v-if="showSearch"
@@ -91,27 +77,16 @@
             @handleChoose="handleChoose"
           />
         </div>
-        <q-btn
-          @click="blockUser"
-          id="block-button"
-          class="col"
-          :disabled='!enableBlock'
-        >Block</q-btn>
+        <q-btn @click="blockUser" id="block-button" class="col" :disabled="!enableBlock">Block</q-btn>
       </div>
-      <p v-if="userToBlockNick">{{userToBlockNick}}  <q-btn
-        round
-        color = 'teal'
-        size = 'xs'
-        icon = 'close'
-        @click = "userToBlockNick = ''"
-      /></p>
-      <p id="error-message" v-if="errorMessage">{{errorMessage}}  <q-btn
-        round
-        color = 'red'
-        size = 'xs'
-        icon = 'close'
-        @click = "errorMessage = ''"
-      /></p>
+      <p v-if="userToBlockNick">
+        {{userToBlockNick}}
+        <q-btn round color="teal" size="xs" icon="close" @click="userToBlockNick = ''" />
+      </p>
+      <p id="error-message" v-if="errorMessage">
+        {{errorMessage}}
+        <q-btn round color="red" size="xs" icon="close" @click="errorMessage = ''" />
+      </p>
       <blocked-list id="blocked-list" @unblock="unblockUser" :list="blockedProfilesList"></blocked-list>
     </q-list>
   </div>
@@ -120,14 +95,20 @@
 <script>
 import BlockSearch from '@/components/BlockSearch.vue'
 import BlockedList from '@/components/BlockedList.vue'
-import debounce from 'lodash/debounce'
+import { debounce } from 'lodash'
 import { searchByNick, profileAction, getProfile } from '@/services/profile.js'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'EditPrivacy',
   components: {
     BlockSearch,
     BlockedList
+  },
+  computed: {
+    ...mapGetters({
+      myid: 'profile/myProfileId'
+    })
   },
   data () {
     return {
@@ -138,7 +119,6 @@ export default {
       hideOffencive: false,
       nickname: '',
       showSearch: true,
-      myid: this.$store.state.profile.myProfileId,
       nicknameSearchResults: [],
       userToBlockNick: '',
       userToBlockId: '',
@@ -231,20 +211,19 @@ export default {
             this.getBlockedProfiles()
           }
         })
-        .catch(err => {
-          console.log(err)
+        .catch(() => {
           this.errorMessage = 'Sorry, something went wrong...'
         })
     },
     getBlockedProfiles () {
+      this.blockedProfilesList = []
       this.blockedIdList.forEach(element => {
         getProfile({ id: element })
           .then(res => {
             const profile = res.data.profile
             this.blockedProfilesList.push({ id: profile.userId, nickname: profile.nickname, avatar: profile.avatarUrl })
           })
-          .catch(err => {
-            console.log(err)
+          .catch(() => {
             this.errorMessage = 'Sorry, something went wrong...'
           })
       })
@@ -253,19 +232,19 @@ export default {
 }
 </script>
 <style scoped>
-  #input-search {
-    max-width: 200px;
-  }
-  #block-button {
-    max-width: 100px;
-  }
-  #error-message {
-    color: red;
-  }
-  #search-result {
-    z-index: 1;
-  }
-  #blocked-list {
-    margin-top: 80px;
-  }
+#input-search {
+  max-width: 200px;
+}
+#block-button {
+  max-width: 100px;
+}
+#error-message {
+  color: red;
+}
+#search-result {
+  z-index: 1;
+}
+#blocked-list {
+  margin-top: 80px;
+}
 </style>

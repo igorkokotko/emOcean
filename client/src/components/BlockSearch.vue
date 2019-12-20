@@ -9,7 +9,7 @@
         :key="index"
         dense
         clickable
-        v-if="!results[0].error"
+        v-if="!errorMessage"
       >
         <q-item-section avatar>
           <q-avatar>
@@ -20,7 +20,7 @@
       </q-item>
       <q-item v-else>
         <q-item-section>
-          <p>{{ results[0].error }}</p>
+          <p>{{ errorMessage }}</p>
         </q-item-section>
       </q-item>
     </template>
@@ -37,7 +37,21 @@ export default {
   data () {
     return {}
   },
-  props: ['results']
+  props: {results: {
+    type: Array,
+    default: () => {
+      return 'No matches found'
+    }
+  }},
+  computed: {
+    errorMessage () {
+      if (!this.results || this.results[0].error) {
+        return 'No matches found'
+      } else {
+        return null
+      }
+    }
+  }
 }
 </script>
 

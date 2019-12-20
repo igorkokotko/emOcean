@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p v-if = "!show">You have no blacklisted users yet.</p>
+    <p v-if = "list.length===0">You have no blacklisted users yet.</p>
     <ul v-else>
       <li v-for='(element, i) in list' :key='i'>
         <div class = 'row justify-between'>
@@ -36,13 +36,6 @@ export default {
   computed: {
     isNewAvatarSelected () {
       return this.photoUrl !== ''
-    },
-    show () {
-      if (this.list.length === 0) {
-        return false
-      } else {
-        return true
-      }
     }
   }
 }
