@@ -79,6 +79,8 @@
 import NicknameSearch from '../components/NicknameSearch.vue'
 import debounce from 'lodash/debounce'
 import { searchByNick } from '@/services/profile.js'
+import { isAuthorized } from '@/services/Authorized.js'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Header',
@@ -89,13 +91,34 @@ export default {
     return {
       nickname: '',
       showSearch: true,
-      nicknameSearchResults: []
+      nicknameSearchResults: [],
+      isAuthenticated: false
     }
   },
 
   computed: {
-    isAuthenticated () {
-      return this.$store.getters['auth/getToken']
+    ...mapGetters({
+      token: 'auth/getToken'
+    })
+  },
+
+  async created () {
+    try {
+      const auth = await isAuthorized()
+      this.isAuthenticated = auth
+    } catch (e) {
+    }
+  },
+
+  watch: {
+    token () {
+      isAuthorized()
+        .then(res => {
+          this.isAuthenticated = res
+        })
+        .catch(() => {
+          this.isAuthenticated = false
+        })
     }
   },
 

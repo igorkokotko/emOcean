@@ -13,7 +13,6 @@
 import Footer from './layouts/Footer.vue'
 import vHeader from '@/layouts/Header.vue'
 import { setApiAuthorizationHeaders } from '@/services/auth.js'
-import Authorized from '@/views/Authentication/Authorized.js'
 import AuthBanner from './views/Authentication/AuthBanner.vue'
 
 export default {
@@ -31,7 +30,10 @@ export default {
   },
 
   created () {
-    if (Authorized.isAuthorized()) {
+    if (
+      window.localStorage.getItem('token') &&
+      window.localStorage.getItem('token') !== ''
+    ) {
       const token = window.localStorage.getItem('token')
       this.$store.commit('auth/signin', { token })
       setApiAuthorizationHeaders(token)
