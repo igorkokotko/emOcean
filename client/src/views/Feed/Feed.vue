@@ -66,11 +66,11 @@ export default {
     }
   },
   created () {
-    this.load_feed_data(this.$route.query.tag)
+    this.loadFeedData(this.$route.query.tag)
   },
   watch: {
     '$route.query.tag': function (tag) {
-      this.load_feed_data(tag)
+      this.loadFeedData(tag)
     }
   },
   methods: {
@@ -79,14 +79,10 @@ export default {
       // close | open
       this.isModelVisible = visibility
     },
-    load_feed_data (tag) {
-      if (tag === undefined) {
+    loadFeedData (tag) {
+      if (!tag) {
         let query = ''
-        if (Authorized.isAuthorized()) {
-          query = getFeedByPreferences()
-        } else {
-          query = getFeedAnonimus()
-        }
+        query = Authorized.isAuthorized() ? getFeedByPreferences() : getFeedAnonimus()
         query.then((response) => {
           this.updateState(response.data)
         })
