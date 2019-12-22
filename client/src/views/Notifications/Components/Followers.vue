@@ -17,23 +17,11 @@
         </q-item-section>
         <q-item-section side>
           <q-btn
-            class="follow-btn"
-            v-if="!follower.followed"
+            :class="(!follower.followed)? 'follow-btn': 'unfollow-btn'"
             @click="updatefollow(follower)"
-            unelevated
             rounded
             size="sm"
-            label="Follow"
-          />
-          <q-btn
-            class="unfollow-btn"
-            v-if="follower.followed"
-            @click="updatefollow(follower)"
-            unelevated
-            outline
-            rounded
-            size="sm"
-            label="Unfollow"
+            :label="(!follower.followed)? 'Follow': 'Unfollow'"
           />
         </q-item-section>
       </q-item>
@@ -72,9 +60,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.video-preview img {
-  border: 2px solid #e91e63;
-}
 .follow-btn {
   background: #4db6ac;
   color: #fff;
