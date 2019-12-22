@@ -14,35 +14,33 @@ import Footer from './layouts/Footer.vue'
 import vHeader from '@/layouts/Header.vue'
 import { setApiAuthorizationHeaders } from '@/services/auth.js'
 import AuthBanner from './views/Authentication/AuthBanner.vue'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'LayoutDefault',
-
   components: {
     Footer,
     vHeader,
     'v-auth-banner': AuthBanner
   },
-
   data () {
     return {
     }
   },
-
   created () {
-    if (
-      window.localStorage.getItem('token') &&
-      window.localStorage.getItem('token') !== ''
-    ) {
-      const token = window.localStorage.getItem('token')
-      this.$store.commit('auth/signin', { token })
-      setApiAuthorizationHeaders(token)
-    }
+    const token = window.localStorage.getItem('token')
+    this.signIn({ token })
+    setApiAuthorizationHeaders(token)
 
     if (window.localStorage.getItem('profileId') && window.localStorage.getItem('profileId') !== '') {
       const profileId = window.localStorage.getItem('profileId')
       this.$store.commit('profile/updateMyProfileId', profileId)
     }
+  },
+  methods: {
+    ...mapActions({
+      signIn: 'auth/signin'
+    })
   }
 }
 </script>

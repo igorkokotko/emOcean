@@ -107,6 +107,7 @@ export default {
       const auth = await isAuthorized()
       this.isAuthenticated = auth
     } catch (e) {
+      this.isAuthenticated = false
     }
   },
 
