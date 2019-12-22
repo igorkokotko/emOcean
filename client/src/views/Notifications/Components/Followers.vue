@@ -19,7 +19,7 @@
           <q-btn
             class="follow-btn"
             v-if="!follower.followed"
-            @click="follow(follower)"
+            @click="updatefollow(follower)"
             unelevated
             rounded
             size="sm"
@@ -28,7 +28,7 @@
           <q-btn
             class="unfollow-btn"
             v-if="follower.followed"
-            @click="unfollow(follower)"
+            @click="updatefollow(follower)"
             unelevated
             outline
             rounded
@@ -50,31 +50,8 @@ const followers = [{
   text: 'Good photo',
   avatar: 'avatar1.jpg',
   post_url: '../preferences/animals.jpg'
-}, {
-  id: 2,
-  name: 'Mallorie Zuck',
-  date: '1574273790143',
-  followed: true,
-  text: 'Really nice...',
-  avatar: 'avatar2.jpg',
-  post_url: '../preferences/animals.jpg'
-}, {
-  id: 3,
-  name: 'George Lebiskiy',
-  date: '1574334498716',
-  followed: false,
-  text: 'It was really cool, I find two new friends.',
-  avatar: 'avatar4.jpg',
-  post_url: '../preferences/fun.jpg'
-}, {
-  id: 4,
-  name: 'Dayana Fawdrey',
-  date: '1574333011326',
-  followed: false,
-  text: 'Happy birthday to you! Have a great time, with memories to last you throughout the whole year',
-  avatar: 'avatar3.jpg',
-  post_url: '../preferences/dance.jpg'
-}]
+}
+]
 export default {
   name: 'followers',
   data () {
@@ -83,13 +60,8 @@ export default {
     }
   },
   methods: {
-    follow: (follower) => {
-      console.log('follow')
-      follower.followed = true
-    },
-    unfollow: (follower) => {
-      console.log('unfollow')
-      follower.followed = false
+    updatefollow: (follower) => {
+      follower.followed = !follower.followed
     }
   },
   mounted () {

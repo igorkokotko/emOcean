@@ -29,7 +29,7 @@ export default {
         },
         {
           icon: 'tag_faces',
-          to: '/profile'
+          to: `/profile/${localStorage.getItem('profileId')}`
         }
       ]
     }

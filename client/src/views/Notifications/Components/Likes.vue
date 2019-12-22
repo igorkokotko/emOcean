@@ -45,30 +45,6 @@ const likes = [{
   date: '1574291790682',
   avatar: 'avatar4.jpg',
   video_url: '../preferences/fun.jpg'
-}, {
-  id: 4,
-  name: 'Dayana Fawdrey',
-  date: '1574273740192',
-  avatar: 'avatar3.jpg',
-  video_url: '../preferences/dance.jpg'
-}, {
-  id: 5,
-  name: 'Mallorie Zuck',
-  date: '1574291846223',
-  avatar: 'avatar2.jpg',
-  video_url: '../preferences/fun.jpg'
-}, {
-  id: 6,
-  name: 'Mallorie Zuck',
-  date: '1574333011326',
-  avatar: 'avatar2.jpg',
-  video_url: '../preferences/nature.jpg'
-}, {
-  id: 7,
-  name: 'Gorge Lebiskiy',
-  date: '1574291790682',
-  avatar: 'avatar4.jpg',
-  video_url: '../preferences/health.jpg'
 }
 ]
 export default {

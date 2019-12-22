@@ -36,28 +36,8 @@ const comments = [{
   text: 'Good photo',
   avatar: 'avatar1.jpg',
   post_url: '../preferences/animals.jpg'
-}, {
-  id: 2,
-  name: 'Mallorie Zuck',
-  date: '1574273790143',
-  text: 'Really nice...',
-  avatar: 'avatar2.jpg',
-  post_url: '../preferences/animals.jpg'
-}, {
-  id: 3,
-  name: 'George Lebiskiy',
-  date: '1574273740192',
-  text: 'It was really cool, I find two new friends.',
-  avatar: 'avatar4.jpg',
-  post_url: '../preferences/fun.jpg'
-}, {
-  id: 4,
-  name: 'Dayana Fawdrey',
-  date: '1574333011326',
-  text: 'Happy birthday to you! Have a great time, with memories to last you throughout the whole year',
-  avatar: 'avatar3.jpg',
-  post_url: '../preferences/dance.jpg'
-}]
+}
+]
 export default {
   name: 'comments',
   data () {
