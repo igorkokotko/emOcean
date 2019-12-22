@@ -6,7 +6,7 @@
 
 <script>
 import SettingsMenu from './SettingsMenu.vue'
-const Authorized = require('../Authentication/Authorized.js')
+import { isAuthorized } from '@/services/Authorized.js'
 
 export default {
   name: 'SettingsPage',
@@ -14,10 +14,21 @@ export default {
     SettingsMenu
   },
   beforeRouteEnter: (to, from, next) => {
-    if (!Authorized.isAuthorized()) {
-      return next('/login')
-    }
-    next()
+    isAuthorized()
+      .then(res => {
+        if (!res) {
+          return next('/login')
+        }
+        if (to.path === '/settings') {
+          return next('/settings/editProfile')
+        }
+      })
+      .catch(() => {
+        return next('/login')
+      })
+      .finally(() => {
+        return next()
+      })
   }
 }
 </script>
