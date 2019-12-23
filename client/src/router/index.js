@@ -90,6 +90,21 @@ const routes = [
     path: '*',
     name: 'Error',
     component: Error404
+  },
+  {
+    path: '/streams',
+    name: 'Streams',
+    component: () => import('../views/Stream/StreamsList/index.vue')
+  },
+  {
+    path: '/streams/:id/presenter',
+    name: 'VideoStream Presenter',
+    component: () => import('../views/Stream/Presenter/index.vue')
+  },
+  {
+    path: '/streams/:id/viewer',
+    name: 'VideoStream Viewer',
+    component: () => import('../views/Stream/Viewer/index.vue')
   }
 ]
 
