@@ -12,6 +12,11 @@
             <q-icon name="add_circle_outline" size="1.5em" />
           </router-link>
         </q-tab>
+        <q-tab name="streams">
+          <router-link to="/streams">
+            <q-icon name="live_tv" size="1.5em" />
+          </router-link>
+        </q-tab>
         <q-tab name="notifications">
           <router-link to="/">
             <q-icon name="notifications" size="1.5em" />
