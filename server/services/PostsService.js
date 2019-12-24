@@ -217,7 +217,7 @@ const editPost = async (userId, postId, postData) => {
 
 const getUserPosts = async userId => {
   const userRef = db.collection('users-posts').doc(userId)
-  const doc = userRef.get()
+  const doc = await userRef.get()
   if (!doc.exists) {
     throw new CustomError({
       name: 'DatabaseError',
