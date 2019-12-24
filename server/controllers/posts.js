@@ -111,6 +111,10 @@ const editPost = asyncMiddleware(async (req, res) => {
   res.status(200).json({ result })
 })
 
+// @desc    Get posts by id
+// @route   GET /api/posts/get-user-posts?id
+// @route   GET /api/posts/get-user-posts?id=qzmHM8GdAYWlgsrF9ZvZXXh8UK93
+// @access  Public
 const getUserPosts = asyncMiddleware(async (req, res) => {
   const { id } = req.query
   const posts = await postsService.getUserPosts(id)
