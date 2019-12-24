@@ -97,14 +97,9 @@ export default {
   beforeRouteEnter: (to, from, next) => {
     isAuthorized()
       .then(res => {
-        if (res === true) {
-          return next('/feed')
-        }
+        return res ? next('/feed') : next()
       })
       .catch(() => {
-        return next()
-      })
-      .finally(() => {
         return next()
       })
   }
