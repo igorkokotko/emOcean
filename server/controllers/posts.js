@@ -3,6 +3,7 @@ const postsService = require('../services/PostsService')
 const VideoHandler = require('../videoHandling/videoHandler')
 const clearTempFiles = require('../common/clearTempFiles')
 const CustomError = require('../common/CustomError')
+const searchService = require('../services/SearchService')
 
 // @desc    Handling and uploading video to database
 // @route   POST /api/posts/upload-videos?type=single-video
@@ -46,10 +47,10 @@ const getPostsByViews = asyncMiddleware(async (req, res) => {
 })
 
 // @desc    Get posts based on requested tag list(from 1 to 10)
-// @route   GET /api/posts/by-tags?tag=tag1
+// @route   GET /api/posts/by-tags?tags
 // @access  Public
 const getPostsByTags = asyncMiddleware(async (req, res, next) => {
-  const tags = req.query.tags
+  const tags = req.query.tags.split('-')
   if (!tags || tags.length === 0) {
     return next(new CustomError({ name: 'Bad Request', message: 'Tags query is empty', status: 400 }))
   }
