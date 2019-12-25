@@ -41,7 +41,7 @@ const savePost = asyncMiddleware(async (req, res) => {
 // @access  Public
 const getPostsByViews = asyncMiddleware(async (req, res) => {
   const index = req.query.index
-  const postsLimit = 10
+  const postsLimit = 5
   const result = await postsService.getPostsByViews(index, postsLimit)
   res.status(200).json({ result })
 })
@@ -55,7 +55,7 @@ const getPostsByTags = asyncMiddleware(async (req, res, next) => {
     return next(new CustomError({ name: 'Bad Request', message: 'Tags query is empty', status: 400 }))
   }
   const paginateId = req.query.index
-  const postsLimit = 10
+  const postsLimit = 5
   const result = await postsService.getPostsByTags(tag, paginateId, postsLimit)
   res.status(200).json({ result })
 })
@@ -66,9 +66,11 @@ const getPostsByTags = asyncMiddleware(async (req, res, next) => {
 const getPostsByFollowings = asyncMiddleware(async (req, res) => {
   const userId = req.userId
   const paginateId = req.query.index
+  const postsLimit = 5
   const result = await postsService.getPostsByFollowings(
     userId,
-    paginateId
+    paginateId,
+    postsLimit
   )
   res.status(200).json({ result })
 })
@@ -79,7 +81,7 @@ const getPostsByFollowings = asyncMiddleware(async (req, res) => {
 const getPostsByPreferences = asyncMiddleware(async (req, res) => {
   const userId = req.userId
   const paginateId = req.query.index
-  const postsLimit = 10
+  const postsLimit = 5
   const result = await postsService.getPostsByPreferences(
     userId,
     paginateId,

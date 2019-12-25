@@ -142,24 +142,44 @@ const getPostsByPreferences = async (id, paginateId, postsCount) => {
   }
 }
 
-const getPostsByFollowings = async id => {
-  const postsQueryRef = db
+const getPostsByFollowings = async (id, index, postsLimit) => {
+  let lastCreated, lastAction, lastIndex
+  let postsQueryRef = db
     .collection('users-posts')
     .where('followers', 'array-contains', id)
+    .limit(postsLimit)
+    .orderBy('lastAction', 'desc')
+  if (index && index !== 'Last index') {
+    const indexArray = index.split('-')
+    lastCreated = indexArray[0]
+    lastAction = indexArray[1]
+    postsQueryRef = postsQueryRef.startAt(lastAction)
+  }
   const snapshots = await postsQueryRef.get()
   let postsArray = []
-  snapshots.forEach(snap => {
-    const { nickname, posts, avatarUrl } = snap.data()
+  for (snap of snapshots.docs) {
+    const { nickname, posts, avatarUrl, lastAction } = snap.data()
     postsArray = [
       ...postsArray,
-      ...posts.map(post => {
-        post.nickname = nickname
-        post.avatarUrl = avatarUrl
-        return post
+      ...posts.filter(post => {
+        if (!lastCreated || post.createdAt < lastCreated) {
+          post.nickname = nickname
+          post.avatarUrl = avatarUrl
+          post.lastAction = lastAction
+          return post
+        }
       })
     ]
-  })
-  return postsArray
+  }
+  postsArray.sort((a, b) => b.createdAt - a.createdAt)
+  if (postsArray.length < postsLimit) {
+    lastIndex = 'Last index'
+  } else {
+    const lastPost = postsArray[postsLimit - 1]
+    lastIndex = lastPost.createdAt + '-' + lastPost.lastAction
+    postsArray.length = postsLimit
+  }
+  return { data: postsArray, lastIndex }
 }
 
 const deletePost = async (userId, postId) => {
