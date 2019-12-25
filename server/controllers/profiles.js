@@ -72,40 +72,52 @@ const uploadImage = asyncMiddleware(async (req, res, next) => {
 })
 
 const saveProfile = asyncMiddleware(async (req, res) => {
+  const id = req.userId
   const userData = req.body
-  // TODO VALIDATION USERNAME, BIO, SOCIALS, INTERESTS, STATUS, BG AND URLS
-  const message = await profilesService.saveProfile(userData, req.userId)
+  const result = await profilesService.saveProfile(userData, id)
 
-  res.status(200).json({ message })
+  res.status(200).json({ result })
 })
 
 const setPreferences = asyncMiddleware(async (req, res) => {
   const { preferences } = req.body
+  const id = req.userId
+  const result = await profilesService.setPreferences(preferences, id)
 
-  const message = await profilesService.setPreferences(preferences, req.userId)
-
-  res.status(200).json({ message })
+  res.status(200).json({ result })
 })
 
 const getFollowersById = asyncMiddleware(async (req, res) => {
   const profileId = req.params.id
-
-  const followers = await profilesService.getFollowersById(profileId)
-
-  res.status(200).json({ followers })
+  const paginationId = req.query.pagination
+  const usersLimit = 10
+  const result = await profilesService.getSubscriptionsById(
+    'followers',
+    profileId,
+    usersLimit,
+    paginationId
+  )
+  res.status(200).json({ result })
 })
 
 const getFollowingsById = asyncMiddleware(async (req, res) => {
   const profileId = req.params.id
-
-  const followings = await profilesService.getFollowingsById(profileId)
-
-  res.status(200).json({ followings })
+  const paginationId = req.query.pagination
+  const usersLimit = 10
+  const result = await profilesService.getSubscriptionsById(
+    'followings',
+    profileId,
+    usersLimit,
+    paginationId
+  )
+  res.status(200).json({ result })
 })
 
-const profileAction = asyncMiddleware(async (req, res) => {
+
+const profileAction = asyncMiddleware(async (req, res, next) => {
   const actionsList = ['follow', 'unfollow', 'block', 'unblock']
   const { action, id } = req.query
+
   if (action && id && actionsList.includes(action)) {
     const myProfileId = req.userId
     const profileActions = {
