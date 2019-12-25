@@ -124,17 +124,9 @@ const followProfile = async (myId, followId) => {
     })
   }
   const myProfileRef = db.collection('users').doc(myId)
-  const myProfileFollowingsRef = db
-    .collection('users')
-    .doc(myId)
-    .collection('followings')
-    .doc(followId)
+  const myProfileFollowingsRef = db.collection(`users/${myId}/followings/${followId}`)
   const followProfileRef = db.collection('users').doc(followId)
-  const followProfileFollowersRef = db
-    .collection('users')
-    .doc(followId)
-    .collection('followers')
-    .doc(myId)
+  const followProfileFollowersRef = db.collection(`users/${followId}/followers/${myId}`)
   const userPostsRef = db.collection('users-posts').doc(followId)
   await db.runTransaction(async t => {
     const myProfileDoc = await t.get(myProfileRef)
@@ -185,17 +177,9 @@ const unfollowProfile = async (myId, followId) => {
     })
   }
   const myProfileRef = db.collection('users').doc(myId)
-  const myProfileFollowingsRef = db
-    .collection('users')
-    .doc(myId)
-    .collection('followings')
-    .doc(followId)
+  const myProfileFollowingsRef = db.collection(`users/${myId}/followings/${followId}`)
   const followProfileRef = db.collection('users').doc(followId)
-  const followProfileFollowersRef = db
-    .collection('users')
-    .doc(followId)
-    .collection('followers')
-    .doc(myId)
+  const followProfileFollowersRef = db.collection(`users/${followId}/followers/${myId}`)
   const userPostsRef = db.collection('users-posts').doc(followId)
   const result = await db.runTransaction(async t => {
     const myProfileDoc = await t.get(myProfileRef)
@@ -233,7 +217,6 @@ const unfollowProfile = async (myId, followId) => {
   return result
 }
 
-
 const blockProfile = async (myId, blockedId) => {
   if (myId === blockedId) {
     throw new CustomError({
@@ -245,16 +228,8 @@ const blockProfile = async (myId, blockedId) => {
   const myProfileRef = db.collection('users').doc(myId)
   const blockedProfileRef = db.collection('users').doc(blockedId)
   const myPostsRef = db.collection('users-posts').doc(myId)
-  const myFollowersRef = db
-    .collection('users')
-    .doc(myId)
-    .collection('followers')
-    .doc(blockedId)
-  const blockedFollowingsRef = db
-    .collection('users')
-    .doc(blockedId)
-    .collection('followings')
-    .doc(myId)
+  const myFollowersRef = db.collection(`users/${myId}/followers/${blockedId}`)
+  const blockedFollowingsRef = db.collection(`users/${blockedId}/followings/${myId}`)
   await db.runTransaction(async t => {
     const myProfileDoc = await t.get(myProfileRef)
     const blockedProfileDoc = await t.get(blockedProfileRef)
@@ -323,13 +298,9 @@ const unblockProfile = async (myId, blockedProfileId) => {
 
 const getSubscriptionsById = async (type, profileId, usersLimit, paginationId) => {
   const profilesRef = db.collection('users')
-  let subscriptionsQueryRef = db
-    .collection('users')
-    .doc(profileId)
-    .collection(type)
+  let subscriptionsQueryRef = db.collection(`users/${profileId}/${type}`)
     .limit(usersLimit)
     .orderBy('actionDate', 'desc')
-
   if (paginationId) {
     const paginateRef = db.collection('users').doc(profileId)
     const snapshot = await paginateRef.get()
