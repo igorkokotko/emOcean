@@ -4,11 +4,7 @@ export const isAuthorized = function () {
   return new Promise((resolve, reject) => {
     checkToken()
       .then((res) => {
-        if (res.data.id === window.localStorage.getItem('profileId')) {
-          resolve(true)
-        } else {
-          resolve(false)
-        }
+        resolve(res.data.id === window.localStorage.getItem('profileId'))
       })
       .catch((err) => reject(err.response.data))
   })

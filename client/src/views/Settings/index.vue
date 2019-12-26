@@ -22,12 +22,10 @@ export default {
         if (to.path === '/settings') {
           return next('/settings/editProfile')
         }
+        next()
       })
       .catch(() => {
         return next('/login')
-      })
-      .finally(() => {
-        return next()
       })
   }
 }
