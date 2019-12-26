@@ -1,22 +1,22 @@
 <template>
 <div>
   <q-virtual-scroll
-    class="virtual-scroll"
-    :items="results"
+    class='virtual-scroll'
+    :items='results'
   >
-    <template v-slot="{ item: user, index }">
+    <template v-slot='{ item: user, index }'>
       <q-item
-        :key="index"
+        :key='index'
         dense
         clickable
-        v-if="!errorMessage"
+        v-if='!errorMessage'
       >
         <q-item-section avatar>
           <q-avatar>
-            <avatar size="40px" :img="user.avatar" />
+            <avatar size='40px' :img='user.avatar' />
           </q-avatar>
         </q-item-section>
-        <q-item-section class="col" @click="$emit('handleChoose', user.id, user.nickname)">{{ user.nickname }}</q-item-section>
+        <q-item-section class='col' @click="$emit('handleChoose', user.id, user.nickname)">{{ user.nickname }}</q-item-section>
       </q-item>
       <q-item v-else>
         <q-item-section>
@@ -59,11 +59,9 @@ export default {
   * {
     background-color: white;
   }
-
   .avatar-image {
     object-fit: cover;
   }
-
   .virtual-scroll {
     max-height: 150px;
     border: 1px solid #e0e1e1;

@@ -12,82 +12,82 @@
       <q-separator spaced />
       <q-item-label header>Notifications</q-item-label>
 
-      <q-item tag="label" v-ripple>
+      <q-item tag='label' v-ripple>
         <q-item-section>
           <q-item-label>Comment to video</q-item-label>
           <q-item-label caption>Allow notification</q-item-label>
         </q-item-section>
         <q-item-section side>
-          <q-toggle color="teal" v-model="comment" />
+          <q-toggle color='teal' v-model='comment' />
         </q-item-section>
       </q-item>
 
-      <q-item tag="label" v-ripple>
+      <q-item tag='label' v-ripple>
         <q-item-section>
           <q-item-label>Like post</q-item-label>
           <q-item-label caption>Allow notification</q-item-label>
         </q-item-section>
         <q-item-section side top>
-          <q-toggle color="teal" v-model="like" />
+          <q-toggle color='teal' v-model='like' />
         </q-item-section>
       </q-item>
 
-      <q-item tag="label" v-ripple>
+      <q-item tag='label' v-ripple>
         <q-item-section>
           <q-item-label>Reply</q-item-label>
           <q-item-label caption>Allow notification</q-item-label>
         </q-item-section>
         <q-item-section side top>
-          <q-toggle color="teal" v-model="reply" />
+          <q-toggle color='teal' v-model='reply' />
         </q-item-section>
       </q-item>
 
-      <q-item tag="label" v-ripple>
+      <q-item tag='label' v-ripple>
         <q-item-section>
           <q-item-label>Video uploaded</q-item-label>
           <q-item-label caption>Allow notification</q-item-label>
         </q-item-section>
         <q-item-section side top>
-          <q-toggle color="teal" v-model="uploadPost" />
+          <q-toggle color='teal' v-model='uploadPost' />
         </q-item-section>
       </q-item>
 
       <q-separator spaced />
       <q-item-label header>Filters</q-item-label>
 
-      <q-item tag="label" v-ripple>
+      <q-item tag='label' v-ripple>
         <q-item-section>
           <q-item-label>Hide offensive comments</q-item-label>
           <q-item-label caption>Hide comments</q-item-label>
         </q-item-section>
         <q-item-section side>
-          <q-toggle color="blue" v-model="hideOffencive" />
+          <q-toggle color='blue' v-model='hideOffencive' />
         </q-item-section>
       </q-item>
 
       <q-separator spaced />
       <q-item-label header>Black list</q-item-label>
-      <div class="row justify-between">
-        <div id="input-search" ref="search" class="col">
-          <q-input v-model="nickname" @input="searchByNick" />
+      <div class='row justify-between'>
+        <div class='input-search col' ref='search' >
+          <q-input v-model='nickname' @input='searchByNick' />
           <block-search
-            v-if="showSearch"
-            id="search-result"
-            :results="nicknameSearchResults"
-            @handleChoose="handleChoose"
+            v-if='showSearch'
+            class='search-result'
+            :results='nicknameSearchResults'
+            @handleChoose='handleChoose'
           />
         </div>
-        <q-btn @click="blockUser" id="block-button" class="col" :disabled="!enableBlock">Block</q-btn>
+        <q-btn @click='blockUser' class='block-button col' :disabled='!enableBlock'>Block</q-btn>
       </div>
-      <p v-if="userToBlockNick">
+      <p v-if='userToBlockNick'>
         {{userToBlockNick}}
-        <q-btn round color="teal" size="xs" icon="close" @click="userToBlockNick = ''" />
+        <q-btn round color='teal' size='xs' icon='close' @click="userToBlockNick = ''" />
       </p>
-      <p id="error-message" v-if="errorMessage">
+      <p class='error-message' v-if='errorMessage'>
         {{errorMessage}}
-        <q-btn round color="red" size="xs" icon="close" @click="errorMessage = ''" />
+        <q-btn round color='red' size='xs' icon='close' @click="errorMessage = ''" />
       </p>
-      <blocked-list id="blocked-list" @unblock="unblockUser" :list="blockedProfilesList"></blocked-list>
+      <blocked-list class='blocked-list' @unblock='unblockUser' :list='blockedProfilesList'></blocked-list>
     </q-list>
   </div>
 </template>
@@ -98,7 +98,6 @@ import BlockedList from '@/components/BlockedList.vue'
 import { debounce } from 'lodash'
 import { searchByNick, profileAction, getProfile } from '@/services/profile.js'
 import { mapGetters } from 'vuex'
-
 export default {
   name: 'EditPrivacy',
   components: {
@@ -133,7 +132,7 @@ export default {
   },
   methods: {
     searchByNick: debounce(function (value) {
-      if (value !== '') {
+      if (value) {
         this.nicknameSearchResults = []
         this.showSearch = true
         searchByNick({ nickname: value })
@@ -143,8 +142,8 @@ export default {
               this.nicknameSearchResults.push({ id: element.userId, nickname: element.nickname, avatar: element.avatarUrl })
             })
           })
-          .catch(err => {
-            if (err.response.data.error === 'No user has been found') {
+          .catch((err) => {
+            if (err.response.status === 404) {
               this.nicknameSearchResults = []
               this.nicknameSearchResults.push({ error: 'No matches found' })
             }
@@ -232,19 +231,19 @@ export default {
 }
 </script>
 <style scoped>
-#input-search {
+.input-search {
   max-width: 200px;
 }
-#block-button {
+.block-button {
   max-width: 100px;
 }
-#error-message {
+.error-message {
   color: red;
 }
-#search-result {
+.search-result {
   z-index: 1;
 }
-#blocked-list {
+.blocked-list {
   margin-top: 80px;
 }
 </style>
