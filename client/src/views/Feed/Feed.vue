@@ -1,5 +1,4 @@
 <template>
-<<<<<<< HEAD
   <div v-touch-swipe.left="handleSwipe" v-touch-swipe.right="handleSwipe">
     <q-tabs
       v-model="tab"
@@ -29,52 +28,8 @@
         <div v-if="postsGetter && postsGetter.length > 0 && !isLoading">
           <div class="feed-post" v-for="(post, key) in postsGetter" :key="key">
             <one-post :post="post" />
-=======
-  <div id="feed">
-    <div class="feed-wrapper">
-      <div class="feed-post"
-        v-for="(post, key) in getPosts"
-        :key="key"
-      >
-        <div class="video-container"
-        @dblclick="updateLikes({ key: key, updates: ({ hasBeenLiked : post.hasBeenLiked, likes: post.likes })  })"
-        @click="play">
-        <div class="test-wrapper">
-          <figure class="image is-32x32">
-            <img :src="post.userImage" />
-          </figure>
-          <video ref="videoElm" width="480">
-            <q-resize-observer @resize="onResize" />
-            <source
-              :src="post.postVideo"
-              type="video/mp4">
-            <source
-              :src="post.postVideo"
-              type="video/ogg">
-            <source
-              :src="post.postVideo"
-              type="video/webm">
-          </video>
           </div>
         </div>
-        <div class="content-wrapper">
-          <div class="heart-and-comments">
-            <div class="heart"
-            @click="updateLikes({ key: key, updates: ({ hasBeenLiked : post.hasBeenLiked, likes: post.likes })  })"
-            >
-              <i class="far fa-heart fa-lg"
-                :class="{'fas': post.hasBeenLiked}">
-              </i>
-              <p ref="likes" class="likes">{{post.likes}}</p>
-            </div>
-            <div class="comments-icon" @click="$router.push('/comments')">
-              <i class="far fa-comment-alt fa-md"></i>
-              <p>{{post.comments.length}}</p>
-            </div>
->>>>>>> add some features and fixes
-          </div>
-        </div>
-<<<<<<< HEAD
         <div
           v-if="(!postsGetter || postsGetter.length === 0) && !isLoading"
           class="text-center q-pa-md"
@@ -82,12 +37,6 @@
         <q-spinner v-if="isLoading" color="primary" size="7em" class="fixed-center" />
         <div v-if="authorized" class="big-btn" @click="$router.push('/addpost')">
           <i class="fas fa-2x fa-plus"></i>
-=======
-      </div>
-      </div>
-        <div class="big-btn" @click="$router.push('/addpost')">
-          <i class="fas fa-2x fa-plus" ></i>
->>>>>>> add some features and fixes
         </div>
       </div>
     </div>
@@ -110,20 +59,6 @@ export default {
       emptyPostsMessage: "You don't have any posts"
     }
   },
-<<<<<<< HEAD
-=======
-  mounted () {
-  // If value more than 999, function replaces thousends to "k"
-    for (let i = 0; i < this.$refs.likes.length; i++) {
-      if (this.$refs.likes[i].textContent.length > 3) {
-        let len = this.$refs.likes[i].textContent.length
-        this.$refs.likes[i].textContent = this.$refs.likes[i].textContent.slice(0, len - 3) + "k"
-      }
-    }
-  },
-  methods: {
-    ...mapActions('posts', ['updateLikes']),
->>>>>>> add some features and fixes
 
   methods: {
     ...mapActions({
@@ -238,13 +173,6 @@ export default {
         }
         this.getPostsByViews()
       }
-    },
-    onResize () {
-      for (let i = 0; i < this.$refs.videoElm.length; i++) {
-        if (this.$refs.videoElm[i].videoHeight > this.$refs.videoElm[i].videoWidth) {
-          this.$refs.videoElm[i].height = "270"
-        }
-      }
     }
   },
   beforeDestroy () {
@@ -266,7 +194,6 @@ export default {
 .empty-message {
   width: 350px;
 }
-<<<<<<< HEAD
 .big-btn {
   width: 75px;
   background: #87e0f5;
@@ -283,13 +210,6 @@ export default {
     top: 23px;
   }
 }
-=======
-// .feed-post {
-//     padding-top: 50px;
-//     height: fit-content;
-//     padding: 6px 0px;
-// }
->>>>>>> add some features and fixes
 .heart-and-comments {
   flex-direction: column;
   position: absolute;
@@ -360,7 +280,6 @@ export default {
 .test-wrapper {
   background: #000;
 }
-<<<<<<< HEAD
 .video-container {
   padding: 7px;
   max-width: 800px;
@@ -368,18 +287,6 @@ export default {
   background: #87e0f5;
   border-radius: 11px;
   box-shadow: 1px 1px 18px;
-=======
-.test-wrapper{
-    background: #000;
-}
-.video-container{
-    padding: 7px;
-    max-width: 800px;
-    position: relative;
-    background: #87e0f5;
-    border-radius: 11px;
-    box-shadow: 1px 1px 18px;
->>>>>>> add some features and fixes
   img {
     border-radius: 99px;
     top: 17%;
@@ -396,7 +303,6 @@ export default {
   }
 }
 .feed-post {
-<<<<<<< HEAD
   position: relative;
   padding: 10px;
   .content-wrapper {
@@ -411,25 +317,6 @@ export default {
   .fas.fa-heart {
     color: #f06595;
   }
-=======
-    position: relative;
-    padding: 10px;
-    .content-wrapper {
-      margin: 7.5px 10px;
-    }
-    video{
-      max-width: 100%;
-      padding: 0px;
-      margin-bottom: -6px;
-    }
-    .fas.fa-heart {
-      color: #f06595;
-    }
-}
-body,
-html{
-background: linear-gradient(90deg, rgba(38,183,233,0.7903536414565826) 0%, rgba(34,218,197,1) 100%);
->>>>>>> add some features and fixes
 }
 #feed {
   position: relative;

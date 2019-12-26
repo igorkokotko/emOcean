@@ -2,7 +2,6 @@ module.exports = {
   devServer: {
     proxy: {
       '/api/': {
-        // target: 'https://emocean.dev',
         target: 'http://localhost:5000',
         // target: 'https://emocean.dev',
         ws: true,
@@ -16,7 +15,6 @@ module.exports = {
       treeShake: true
     }
   },
-<<<<<<< HEAD
   transpileDependencies: [/[\\/]node_modules[\\/]quasar[\\/]/],
   css: {
     loaderOptions: {
@@ -27,7 +25,4 @@ module.exports = {
       }
     }
   }
-=======
-  transpileDependencies: [/[\\/]node_modules[\\/]quasar[\\/]/]
->>>>>>> add some features and fixes
 }

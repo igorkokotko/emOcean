@@ -6,20 +6,18 @@
           <img src="@/assets/img/logoSmall.jpg" class="logo lt-sm" />
           <img src="@/assets/img/logo.jpeg" class="logo gt-xs" />
         </router-link>
-<<<<<<< HEAD
         <q-space></q-space>
         <div
           id="input-search"
           ref="search"
           class="fixed-top-center"
           :style="{ visibility: 'hidden' }"
-=======
-        <q-space ></q-space>
+          >
+        <q-space></q-space>
         <div id="input-search" ref="search" class="fixed-top-center" :style="{ visibility: 'hidden'}">
           <q-input v-model='nickname' @input="searchByNick" />
           <nickname-search v-if="list" id="search-result" :results="nicknameSearchResults"/>
         </div>
-<<<<<<< HEAD
         <div id="search-wrapper" ref="searchWrapper">
           <q-btn
             flat
@@ -29,15 +27,12 @@
             @click="visible"
             class="q-mr-xs text-cyan" />
         </div>
-=======
->>>>>>> fixed
         <q-btn
           flat
           round
           dense
           icon="menu"
           class="text-cyan"
->>>>>>> add some features and fixes
         >
           <q-input v-model="userInput" @input="searchByNick" @keyup.enter="searchTag" />
           <nickname-search

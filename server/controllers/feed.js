@@ -26,8 +26,6 @@ let getFeedByPreferences = function(req, res) {
             .then(doc => {
                 let posts = {}
                 let pref = doc.data().preferences
-<<<<<<< HEAD
-=======
                 if(pref === undefined){
                         const collection = db.collection('posts').get()
                         collection.then((querySnapshot) => {
@@ -37,7 +35,6 @@ let getFeedByPreferences = function(req, res) {
                             res.json(posts)
                         })
                 } else {
->>>>>>> add features and fixes
                 const postsDocs = db.collection('posts')
                 const postsCollection = postsDocs.where('tag', 'array-contains-any', pref).get()
                 postsCollection.then((querySnapshot) => {
