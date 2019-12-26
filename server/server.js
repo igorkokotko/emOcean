@@ -14,6 +14,7 @@ const profiles = require('./routes/profiles')
 const posts = require('./routes/posts')
 const preferences = require('./routes/preferences')
 const feed = require('./routes/feed')
+const streams = require('./routes/streams')
 
 // Run server
 const app = express()
@@ -34,6 +35,8 @@ app.use('/api/profiles', profiles)
 app.use('/api/preferences', preferences)
 
 app.use('/api/feed', feed)
+
+app.use('/api/streams', streams)
 
 app.use(errorHandler)
 
