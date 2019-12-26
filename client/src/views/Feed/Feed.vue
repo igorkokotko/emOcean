@@ -1,128 +1,199 @@
 <template>
-  <div id="feed">
-    <v-comments :isModelVisible="isModelVisible" :closePopup="closePopup" />
-    <div class="feed-wrapper">
-      <div class="feed-post" v-for="(post, key) in getPosts" :key="key">
+  <div v-touch-swipe.left="handleSwipe" v-touch-swipe.right="handleSwipe">
+    <q-tabs
+      v-model="tab"
+      v-if="!isSearch"
+      class="bg-primary text-white shadow-2"
+      active-color="black"
+      indicator-color="black"
+      align="justify"
+    >
+      <q-tab
+        v-if="authorized"
+        name="by-preferences"
+        label="recommended"
+        @click="getPosts('preferences')"
+      />
+      <q-tab name="by-views" label="popular" @click="getPosts('popular')" />
+      <q-tab
+        v-if="authorized"
+        name="by-followings"
+        label="Followings"
+        @click="getPosts('followings')"
+      />
+    </q-tabs>
+    <div id="feed">
+      <div class="feed-wrapper">
+        <div v-if="isSearch" class="q-mt-lg text-center text-h5">RESULTS</div>
+        <div v-if="postsGetter && postsGetter.length > 0 && !isLoading">
+          <div class="feed-post" v-for="(post, key) in postsGetter" :key="key">
+            <one-post :post="post" />
+          </div>
+        </div>
         <div
-          class="image-container"
-          @dblclick="updateLikes({ key: key, updates: ({ hasBeenLiked : post.hasBeenLiked, likes: post.likes })  })"
-          @click="play"
-        >
-          <figure class="image is-32x32">
-            <img :src="post.userImage" />
-          </figure>
-          <video ref="videoElm" width="480" max-height="270">
-            <source :src="post.postVideo" type="video/mp4" />
-            <source :src="post.postVideo" type="video/ogg" />
-            <source :src="post.postVideo" type="video/webm" />
-          </video>
-        </div>
-        <div class="content-wrapper">
-          <div class="heart-and-comments">
-            <div class="heart">
-              <i
-                class="far fa-heart fa-lg"
-                :class="{'fas': post.hasBeenLiked}"
-                @click="updateLikes({ key: key, updates: ({ hasBeenLiked : post.hasBeenLiked, likes: post.likes })  })"
-              ></i>
-              <p
-                class="likes"
-                @click="showLikesList(key)"
-              >{{post.likes}}</p>
-            </div>
-            <div class="comments-icon" @click="closePopup(true)">
-              <i class="far fa-comment-alt fa-md"></i>
-              <p>{{post.comments.length}}</p>
-            </div>
-          </div>
-          <div class="content">
-            <p
-              class="caption"
-              ref="caption"
-              :class="[post.caption.length > 40 ? 'caption' : 'caption2']"
-            >
-              <span>{{post.username}}</span>
-              {{post.caption}}
-            </p>
-          </div>
+          v-if="(!postsGetter || postsGetter.length === 0) && !isLoading"
+          class="text-center q-pa-md"
+        >{{ this.emptyPostsMessage }}</div>
+        <q-spinner v-if="isLoading" color="primary" size="7em" class="fixed-center" />
+        <div v-if="authorized" class="big-btn" @click="$router.push('/addpost')">
+          <i class="fas fa-2x fa-plus"></i>
         </div>
       </div>
-      <div class="big-btn" @click="$router.push('/addpost')">
-        <i class="fas fa-2x fa-plus"></i>
-      </div>
-      <likes-list v-bind:info="likesInfo" v-if="likesInfo.show" />
     </div>
   </div>
 </template>
 
 <script>
-import PageComments from '../Comments/PageComments'
+import SinglePost from './SinglePost'
 import { mapGetters, mapActions } from 'vuex'
-import axios from 'axios'
-import LikesList from '../../components/LikesList.vue'
 
-const Authorized = require('../Authentication/Authorized.js')
-
+import { isAuthorized } from '../Authentication/Authorized'
 export default {
   name: 'Feed',
   data () {
     return {
       isModelVisible: false,
-      likesInfo: {
-        show: false
+      authorized: false,
+      isSearch: false,
+      tab: 'by-views',
+      emptyPostsMessage: "You don't have any posts"
+    }
+  },
+
+  methods: {
+    ...mapActions({
+      getMyProfile: 'profile/getMyProfile',
+      getPostsByViews: 'posts/getPostsByViewsAction',
+      getPostsByPreferences: 'posts/getPostsByPreferencesAction',
+      getPostsByFollowings: 'posts/getPostsByFollowingsAction',
+      getPostsByTag: 'posts/getPostsByTagAction',
+      clearPosts: 'posts/clearPostsAction'
+    }),
+    getPosts: function (action) {
+      switch (action) {
+        case 'preferences':
+          if (this.$route.query.tab !== 'recommended') {
+            this.$router.replace({ query: { tab: 'recommended' } })
+          }
+          this.clearPosts()
+          this.emptyPostsMessage =
+            "You don't have any recommended posts. Please go to settings and choose your preferences"
+          this.getPostsByPreferences()
+          break
+        case 'popular': {
+          if (this.$route.query.tab !== 'popular') {
+            this.$router.replace({ query: { tab: 'popular' } })
+          }
+          this.clearPosts()
+          this.emptyPostsMessage = "You don't have any posts"
+          this.getPostsByViews()
+          break
+        }
+        case 'followings': {
+          if (this.$route.query.tab !== 'followings') {
+            this.$router.replace({ query: { tab: 'followings' } })
+          }
+          this.clearPosts()
+          this.emptyPostsMessage =
+            "You don't have any posts from your followings. Follow your friends or someone else and get fun with us ^_^"
+          this.getPostsByFollowings()
+          break
+        }
+      }
+    },
+    handleSwipe: function (obj) {
+      let dir = obj.direction
+      if (this.tab === 'by-views') {
+        if (dir === 'right') {
+          this.tab = 'by-preferences'
+          this.getPosts('preferences')
+        }
+        if (dir === 'left') {
+          this.tab = 'by-followings'
+          this.getPosts('followings')
+        }
+      } else {
+        if (dir === 'left' && this.tab === 'by-preferences') {
+          this.tab = 'by-views'
+          this.getPosts('popular')
+        }
+        if (dir === 'right' && this.tab === 'by-followings') {
+          this.tab = 'by-views'
+          this.getPosts('popular')
+        }
       }
     }
+  },
+  beforeRouteUpdate (to, from, next) {
+    if (to.query.tab === 'search') {
+      this.emptyPostsMessage = 'There is no posts with given tags'
+      this.isSearch = true
+      this.getPostsByTag(to.query.tag)
+      next()
+    }
+    if (to.path === '/' && to.query.tab !== 'search') {
+      if (isAuthorized()) {
+        this.authorized = true
+        this.isSearch = false
+        this.getPostsByFollowings()
+      } else {
+        this.isSearch = false
+        this.getPostsByViews()
+      }
+    }
+    next()
   },
   created () {
-    let route = ''
-    if (Authorized.isAuthorized()) {
-      route = '/api/feed/authorized'
-    } else {
-      route = '/api/feed/anonimus'
-    }
-    axios.get(route)
-      .then((response) => {
-        this.updateState(response.data)
-      })
-      .catch(error => {
-        if (error.response) {
-          this.$q.notify({
-            message: 'Failed to fetch the feed!',
-            icon: 'announcement'
-          })
-        }
-      })
+    this.getMyProfile()
   },
-  methods: {
-    ...mapActions('posts', ['updateLikes', 'updateState']),
-    closePopup (visibility) {
-      // close | open
-      this.isModelVisible = visibility
-    },
-    play: function (event) {
-      let currentVideo = event.target
-      if (currentVideo.paused) {
-        currentVideo.play()
+  mounted () {
+    if (this.$route.query.tab === 'search') {
+      this.emptyPostsMessage = 'There is no posts with given tags'
+      this.isSearch = true
+      this.getPostsByTag(this.$route.query.tag)
+    } else {
+      if (isAuthorized()) {
+        this.authorized = true
+        if (this.$route.query.tab === 'recommended') {
+          this.tab = 'by-preferences'
+          this.emptyPostsMessage =
+            "You don't have any recommended posts. Please go to settings and choose your preferences"
+          this.getPostsByPreferences()
+        } else {
+          if (this.$route.query.tab !== 'followings') {
+            this.$router.replace({ query: { tab: 'followings' } })
+          }
+          this.showAddButton = true
+          this.tab = 'by-followings'
+          this.getPostsByFollowings()
+        }
       } else {
-        currentVideo.pause()
+        if (this.$route.query.tab !== 'popular') {
+          this.$router.replace({ query: { tab: 'popular' } })
+        }
+        this.getPostsByViews()
       }
-    },
-    showLikesList (key) {
-      this.likesInfo.show = true
-      this.likesInfo.postId = key
     }
+  },
+  beforeDestroy () {
+    this.clearPosts()
   },
   computed: {
-    ...mapGetters('posts', ['getPosts'])
+    ...mapGetters({
+      postsGetter: 'posts/postsGetter',
+      myProfile: 'profile/myProfile',
+      isLoading: 'posts/loadingGetter'
+    })
   },
   components: {
-    'v-comments': PageComments,
-    'likes-list': LikesList
+    'one-post': SinglePost
   }
 }
 </script>
-
 <style lang="scss">
+.empty-message {
+  width: 350px;
+}
 .big-btn {
   width: 75px;
   background: #87e0f5;
@@ -138,11 +209,6 @@ export default {
     left: 25px;
     top: 23px;
   }
-}
-.feed-post {
-  padding-top: 50px;
-  height: fit-content;
-  padding: 6px 0px;
 }
 .heart-and-comments {
   flex-direction: column;
@@ -211,7 +277,11 @@ export default {
 .content p {
   color: #dbe4e2;
 }
-.image-container {
+.test-wrapper {
+  background: #000;
+}
+.video-container {
+  padding: 7px;
   max-width: 800px;
   position: relative;
   background: #87e0f5;
@@ -240,25 +310,18 @@ export default {
   }
   video {
     max-width: 100%;
-    padding: 7px 7px 2px 7px;
+    padding: 0px;
+    background: #000;
+    margin-bottom: -6px;
   }
   .fas.fa-heart {
     color: #f06595;
   }
 }
-body,
-html {
-  background: linear-gradient(
-    90deg,
-    rgba(38, 183, 233, 0.7903536414565826) 0%,
-    rgba(34, 218, 197, 1) 100%
-  );
-}
-
 #feed {
   position: relative;
   width: 100%;
-  max-width: 1440px;
+  max-width: 4200px;
   display: grid;
   justify-content: center;
 }

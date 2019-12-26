@@ -20,9 +20,19 @@ const uploadVideos = asyncMiddleware(async (req, res, next) => {
 )
 
 
-const savePost = asyncMiddleware(async (req, res, next) => {
-  // TODO
-  res.status(200).json({ success: true })
+const savePost = asyncMiddleware(async(req, res, next) => {
+    try {
+        db.collection("posts").add(req.body)
+            .then(resolve => {
+                db.collection("users").doc(req.userId).update({ posts: req.body })
+                res.send()
+            })
+            .catch(error => {
+                res.status(400).send('Error - ' + error)
+            })
+    } catch (error) {
+        res.status(500).send('Error - ' + error)
+    }
 })
 
 
