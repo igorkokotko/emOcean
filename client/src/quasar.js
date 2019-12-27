@@ -44,7 +44,6 @@ import {
   QToggle,
   Ripple,
   QBar,
-  QResizeObserver,
   QDialog,
   ClosePopup,
   QVirtualScroll,
@@ -53,7 +52,6 @@ import {
   QScrollObserver,
   QChatMessage,
   QResizeObserver,
-  QSpinnerHourglass,
   QSpinner,
   colors,
   TouchSwipe
@@ -98,7 +96,6 @@ Vue.use(Quasar, {
     QSeparator,
     QToggle,
     QDialog,
-    QResizeObserver,
     QBanner,
     QVirtualScroll,
     QScrollObserver,
