@@ -38,6 +38,15 @@ export default {
         .then((res) => {
           this.userLogOut()
         })
+        .catch(error => {
+          if (error.response) {
+            this.$q.notify({
+              textColor: 'white',
+              actions: [{ icon: 'announcement', color: 'white' }],
+              message: 'Failed to delete profile!'
+            })
+          }
+        })
     },
     userLogOut () {
       window.localStorage.removeItem('token')
