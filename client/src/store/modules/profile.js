@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import { getProfile, updateProfile } from '@/services/profile'
+=======
+import authService from '@/services/auth'
+import { setPreferences } from '@/services/profile'
+>>>>>>> 4dc9a5115f9b5e886f63475312b85225c4ec7d74
 import axios from 'axios'
 
 export default {
@@ -76,6 +81,10 @@ export default {
           commit('', response.data)
         })
         .catch(error => console.log(error.response.data))
+    },
+    async setPreferencesAction ({ commit }, preferences) {
+      await setPreferences({ preferences })
+      commit('setPreferences', preferences)
     }
   },
 
@@ -130,6 +139,9 @@ export default {
         followingIds.push(value.id)
       })
       return followingIds
+    },
+    setPreferences (state, data) {
+      state.myProfile.preferences = data
     }
   }
 }
