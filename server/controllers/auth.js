@@ -138,6 +138,14 @@ const checkToken = asyncMiddleware(async (req, res) => {
   res.status(200).json({ id: req.userId })
 })
 
+const deleteAccount = asyncMiddleware(async (req, res) => {
+  const token = req.headers.authorization
+
+  const result = await authService.deleteAccount(token)
+
+  res.status(200).json({ result })
+})
+
 module.exports = {
   register,
   checkToken,
@@ -145,5 +153,6 @@ module.exports = {
   sendPasswordResetCode,
   changePassword,
   resetPassword,
-  signInWithGoogle
+  signInWithGoogle,
+  deleteAccount
 }

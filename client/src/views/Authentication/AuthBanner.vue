@@ -2,9 +2,10 @@
   <q-banner v-if="showBanner" inline-actions dark class="text-white auth-banner fixed-bottom">
     <div class="row items-center q-ml-md">
       <q-icon name="sentiment_satisfied" size="40px" class="q-mr-sm" />
-      <p
-        class="banner-text"
-      >Sign in to watch videos from friends and find other accounts you may like.</p>
+      <p class="banner-text">
+        Sign in to watch videos from friends and find other accounts you may
+        like.
+      </p>
     </div>
     <template v-slot:action>
       <div class="column q-mr-lg">
