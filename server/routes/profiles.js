@@ -4,6 +4,7 @@ const multer = require('multer')
 const storage = multer.memoryStorage()
 const upload = multer({ storage })
 const protected = require('../middleware/protectRoute')
+const blocked = require('../middleware/blockedUser')
 const {
   searchByNick,
   getProfile,
@@ -20,19 +21,19 @@ router.post('/save-profile', protected, saveProfile)
 router.post('/upload-image', protected, upload.single('file'), uploadImage)
 
 // get some profiles
-router.get('/get-profile', getProfile)
+router.get('/get-profile', blocked, getProfile)
 
 // profile actions (Block, unblock, follow, unfollow)
-router.get('/profile-action', protected, profileAction)
+router.get('/profile-action', protected, blocked, profileAction)
 
 // preferences
 router.post('/set-preferences', protected, setPreferences)
 
 // FOLLOWERS
-router.get('/get-followers/:id', protected, getFollowersById)
+router.get('/get-followers/:id', protected, blocked, getFollowersById)
 
 // FOLLOWING
-router.get('/get-followings/:id', protected, getFollowingsById)
+router.get('/get-followings/:id', protected, blocked, getFollowingsById)
 
 // Search logic
 router.post('/search-by-nick', searchByNick)

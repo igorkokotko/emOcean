@@ -1,4 +1,5 @@
 import authService from '@/services/auth'
+import { setPreferences } from '@/services/profile'
 import axios from 'axios'
 
 export default {
@@ -79,6 +80,10 @@ export default {
           commit('', response.data)
         })
         .catch(error => console.log(error.response.data))
+    },
+    async setPreferencesAction ({ commit }, preferences) {
+      await setPreferences({ preferences })
+      commit('setPreferences', preferences)
     }
   },
 
@@ -133,6 +138,9 @@ export default {
         followingIds.push(value.id)
       })
       return followingIds
+    },
+    setPreferences (state, data) {
+      state.myProfile.preferences = data
     }
   }
 }
