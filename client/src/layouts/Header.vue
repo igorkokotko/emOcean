@@ -79,6 +79,7 @@
 import NicknameSearch from '../components/NicknameSearch.vue'
 import debounce from 'lodash/debounce'
 import { searchByNick } from '@/services/profile.js'
+import axios from 'axios'
 
 export default {
   name: 'Header',
@@ -132,6 +133,7 @@ export default {
       this.$store.dispatch('auth/signin', { token: '', user: '' })
       window.localStorage.removeItem('token')
       window.localStorage.removeItem('profileId')
+      delete axios.defaults.headers.common['Authorization']
       this.$q.notify({
         textColor: 'white',
         actions: [{ icon: 'close', color: 'white' }],
@@ -139,7 +141,7 @@ export default {
         color: 'primary',
         message: 'You logged out.'
       })
-      this.$router.push('/feed')
+      this.$router.push('/login')
     },
 
     closeSearchComponent () {

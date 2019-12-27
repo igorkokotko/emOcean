@@ -1,4 +1,4 @@
-import authService from '@/services/auth'
+import { getProfile, updateProfile } from '@/services/profile'
 import axios from 'axios'
 
 export default {
@@ -6,13 +6,10 @@ export default {
 
   actions: {
     updateMyProfile (ctx, editedData) {
-      return authService.updateProfile(editedData)
-      /* .then((response) => {
-          ctx.commit('updateMyProfile', response.data.profile)
-        }) */
+      return updateProfile(editedData)
     },
     getMyProfile (ctx) {
-      return authService.getProfile({ id: ctx.state.myProfileId })
+      return getProfile({ id: ctx.state.myProfileId })
         .then((response) => {
           ctx.commit('updateMyProfile', response.data.profile)
         })

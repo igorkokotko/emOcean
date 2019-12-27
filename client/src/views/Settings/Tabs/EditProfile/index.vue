@@ -13,7 +13,7 @@
         <q-card-section>
           <template v-if="!isNewAvatarSelected">
             <div class="row justify-center">
-              <avatar :img="profile.avatar_url" />
+              <avatar :img="profile.avatarUrl" />
             </div>
           </template>
           <template v-else>
@@ -63,7 +63,8 @@
           <template v-if="!isNewCoverPhotoSelected">
             <div class="row justify-center">
               <img
-                :src="profile.user_background !== '' ? profile.user_background : DefaultCoverPhoto"
+                v-if="isProfileLoaded"
+                :src="profile.backgroundUrl !== '' ? profile.backgroundUrl : DefaultCoverPhoto"
                 class="coverPhoto"
               />
             </div>
@@ -220,7 +221,7 @@ import {
   checkUserDescriptionField,
   checkURL
 } from '@/utilities/validation.js'
-import authService from '@/services/auth.js'
+import { uploadAvatar, uploadBackground } from '@/services/profile.js'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -234,8 +235,8 @@ export default {
       nickname: '',
       bio: '',
       status: '',
-      avatar_url: '',
-      user_background: '',
+      avatarUrl: '',
+      backgroundUrl: '',
       socialAccounts: {
         youtube: '',
         instagram: '',
@@ -257,7 +258,8 @@ export default {
       isNewAvatarUploaded: false,
       isNewCoverPhotoUploaded: false,
       DefaultCoverPhoto,
-      loading: false
+      loading: false,
+      isProfileLoaded: false
     }
   },
 
@@ -278,6 +280,7 @@ export default {
   watch: {
     profileGetter (newValue) {
       this.loadDataFromStore()
+      this.isProfileLoaded = true
     }
   },
 
@@ -296,7 +299,7 @@ export default {
 
     deletePhotoUrl (val) {
       this.photoUrl = ""
-      this.profile.avatar_url = ""
+      this.profile.avatarUrl = ""
     },
 
     uploadImageUrl (val, imageType) {
@@ -330,16 +333,16 @@ export default {
 
     deleteBackgroundUrl (val) {
       this.backgroundUrl = ""
-      this.profile.user_background = ""
+      this.profile.backgroundUrl = ""
     },
 
     onCreatedAvatarBlob (blob) {
       const avatarFormData = new FormData()
       avatarFormData.append('file', blob)
 
-      authService.uploadAvatar(avatarFormData, { type: 'avatar' })
+      uploadAvatar(avatarFormData, { type: 'avatar' })
         .then((res) => {
-          this.profile.avatar_url = res.data.imageUrl
+          this.profile.avatarUrl = res.data.imageUrl
           this.isNewAvatarUploaded = true
           this.sendProfile()
         })
@@ -352,9 +355,9 @@ export default {
       const coverPhotoFormData = new FormData()
       coverPhotoFormData.append('file', blob)
 
-      authService.uploadBackground(coverPhotoFormData, { type: 'background' })
+      uploadBackground(coverPhotoFormData, { type: 'background' })
         .then((res) => {
-          this.profile.user_background = res.data.imageUrl
+          this.profile.backgroundUrl = res.data.imageUrl
           this.isNewCoverPhotoUploaded = true
           this.sendProfile()
         })
@@ -384,7 +387,7 @@ export default {
       Object.keys(this.profile.socialAccounts).forEach(item => {
         profile.socialAccounts.push({ type: item, link: this.profile.socialAccounts[item] })
       })
-      if (!profile.interests) { profile.interests = [] }
+      if (!profile.preferences) { profile.preferences = [] }
 
       this.$store.dispatch('profile/updateMyProfile', profile)
         .then(() => {
@@ -422,11 +425,11 @@ export default {
         })
       }
       this.profile = { ...this.emptyProfile, ...this.profileGetter, socialAccounts }
-      if (this.profile.avatar_url && JSON.stringify(this.profile.avatar_url) === JSON.stringify({})) {
-        this.profile.avatar_url = ""
+      if (this.profile.avatarUrl && JSON.stringify(this.profile.avatarUrl) === JSON.stringify({})) {
+        this.profile.avatarUrl = ""
       }
-      if (this.profile.user_background && JSON.stringify(this.profile.user_background) === JSON.stringify({})) {
-        this.profile.user_background = ""
+      if (this.profile.backgroundUrl && JSON.stringify(this.profile.backgroundUrl) === JSON.stringify({})) {
+        this.profile.backgroundUrl = ""
       }
     },
 
@@ -438,13 +441,16 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .q-avatar__content, .q-avatar img:not(.q-icon) {
   width: auto;
 }
 
 .coverPhoto {
-  max-width: 500px;
+  max-width: 100%;
+  @media (min-width: 600px) {
+    max-width: 500px;
+  }
 }
 
 .uploadImage {
@@ -452,7 +458,7 @@ export default {
 }
 </style>
 
-<style>
+<style lang="scss">
 .inputFile {
   display: none;
 }
@@ -479,6 +485,9 @@ export default {
 }
 
 .backgroundImage .vueCropperWrapper {
-  max-width: 500px;
+  max-width: 100%;
+  @media (min-width: 600px) {
+    max-width: 500px;
+  }
 }
 </style>
