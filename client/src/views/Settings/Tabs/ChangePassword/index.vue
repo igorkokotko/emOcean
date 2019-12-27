@@ -78,7 +78,7 @@ import {
   checkPasswordField,
   checkRepeatPasswordField
 } from '@/utilities/validation.js'
-import authService from '@/services/auth.js'
+import { changePassword } from '@/services/auth.js'
 
 export default {
   data () {
@@ -109,7 +109,7 @@ export default {
         actions: [{ icon: 'close', color: 'white' }],
         timeout: 3000
       }
-      authService.changePassword({
+      changePassword({
         oldPassword: this.formModel.currentPassword,
         newPassword: this.formModel.newPassword
       })

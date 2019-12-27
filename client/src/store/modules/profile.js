@@ -1,4 +1,4 @@
-import authService from '@/services/auth'
+import { getProfile, updateProfile, setPreferences } from '@/services/profile'
 import axios from 'axios'
 
 export default {
@@ -6,13 +6,10 @@ export default {
 
   actions: {
     updateMyProfile (ctx, editedData) {
-      return authService.updateProfile(editedData)
-      /* .then((response) => {
-          ctx.commit('updateMyProfile', response.data.profile)
-        }) */
+      return updateProfile(editedData)
     },
     getMyProfile (ctx) {
-      return authService.getProfile({ id: ctx.state.myProfileId })
+      return getProfile({ id: ctx.state.myProfileId })
         .then((response) => {
           ctx.commit('updateMyProfile', response.data.profile)
         })
@@ -79,6 +76,10 @@ export default {
           commit('', response.data)
         })
         .catch(error => console.log(error.response.data))
+    },
+    async setPreferencesAction ({ commit }, preferences) {
+      await setPreferences({ preferences })
+      commit('setPreferences', preferences)
     }
   },
 
@@ -133,6 +134,9 @@ export default {
         followingIds.push(value.id)
       })
       return followingIds
+    },
+    setPreferences (state, data) {
+      state.myProfile.preferences = data
     }
   }
 }

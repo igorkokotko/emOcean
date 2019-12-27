@@ -1,69 +1,43 @@
 <template>
   <div class="header" @click="visible">
-    <q-header
-      bordered
-      class="bg-white text-primary"
-    >
+    <q-header bordered class="bg-white text-primary">
       <q-toolbar ref="toolbar">
-        <router-link
-          :to="{path: '/'}"
-          class="homeRouterLink"
-        >
-          <img
-            src="@/assets/img/logoSmall.jpg"
-            class="logo lt-sm"
-          >
-          <img
-            src="@/assets/img/logo.jpeg"
-            class="logo gt-xs"
-          >
-        </router-link>
-        <q-space ></q-space>
-        <div id="input-search" ref="search" class="fixed-top-center" :style="{ visibility: 'hidden'}">
-          <q-input v-model='nickname' @input="searchByNick" />
-          <nickname-search v-if="showSearch" id="search-result" :results="nicknameSearchResults" @closeSearch="closeSearchComponent"/>
+        <div class="homeRouterLink" @click="navigate">
+          <img src="@/assets/img/logoSmall.jpg" class="logo lt-sm" />
+          <img src="@/assets/img/logo.jpeg" class="logo gt-xs" />
         </div>
-        <q-btn
-          flat
-          round
-          dense
-          icon="search"
-          @click="visible"
-          class="q-mr-xs text-cyan" />
-        <q-btn
-          flat
-          round
-          dense
-          icon="menu"
-          class="text-cyan"
+        <q-space></q-space>
+        <div
+          id="input-search"
+          ref="search"
+          class="fixed-top-center"
+          :style="{ visibility: 'hidden'}"
         >
+          <q-input v-model="nickname" @input="searchByNick" @keyup.enter="searchTag" />
+          <nickname-search
+            v-if="showSearch"
+            id="search-result"
+            :results="nicknameSearchResults"
+            @closeSearch="closeSearchComponent"
+          />
+        </div>
+        <q-btn flat round dense icon="search" @click="visible" class="q-mr-xs text-cyan" />
+        <q-btn flat round dense icon="menu" class="text-cyan">
           <q-menu>
             <q-list style="min-width: 100px">
               <template v-if="isAuthenticated">
-                <q-item
-                  to="/settings"
-                  clickable
-                >
+                <q-item to="/settings" clickable>
                   <q-item-section>Settings</q-item-section>
                 </q-item>
-                <q-item
-                  clickable
-                  @click="logOut"
-                >
+                <q-item clickable @click="logOut">
                   <q-item-section>Log out</q-item-section>
                 </q-item>
               </template>
               <template v-else>
-                <q-item
-                  to="/login"
-                  clickable
-                >
+                <q-item to="/login" clickable>
                   <q-item-section>Login</q-item-section>
                 </q-item>
-                <q-item
-                  to="/register"
-                  clickable
-                >
+                <q-item to="/register" clickable>
                   <q-item-section>Register</q-item-section>
                 </q-item>
               </template>
@@ -79,6 +53,8 @@
 import NicknameSearch from '../components/NicknameSearch.vue'
 import debounce from 'lodash/debounce'
 import { searchByNick } from '@/services/profile.js'
+import { isAuthorized } from '@/services/Authorized.js'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Header',
@@ -89,16 +65,36 @@ export default {
     return {
       nickname: '',
       showSearch: true,
-      nicknameSearchResults: []
+      nicknameSearchResults: [],
+      isAuthenticated: false
     }
   },
-
   computed: {
-    isAuthenticated () {
-      return this.$store.getters['auth/getToken']
+    ...mapGetters({
+      token: 'auth/getToken'
+    })
+  },
+
+  async created () {
+    try {
+      const auth = await isAuthorized()
+      this.isAuthenticated = auth
+    } catch (e) {
+      this.isAuthenticated = false
     }
   },
 
+  watch: {
+    token () {
+      isAuthorized()
+        .then(res => {
+          this.isAuthenticated = res
+        })
+        .catch(() => {
+          this.isAuthenticated = false
+        })
+    }
+  },
   methods: {
     searchByNick: debounce(function (value) {
       if (!/^#/.test(value) && value !== '') {
@@ -127,7 +123,24 @@ export default {
         this.$refs.search.style.visibility = 'hidden'
       } else this.$refs.search.style.visibility = 'visible'
     },
-
+    searchTag: function () {
+      if (/^#/.test(this.userInput) && this.userInput !== '') {
+        const tagsArray = this.userInput.split(' ').map(item => {
+          if (item.startsWith('#')) { return item.trim().slice(1) }
+        }).join('-')
+        if (this.$route.name === 'Feed') {
+          if (
+            this.$route.query.tab === 'search' &&
+            this.$route.query.tags === tagsArray
+          ) {
+            this.$router.replace({ query: { tab: 'search', tags: '' } })
+          }
+          this.$router.replace({ query: { tab: 'search', tags: tagsArray } })
+        } else {
+          this.$router.push(`/?tab=search&tags=${tagsArray}`)
+        }
+      }
+    },
     logOut () {
       this.$store.dispatch('auth/signin', { token: '', user: '' })
       window.localStorage.removeItem('token')
@@ -139,9 +152,18 @@ export default {
         color: 'primary',
         message: 'You logged out.'
       })
-      this.$router.push('/feed')
+      this.$router.push('/login')
     },
-
+    navigate () {
+      if (this.$route.path === '/') {
+        if (this.$route.query.tab === 'search') {
+          this.$router.replace({ query: { tab: 'popular' } })
+        }
+        this.$router.go()
+      } else {
+        this.$router.push('/')
+      }
+    },
     closeSearchComponent () {
       this.showSearch = false
       this.nickname = ''
@@ -151,22 +173,23 @@ export default {
 </script>
 
 <style>
-  .logo {
-    height: 100%;
-    margin: 0;
-  }
-  .homeRouterLink {
-    height: 60px;
-    display: block;
-    padding: 8px 0;
-  }
+.logo {
+  height: 100%;
+  margin: 0;
+}
+.homeRouterLink {
+  height: 60px;
+  display: block;
+  padding: 8px 0;
+  cursor: pointer;
+}
 
-  #input-search .q-field__control {
-    height: 24px;
-    position: relative;
-  }
+#input-search .q-field__control {
+  height: 24px;
+  position: relative;
+}
 
-  #search-result {
-    position: absolute;
-  }
+#search-result {
+  position: absolute;
+}
 </style>
