@@ -21,7 +21,7 @@
 
 <script>
 import { deleteAccount } from '@/services/profile.js'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'DeleteAccount',
@@ -31,15 +31,15 @@ export default {
     }
   },
   methods: {
+    ...mapActions('auth', ['logOut']),
     deleteProfile () {
       let user = this.getProfile
       deleteAccount(user)
         .then((res) => {
-          this.logOut()
+          this.userLogOut()
         })
     },
-    logOut () {
-      this.$store.dispatch('auth/signin', { token: '', user: '' })
+    userLogOut () {
       window.localStorage.removeItem('token')
       window.localStorage.removeItem('profileId')
       this.$q.notify({
