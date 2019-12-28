@@ -1,11 +1,6 @@
 <template>
   <q-page>
-    <q-form
-      class="q-gutter-md"
-      @submit="onSubmit"
-      @reset="onReset"
-    >
-
+    <q-form class="q-gutter-md" @submit="onSubmit" @reset="onReset">
       <q-card class="my-card">
         <q-card-section>
           <div class="text-h6">Avatar</div>
@@ -13,7 +8,7 @@
         <q-card-section>
           <template v-if="!isNewAvatarSelected">
             <div class="row justify-center">
-              <avatar :img="profile.avatar_url" />
+              <avatar :img="profile.avatarUrl" />
             </div>
           </template>
           <template v-else>
@@ -25,10 +20,7 @@
             />
           </template>
           <div class="row justify-center q-mt-sm">
-            <label
-              for="inputAvatar"
-              ref="photoUrlLabel"
-            >
+            <label for="inputAvatar" ref="photoUrlLabel">
               <input
                 ref="avatar"
                 type="file"
@@ -36,7 +28,7 @@
                 accept="image/*"
                 @input="uploadImageUrl($event, 'avatar')"
                 class="uploadImage"
-              >
+              />
               <q-btn
                 round
                 color="secondary"
@@ -45,12 +37,7 @@
                 class="q-mr-md"
               />
             </label>
-            <q-btn
-              round
-              color="negative"
-              icon="delete"
-              @click="deletePhotoUrl"
-            />
+            <q-btn round color="negative" icon="delete" @click="deletePhotoUrl" />
           </div>
         </q-card-section>
       </q-card>
@@ -63,7 +50,7 @@
           <template v-if="!isNewCoverPhotoSelected">
             <div class="row justify-center">
               <img
-                :src="profile.user_background !== '' ? profile.user_background : DefaultCoverPhoto"
+                :src="profile.backgroundUrl !== '' ? profile.backgroundUrl : DefaultCoverPhoto"
                 class="coverPhoto"
               />
             </div>
@@ -78,10 +65,7 @@
             />
           </template>
           <div class="row justify-center q-mt-sm">
-            <label
-              for="inputImage"
-              ref="backgroundUrlLabel"
-            >
+            <label for="inputImage" ref="backgroundUrlLabel">
               <input
                 ref="background"
                 type="file"
@@ -89,7 +73,7 @@
                 accept="image/*"
                 @input="uploadImageUrl($event, 'background')"
                 class="uploadImage"
-              >
+              />
               <q-btn
                 round
                 color="secondary"
@@ -98,12 +82,7 @@
                 class="q-mr-md"
               />
             </label>
-            <q-btn
-              round
-              color="negative"
-              icon="delete"
-              @click="deleteBackgroundUrl"
-            />
+            <q-btn round color="negative" icon="delete" @click="deleteBackgroundUrl" />
           </div>
         </q-card-section>
       </q-card>
@@ -183,29 +162,11 @@
       </q-card>
 
       <div class="q-pt-md">
-        <q-btn
-          label="Edit profile"
-          type="submit"
-          rounded
-          color="secondary"
-        >
-          <q-spinner-bars
-            class='q-ml-md'
-            color='primary'
-            size='1em'
-            v-show='loading'
-          />
+        <q-btn label="Edit profile" type="submit" rounded color="secondary">
+          <q-spinner-bars class="q-ml-md" color="primary" size="1em" v-show="loading" />
         </q-btn>
-        <q-btn
-          label="Reset"
-          type="reset"
-          color="secondary"
-          flat
-          rounded
-          class="q-ml-sm"
-        />
+        <q-btn label="Reset" type="reset" color="secondary" flat rounded class="q-ml-sm" />
       </div>
-
     </q-form>
   </q-page>
 </template>
@@ -220,7 +181,7 @@ import {
   checkUserDescriptionField,
   checkURL
 } from '@/utilities/validation.js'
-import authService from '@/services/auth.js'
+import { uploadAvatar, uploadBackground } from '@/services/profile.js'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -234,8 +195,8 @@ export default {
       nickname: '',
       bio: '',
       status: '',
-      avatar_url: '',
-      user_background: '',
+      avatarUrl: '',
+      backgroundUrl: '',
       socialAccounts: {
         youtube: '',
         instagram: '',
@@ -296,7 +257,7 @@ export default {
 
     deletePhotoUrl (val) {
       this.photoUrl = ""
-      this.profile.avatar_url = ""
+      this.profile.avatarUrl = ""
     },
 
     uploadImageUrl (val, imageType) {
@@ -330,16 +291,16 @@ export default {
 
     deleteBackgroundUrl (val) {
       this.backgroundUrl = ""
-      this.profile.user_background = ""
+      this.profile.backgroundUrl = ""
     },
 
     onCreatedAvatarBlob (blob) {
       const avatarFormData = new FormData()
       avatarFormData.append('file', blob)
 
-      authService.uploadAvatar(avatarFormData, { type: 'avatar' })
+      uploadAvatar(avatarFormData, { type: 'avatar' })
         .then((res) => {
-          this.profile.avatar_url = res.data.imageUrl
+          this.profile.avatarUrl = res.data.imageUrl
           this.isNewAvatarUploaded = true
           this.sendProfile()
         })
@@ -352,9 +313,9 @@ export default {
       const coverPhotoFormData = new FormData()
       coverPhotoFormData.append('file', blob)
 
-      authService.uploadBackground(coverPhotoFormData, { type: 'background' })
+      uploadBackground(coverPhotoFormData, { type: 'background' })
         .then((res) => {
-          this.profile.user_background = res.data.imageUrl
+          this.profile.backgroundUrl = res.data.imageUrl
           this.isNewCoverPhotoUploaded = true
           this.sendProfile()
         })
@@ -422,11 +383,11 @@ export default {
         })
       }
       this.profile = { ...this.emptyProfile, ...this.profileGetter, socialAccounts }
-      if (this.profile.avatar_url && JSON.stringify(this.profile.avatar_url) === JSON.stringify({})) {
-        this.profile.avatar_url = ""
+      if (this.profile.avatarUrl && JSON.stringify(this.profile.avatarUrl) === JSON.stringify({})) {
+        this.profile.avatarUrl = ""
       }
-      if (this.profile.user_background && JSON.stringify(this.profile.user_background) === JSON.stringify({})) {
-        this.profile.user_background = ""
+      if (this.profile.backgroundUrl && JSON.stringify(this.profile.backgroundUrl) === JSON.stringify({})) {
+        this.profile.backgroundUrl = ""
       }
     },
 
@@ -439,7 +400,8 @@ export default {
 </script>
 
 <style scoped>
-.q-avatar__content, .q-avatar img:not(.q-icon) {
+.q-avatar__content,
+.q-avatar img:not(.q-icon) {
   width: auto;
 }
 
@@ -457,7 +419,8 @@ export default {
   display: none;
 }
 
-.inputFile .q-field__control:before, .q-field__control:after {
+.inputFile .q-field__control:before,
+.q-field__control:after {
   content: none;
 }
 
@@ -471,7 +434,7 @@ export default {
 }
 
 .youtube {
-  color: #FF0000;
+  color: #ff0000;
 }
 
 .instagram {

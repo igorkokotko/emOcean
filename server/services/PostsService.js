@@ -59,11 +59,12 @@ const savePost = async (userId, postData) => {
 }
 
 const getPostsByViews = async (paginateId, postsLimit) => {
+  console.log(postsLimit)
   let postsRefQuery = db
     .collection('posts')
     .orderBy('views', 'desc')
     .limit(postsLimit)
-  return await getPostsByQuery(postsRefQuery, paginateId)
+  return await getPostsByQuery(postsRefQuery, paginateId, postsLimit)
 }
 
 const getPostsByTags = async (paginateId, postsLimit, tags) => {
@@ -72,7 +73,7 @@ const getPostsByTags = async (paginateId, postsLimit, tags) => {
     .orderBy('createdAt', 'desc')
     .where('tags', 'array-contains-any', tags)
     .limit(postsLimit)
-  return await getPostsByQuery(postsRefQuery, paginateId)
+  return await getPostsByQuery(postsRefQuery, paginateId, postsLimit)
 }
 
 const getPostsByPreferences = async (paginateId, postsLimit, id) => {
@@ -91,7 +92,7 @@ const getPostsByPreferences = async (paginateId, postsLimit, id) => {
     .orderBy('createdAt', 'desc')
     .where('tags', 'array-contains-any', preferences)
     .limit(postsLimit)
-  return await getPostsByQuery(postsRefQuery, paginateId)
+  return await getPostsByQuery(postsRefQuery, paginateId, postsLimit)
 }
 
 const getPostsByFollowings = async (index, postsLimit, id) => {
@@ -213,7 +214,7 @@ const getUserPosts = async userId => {
   }
 }
 
-const getPostsByQuery = async (query, paginateId) => {
+const getPostsByQuery = async (query, paginateId, postsLimit) => {
   let postsRefQuery = query
   if (paginateId) {
     const paginateRef = db.collection('posts').doc(paginateId)

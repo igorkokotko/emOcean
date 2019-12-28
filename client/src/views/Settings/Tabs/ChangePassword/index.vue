@@ -1,9 +1,6 @@
 <template>
   <q-page>
-    <q-form
-      class="q-gutter-md"
-      @submit="onFormSubmit"
-    >
+    <q-form class="q-gutter-md" @submit="onFormSubmit">
       <q-input
         label="Current password"
         placeholder="Type your current password"
@@ -52,13 +49,8 @@
         </template>
       </q-input>
       <div class="q-pt-md">
-        <q-btn
-          label="Change password"
-          type="submit"
-          rounded
-          color="secondary"
-        />
-        <br>
+        <q-btn label="Change password" type="submit" rounded color="secondary" />
+        <br />
         <q-btn
           label="Forgot password?"
           @click="onForgotPasswordClick"
@@ -78,7 +70,7 @@ import {
   checkPasswordField,
   checkRepeatPasswordField
 } from '@/utilities/validation.js'
-import authService from '@/services/auth.js'
+import { changePassword } from '@/services/auth.js'
 
 export default {
   data () {
@@ -109,7 +101,7 @@ export default {
         actions: [{ icon: 'close', color: 'white' }],
         timeout: 3000
       }
-      authService.changePassword({
+      changePassword({
         oldPassword: this.formModel.currentPassword,
         newPassword: this.formModel.newPassword
       })

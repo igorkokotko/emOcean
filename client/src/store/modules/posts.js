@@ -1,7 +1,7 @@
 import {
   getPostsByType,
   savePost
-} from '@/services/posts'
+} from '@/services/post'
 
 const state = {
   posts: [],
@@ -61,6 +61,9 @@ const actions = {
       commit('updateErrors', error.response.data)
       commit('setLoading', false)
     }
+  },
+  clearPostsAction ({ commit }) {
+    commit('clearPosts')
   }
 }
 

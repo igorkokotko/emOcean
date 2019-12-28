@@ -1,8 +1,8 @@
-import postService from '../../services/post'
+import { getLikedList } from '@/services/post'
 export default {
   actions: {
     getLikedList (ctx, videoId) {
-      ctx.commit('updateLikedList', postService.getLikedList(videoId))
+      ctx.commit('updateLikedList', getLikedList(videoId))
     }
   },
 

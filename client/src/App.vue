@@ -28,7 +28,7 @@ export default {
     Footer,
     vHeader,
     'v-auth-banner': AuthBanner,
-    'v-auth-login-modal': AuthModal,
+    'v-auth-login-modal': AuthModal
   },
   data () {
     return {

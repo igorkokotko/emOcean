@@ -2,6 +2,8 @@ const asyncMiddleware = require('../middleware/asyncMiddleware')
 const postsService = require('../services/PostsService')
 const VideoHandler = require('../videoHandling/videoHandler')
 const clearTempFiles = require('../common/clearTempFiles')
+const CustomError = require('../common/CustomError')
+const jwt = require('jsonwebtoken')
 
 // @desc    Handling and uploading video to database
 // @route   POST /api/posts/upload-videos?type=single-video
@@ -33,62 +35,6 @@ const savePost = asyncMiddleware(async (req, res) => {
   res.status(200).json({ result })
 })
 
-// @desc    Get most popular posts with pagination
-// @route   GET /api/posts/by-views
-// @route   GET /api/posts/by-views?index=qzmHM8GdAYWlgsrF9ZvZXXh8UK93
-// @access  Public
-const getPostsByViews = asyncMiddleware(async (req, res) => {
-  const index = req.query.index
-  const postsLimit = 5
-  const result = await postsService.getPostsByViews(index, postsLimit)
-  res.status(200).json({ result })
-})
-
-// @desc    Get posts based on requested tag list(from 1 to 10)
-// @route   GET /api/posts/by-tags?tags
-// @access  Public
-const getPostsByTags = asyncMiddleware(async (req, res, next) => {
-  const tags = req.query.tags.split('-')
-  if (!tags || tags.length === 0) {
-    return next(new CustomError({ name: 'Bad Request', message: 'Tags query is empty', status: 400 }))
-  }
-  const paginateId = req.query.index
-  const postsLimit = 5
-  const result = await postsService.getPostsByTags(tag, paginateId, postsLimit)
-  res.status(200).json({ result })
-})
-
-// @desc    Get posts based on user followings
-// @route   GET /api/posts/by-followings
-// @access  Private
-const getPostsByFollowings = asyncMiddleware(async (req, res) => {
-  const userId = req.userId
-  const paginateId = req.query.index
-  const postsLimit = 5
-  const result = await postsService.getPostsByFollowings(
-    userId,
-    paginateId,
-    postsLimit
-  )
-  res.status(200).json({ result })
-})
-
-// @desc    Get posts based on user preferences
-// @route   GET /api/posts/by-preferences
-// @access  Private
-const getPostsByPreferences = asyncMiddleware(async (req, res) => {
-  const userId = req.userId
-  const paginateId = req.query.index
-  const postsLimit = 5
-
-  const result = await postsService.getPostsByPreferences(
-    userId,
-    paginateId,
-    postsLimit
-  )
-  res.status(200).json({ result })
-})
-
 const getPostsByType = asyncMiddleware(async (req, res, next) => {
   const typesList = ['search', 'preferences', 'followings', 'popular']
   const { type } = req.query
@@ -103,11 +49,12 @@ const getPostsByType = asyncMiddleware(async (req, res, next) => {
       followings: 'getPostsByFollowings'
     }
     const postMethod = postsActions[type]
-    if (type === 'preferences' || 'followings') {
+    if (type === 'preferences' || type === 'followings') {
+      const token = req.headers.authorization.split(' ')[1]
       value = jwt.verify(token, process.env.JWT_SECRET).value.uid
     }
     if (type === 'search') {
-      value = req.query.tags
+      value = req.query.tags.split('-')
     }
     const result = await postsService[postMethod](paginateId, postsLimit, value)
 

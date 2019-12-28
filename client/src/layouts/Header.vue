@@ -13,7 +13,7 @@
           class="fixed-top-center"
           :style="{ visibility: 'hidden'}"
         >
-          <q-input v-model="nickname" @input="searchByNick" @keyup.enter="searchTag" />
+          <q-input v-model="userInput" @input="searchByNick" @keyup.enter="searchTag" />
           <nickname-search
             v-if="showSearch"
             id="search-result"
@@ -63,7 +63,7 @@ export default {
   },
   data () {
     return {
-      nickname: '',
+      userInput: '',
       showSearch: true,
       nicknameSearchResults: [],
       isAuthenticated: false
@@ -74,7 +74,6 @@ export default {
       token: 'auth/getToken'
     })
   },
-
   async created () {
     try {
       const auth = await isAuthorized()
@@ -124,20 +123,22 @@ export default {
       } else this.$refs.search.style.visibility = 'visible'
     },
     searchTag: function () {
-      if (/^#/.test(this.userInput) && this.userInput !== '') {
-        const tagsArray = this.userInput.split(' ').map(item => {
-          if (item.startsWith('#')) { return item.trim().slice(1) }
-        }).join('-')
-        if (this.$route.name === 'Feed') {
-          if (
-            this.$route.query.tab === 'search' &&
-            this.$route.query.tags === tagsArray
-          ) {
-            this.$router.replace({ query: { tab: 'search', tags: '' } })
+      if (this.userInput) {
+        const hashRegex = /^#/
+        const tagsQuery = this.userInput.split(' ').filter(item => hashRegex.test(item)
+        ).map(item => item.replace(hashRegex, '')).join('-')
+        if (tagsQuery) {
+          if (this.$route.name === 'Feed') {
+            if (
+              this.$route.query.tab === 'search' &&
+              this.$route.query.tags === tagsQuery
+            ) {
+              this.$router.replace({ query: { tab: '', tags: '' } })
+            }
+            this.$router.replace({ query: { tab: 'search', tags: tagsQuery } })
+          } else {
+            this.$router.push(`/?tab=search&tags=${tagsQuery}`)
           }
-          this.$router.replace({ query: { tab: 'search', tags: tagsArray } })
-        } else {
-          this.$router.push(`/?tab=search&tags=${tagsArray}`)
         }
       }
     },
@@ -166,7 +167,7 @@ export default {
     },
     closeSearchComponent () {
       this.showSearch = false
-      this.nickname = ''
+      this.userInput = ''
     }
   }
 }

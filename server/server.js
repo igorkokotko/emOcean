@@ -31,7 +31,8 @@ app.use('/api/profiles', profiles)
 
 app.use(errorHandler)
 
-const PORT = process.env.port || 5000
+// const PORT = process.env.port || 5000
+const PORT = 5000
 
 app.listen(
   PORT,

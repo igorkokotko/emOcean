@@ -59,7 +59,7 @@
 <script>
 import SinglePost from './SinglePost'
 import { mapGetters, mapActions } from 'vuex'
-import { isAuthorized } from '../Authentication/Authorized'
+import { isAuthorized } from '@/services/Authorized.js'
 
 export default {
   name: 'Feed',
@@ -82,13 +82,13 @@ export default {
   beforeCreated () {
     this.getMyProfile()
   },
-  mounted () {
-    if (this.$route.query.tab === 'search') {
-      this.isSearch = true
-      this.getPostsAction({ type: 'search', tags: this.$route.query.tags })
-    } else {
-      if (isAuthorized()) {
-        this.authorized = true
+  async mounted () {
+    try {
+      if (this.$route.query.tab === 'search') {
+        this.isSearch = true
+        this.getPostsAction({ type: 'search', tags: this.$route.query.tags })
+      } else {
+        this.authorized = await isAuthorized()
         if (this.$route.query.tab === 'preferences') {
           this.tab = 'preferences'
           this.getPostsAction({ type: 'preferences' })
@@ -100,12 +100,12 @@ export default {
           this.tab = 'followings'
           this.getPostsAction({ type: 'followings' })
         }
-      } else {
-        if (this.$route.query.tab !== 'popular') {
-          this.$router.replace({ query: { tab: 'popular' } })
-        }
-        this.getPostsAction({ type: 'popular' })
       }
+    } catch (error) {
+      if (this.$route.query.tab !== 'popular') {
+        this.$router.replace({ query: { tab: 'popular' } })
+      }
+      this.getPostsAction({ type: 'popular' })
     }
   },
   beforeDestroy () {

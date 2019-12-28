@@ -19,4 +19,4 @@ export const changePassword = (data) => axios.post(`${apiAuth}/change-password`,
 
 export const checkToken = () => axios.get(`${apiAuth}/check-token`)
 
-export const deleteAccount = (params) => axios.delete(`${apiProfile}/delete-account`, { data: params })
+export const deleteAccount = (params) => axios.delete(`${apiAuth}/delete-account`, { data: params })
