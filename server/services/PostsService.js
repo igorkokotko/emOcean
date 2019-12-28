@@ -59,7 +59,6 @@ const savePost = async (userId, postData) => {
 }
 
 const getPostsByViews = async (paginateId, postsLimit) => {
-  console.log(postsLimit)
   let postsRefQuery = db
     .collection('posts')
     .orderBy('views', 'desc')

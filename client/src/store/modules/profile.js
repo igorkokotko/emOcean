@@ -39,7 +39,6 @@ export default {
           commit('updateFollowers', response.data.followers)
         })
         .catch(error => {
-          console.log(error)
           if (error) {
             commit('updateFollowers', [])
           }
@@ -64,7 +63,6 @@ export default {
           commit('updateCurrentFollowings', response.data.followings)
         })
         .catch(error => {
-          console.log(error)
           if (error) {
             commit('updateCurrentFollowings', [])
           }

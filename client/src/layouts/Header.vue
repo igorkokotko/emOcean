@@ -103,7 +103,7 @@ export default {
           .then(res => {
             this.nicknameSearchResults = []
             res.data.message.forEach(element => {
-              this.nicknameSearchResults.push({ id: element.profileId, nickname: element.nickname, avatar: element.avatar_url })
+              this.nicknameSearchResults.push({ id: element.profileId, nickname: element.nickname, avatar: element.avatarUrl })
             })
           })
           .catch(err => {

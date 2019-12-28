@@ -6,7 +6,7 @@
     text-color="white"
     :icon="img.length === 0 ? 'account_circle' : null"
   >
-    <img v-if="img.length > 0" :src="img">
+    <img v-if="img.length > 0" :src="img" />
   </q-avatar>
 </template>
 
