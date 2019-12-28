@@ -14,3 +14,5 @@ export const searchByNick = (data) => axios.post(`${apiProfile}/search-by-nick`,
 export const profileAction = (data) => axios.get(`${apiProfile}/profile-action?action=${data.action}&id=${data.id}`)
 
 export const setPreferences = data => axios.post(`${apiProfile}/set-preferences`, data)
+
+export const deleteAccount = (params) => axios.delete(`${apiProfile}/delete-account`, { data: params })

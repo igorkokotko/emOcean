@@ -13,7 +13,8 @@ const {
   setPreferences,
   getFollowersById,
   getFollowingsById,
-  profileAction
+  profileAction,
+  deleteAccount
 } = require('../controllers/profiles')
 
 // edit profile
@@ -37,6 +38,8 @@ router.get('/get-followings/:id', protected, blocked, getFollowingsById)
 
 // Search logic
 router.post('/search-by-nick', searchByNick)
+
+router.delete('/delete-account', protected, deleteAccount)
 
 // TODO
 
