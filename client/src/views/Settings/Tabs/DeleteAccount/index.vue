@@ -1,8 +1,8 @@
 <template>
   <div>
     <p class="danger text-h5">ATTENTION!!!</p>
-    <p>This action will delete our account</p>
-    <q-btn label="Confirm" color="pink" @click="confirm = true" />
+    <p>This action will delete your account</p>
+    <q-btn label="DELETE" color="pink" @click="confirm = true" />
     <q-dialog v-model="confirm" persistent>
       <q-card>
         <q-card-section class="row items-center">
@@ -12,7 +12,7 @@
 
         <q-card-actions align="right">
           <q-btn flat label="Cancel" color="teal" v-close-popup />
-          <q-btn flat label="Delete" color="pink" v-close-popup />
+          <q-btn flat label="Delete" color="pink" @click="deleteProfile()" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -20,14 +20,52 @@
 </template>
 
 <script>
+import { deleteAccount } from '@/services/profile.js'
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   name: 'DeleteAccount',
   data () {
     return {
       confirm: false
     }
+  },
+  methods: {
+    ...mapActions('auth', ['logOut']),
+    deleteProfile () {
+      let user = this.getProfile
+      deleteAccount(user)
+        .then((res) => {
+          this.userLogOut()
+        })
+        .catch(error => {
+          if (error.response) {
+            this.$q.notify({
+              textColor: 'white',
+              actions: [{ icon: 'announcement', color: 'white' }],
+              message: 'Failed to delete profile!'
+            })
+          }
+        })
+    },
+    userLogOut () {
+      window.localStorage.removeItem('token')
+      window.localStorage.removeItem('profileId')
+      this.$q.notify({
+        textColor: 'white',
+        actions: [{ icon: 'delete_forever', color: 'white' }],
+        timeout: 3000,
+        message: 'Your account was successfully deleted'
+      })
+      this.$router.push('/login')
+    }
+  },
+  computed: {
+    ...mapGetters({ getProfile: 'profile/myProfileId',
+      getToken: 'auth/getToken' })
   }
 }
+
 </script>
 
 <style scoped>
