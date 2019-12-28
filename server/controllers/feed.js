@@ -26,7 +26,7 @@ let getFeedByPreferences = function(req, res) {
             .then(doc => {
                 let posts = {}
                 let pref = doc.data().preferences
-                if(pref === undefined){
+                if(!pref){
                         const collection = db.collection('posts').get()
                         collection.then((querySnapshot) => {
                             querySnapshot.docs.forEach((doc) => {

@@ -47,9 +47,9 @@ const mutations = {
   },
   dislikePost (state, postId) {
     const userId = localStorage.getItem('profileId')
-    return state.posts.forEach(function (value, index, arr) {
+    return state.posts.forEach(function (value) {
       if (value.postId === postId) {
-        value.likes.filter(function (elem, index, arr) {
+        value.likes.filter(function (elem) {
           return elem !== userId
         })
         value.likesCount--
@@ -58,7 +58,7 @@ const mutations = {
   },
   likePost (state, postId) {
     const userId = localStorage.getItem('profileId')
-    return state.posts.forEach(function (value, index, arr) {
+    return state.posts.forEach(function (value) {
       if (value.postId === postId) {
         value.likes.push(userId)
         value.likesCount++

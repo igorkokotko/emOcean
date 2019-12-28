@@ -4,7 +4,6 @@ const postsService = require('../services/PostsService')
 const VideoHandler = require('../videoHandling/videoHandler')
 const clearTempFiles = require('../common/clearTempFiles')
 const searchService = require("../services/SearchService")
-const { db } = require("../config/databaseConfig");
 
 
 const uploadVideos = asyncMiddleware(async (req, res, next) => {

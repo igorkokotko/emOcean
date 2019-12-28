@@ -125,18 +125,22 @@ export default {
     }, 300),
 
     searchTag: function () {
-      if (/^#/.test(this.userInput) && this.userInput !== '') {
-        let inputValue = this.userInput.trim().slice(1)
-        if (this.$route.name === 'Feed') {
-          if (
-            this.$route.query.tab === 'search' &&
-            this.$route.query.tag === inputValue
-          ) {
-            this.$router.replace({ query: { tab: 'search', tag: '' } })
+      if (this.userInput) {
+        const hashRegex = /^#/
+        const tagsQuery = this.userInput.split(' ').filter(item => hashRegex.test(item)
+        ).map(item => item.replace(hashRegex, '')).join('-')
+        if (tagsQuery) {
+          if (this.$route.name === 'Feed') {
+            if (
+              this.$route.query.tab === 'search' &&
+              this.$route.query.tags === tagsQuery
+            ) {
+              this.$router.replace({ query: { tab: 'search', tags: '' } })
+            }
+            this.$router.replace({ query: { tab: 'search', tags: tagsQuery } })
+          } else {
+            this.$router.push(`/?tab=search&tags=${tagsQuery}`)
           }
-          this.$router.replace({ query: { tab: 'search', tag: inputValue } })
-        } else {
-          this.$router.push(`/?tab=search&tag=${inputValue}`)
         }
       }
     },

@@ -6,7 +6,7 @@
         <span class="emoji video-emoji" v-html="post.emoji" />
         <avatar :img="post.avatarUrl" :size="'30px'" />
       </figure>
-     <video ref="videoElm" width="480" v-observe-visibility="visibilityChanged">
+     <video ref="videoElm" width="480" v-observe-visibility="visibilityChanged" @click.once="incrementViewsCounter(post)">
         <q-resize-observer @resize="onResize" />
         <source :src="post.videoUrl" type="video/mp4" />
         <source :src="post.videoUrl" type="video/ogg" />
@@ -51,7 +51,7 @@
             <figure class="image is-32x32">
               <avatar :img="post.avatarUrl" :size="'30px'" />
             </figure>
-            <video ref="modalVideo" @click.once="incrementViewsCounter(post)">
+            <video ref="modalVideo">
                 <q-resize-observer @resize="onResize" />
                 <source :src="post.videoUrl" type="video/mp4" />
                 <source :src="post.videoUrl" type="video/ogg" />
@@ -249,24 +249,24 @@ export default {
 }
 #feed-modal-video {
     .q-card__section {
-    padding: 0;
+      padding: 0;
     }
     .width-video{
       height: auto;
       width: 100%;
     }
     video {
-    width: auto;
-    height: -webkit-fill-available;
-    background: #000;
-    margin-bottom: -6px;
+      width: auto;
+      height: -webkit-fill-available;
+      background: #000;
+      margin-bottom: -6px;
     }
     .video-container {
-    padding: 0;
-    background: #0000;
-    border-radius: 0;
-    -webkit-box-shadow: none;
-    box-shadow: none;
+      padding: 0;
+      background: #0000;
+      border-radius: 0;
+      -webkit-box-shadow: none;
+      box-shadow: none;
     }
 }
 .bigger-video{

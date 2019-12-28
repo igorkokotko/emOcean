@@ -44,5 +44,16 @@
     "stylus-loader": "^3.0.2",
     "vue-cli-plugin-quasar": "^1.0.0",
     "vue-template-compiler": "^2.6.10"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "vue"
+    ],
+    "transform": {
+      "^.+\\.js$": "<rootDir>/node_modules/babel-jest",
+      ".*\\.(vue)$": "<rootDir>/node_modules/vue-jest"
+    }
   }
 }

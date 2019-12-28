@@ -6,7 +6,7 @@
           <q-card class="bg-white text-black h-70" id="modal-window">
             <q-bar>
               <q-space />
-              <div id="hour-glass" ref="hourGlass" :style="{ display: 'none' }">
+              <div id="hour-glass" ref="hourGlass" v-if="hourGlass">
                 <q-tooltip :offset="[0, 8]">QSpinnerHourglass</q-tooltip>
                 <q-spinner-hourglass color="primary" size="2em" />
               </div>
@@ -32,7 +32,7 @@
         </q-dialog>
       </div>
     </template>
-    <div id="chip" ref="chip" :style="{ display: 'none' }">
+    <div id="chip" ref="chip" v-if="showBanner">
       <template>
         <q-banner inline-actions dense class="text-white bg-red">
           File format that you want to download is incorrect. Please select a
@@ -84,6 +84,8 @@ export default {
   data () {
     return {
       dialog: true,
+      hourGlass: false,
+      showBanner: false,
       showEmojiBool: false,
       post: {
         videoUrl: '',
@@ -111,13 +113,12 @@ export default {
       this.showEmojiBool = !this.showEmojiBool
     },
     selectEmoji (emoji) {
-      console.log(emoji.data)
       this.post.emoji = emoji.data
       this.showEmojiBool = !this.showEmojiBool
     },
     showNotif (position) {
       this.$q.notify({
-        message: `<span style="font-size:1.3em;">Please, add an emoji to describe ypur post</span>`,
+        message: `<span style="font-size:1.3em;">Please, add an emoji to describe your post</span>`,
         color: 'primary',
         position,
         html: true,
@@ -150,7 +151,7 @@ export default {
         const formData = new FormData()
         formData.append('file', files[0])
         try {
-          this.$refs.hourGlass.style = 'block'
+          this.hourGlass = true
           const type = 'single-video'
           const videoUrl = await uploadMedia(formData, type)
           this.post.videoUrl = videoUrl.data.videoUrl
@@ -160,9 +161,9 @@ export default {
           console.log(err)
         }
       } else {
-        this.$refs.chip.style.display = 'block'
+        this.showBanner = true
         setTimeout(() => {
-          this.$refs.chip.style.display = 'none'
+          this.showBanner = false
           this.$refs.input.value = ''
         }, 5000)
       }
@@ -246,9 +247,7 @@ export default {
 }
 .adder-wrapper {
   width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 50px;
+  margin: 50px auto 0;
   background: #87e0f5;
   border-radius: 11px;
   box-shadow: 1px 1px 18px;
@@ -264,6 +263,7 @@ export default {
 .step-buttons {
   margin-top: 20px;
   display: flex;
+  align-items: center;
   padding: 0 66px;
   justify-content: space-between;
   .cancel-btn,
