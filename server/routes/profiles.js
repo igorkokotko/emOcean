@@ -11,8 +11,7 @@ const {
   saveProfile,
   uploadImage,
   setPreferences,
-  getFollowersById,
-  getFollowingsById,
+  getSubscriptionsById,
   profileAction
 } = require('../controllers/profiles')
 
@@ -29,11 +28,8 @@ router.get('/profile-action', protected, blocked, profileAction)
 // preferences
 router.post('/set-preferences', protected, setPreferences)
 
-// FOLLOWERS
-router.get('/get-followers/:id', getFollowersById)
-
-// FOLLOWING
-router.get('/get-followings/:id', getFollowingsById)
+// Followers followings
+router.get('/get-subscriptions', getSubscriptionsById)
 
 // Search logic
 router.post('/search-by-nick', searchByNick)

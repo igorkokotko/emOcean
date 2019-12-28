@@ -118,8 +118,6 @@ const followProfileAction = async (myId, followId, action) => {
     let { followersCount } = followProfileDoc.data()
     let { followers } = userPostsDoc.data()
 
-    let newFollowersCount, newFollowingsCount
-
     if (action === 'follow') {
       message = 'User succesfully followed'
       if (
@@ -136,8 +134,6 @@ const followProfileAction = async (myId, followId, action) => {
         followers.push(myId)
         followingsId.push(followId)
         const actionDate = Date.now()
-        newFollowersCount = followersCount + 1
-        newFollowingsCount = followingsCount + 1
         transaction.set(myProfileFollowingsRef, { id: followId, actionDate })
         transaction.set(followProfileFollowersRef, { id: myId, actionDate })
       }
@@ -153,18 +149,17 @@ const followProfileAction = async (myId, followId, action) => {
       } else {
         followers = followers.filter(id => id !== myId)
         followingsId = followingsId.filter(id => id !== followId)
-        newFollowersCount = followersCount - 1
-        newFollowingsCount = followingsCount - 1
         transaction.delete(myProfileFollowingsRef)
         transaction.delete(followProfileFollowersRef)
       }
     }
+    const subAdjustment = action === 'follow' ? 1 : -1
     transaction.update(myProfileRef, {
-      followingsCount: newFollowingsCount,
+      followingsCount: followingsCount + subAdjustment,
       followingsId
     })
     transaction.update(followProfileRef, {
-      followersCount: newFollowersCount
+      followersCount: followersCount + subAdjustment
     })
     transaction.update(userPostsRef, { followers })
     return message

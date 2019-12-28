@@ -88,25 +88,23 @@ const setPreferences = asyncMiddleware(async (req, res) => {
   res.status(200).json({ result })
 })
 
-const getFollowersById = asyncMiddleware(async (req, res) => {
-  const profileId = req.params.id
+const getSubscriptionsById = asyncMiddleware(async (req, res) => {
+  const subscriptionsList = ['folowings', 'followers']
+  const profileId = req.query.id
   const paginationId = req.query.pagination
+  const type = req.query.type
+  if (!type || !subscriptionsList.includes(type) || !profileId) {
+    return next(
+      new CustomError({
+        name: 'Bad Request',
+        message: 'Invalid query request',
+        status: 400
+      })
+    )
+  }
   const usersLimit = 10
   const result = await profilesService.getSubscriptionsById(
-    'followers',
-    profileId,
-    usersLimit,
-    paginationId
-  )
-  res.status(200).json({ result })
-})
-
-const getFollowingsById = asyncMiddleware(async (req, res) => {
-  const profileId = req.params.id
-  const paginationId = req.query.pagination
-  const usersLimit = 10
-  const result = await profilesService.getSubscriptionsById(
-    'followings',
+    type,
     profileId,
     usersLimit,
     paginationId
@@ -121,10 +119,10 @@ const profileAction = asyncMiddleware(async (req, res, next) => {
   if (action && id && actionsList.includes(action)) {
     const myProfileId = req.userId
     const profileActions = {
-      follow: 'followProfile',
-      unfollow: 'unfollowProfile',
-      block: 'blockProfile',
-      unblock: 'unblockProfile'
+      follow: 'followProfileAction',
+      unfollow: 'followProfileAction',
+      block: 'blockProfileAction',
+      unblock: 'blockProfileAction'
     }
     const followMethod = profileActions[action]
     const result = await profilesService[followMethod](myProfileId, id)
@@ -146,7 +144,6 @@ module.exports = {
   saveProfile,
   uploadImage,
   setPreferences,
-  getFollowersById,
-  getFollowingsById,
-  profileAction
+  profileAction,
+  getSubscriptionsById
 }
