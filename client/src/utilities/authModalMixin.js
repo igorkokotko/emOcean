@@ -9,7 +9,7 @@ export const authModalMixin = {
   },
   methods: {
     onScroll (info) {
-      if (info.position > 1000 && !isAuthorized()) {
+      if (!isAuthorized() && info.position > 5000) {
         this.showLoginPage = true
       }
     }

@@ -10,14 +10,14 @@
     >
       <q-tab
         v-if="authorized"
-        name="by-preferences"
+        name="preferences"
         label="recommended"
         @click="getPosts('preferences')"
       />
-      <q-tab name="by-views" label="popular" @click="getPosts('popular')" />
+      <q-tab name="popular" label="popular" @click="getPosts('popular')" />
       <q-tab
         v-if="authorized"
-        name="by-followings"
+        name="followings"
         label="Followings"
         @click="getPosts('followings')"
       />
@@ -25,10 +25,31 @@
     <div id="feed">
       <div class="feed-wrapper">
         <div v-if="isSearch" class="q-mt-lg text-center text-h5">RESULTS</div>
-        <div v-if="postsGetter && postsGetter.length > 0 && !isLoading">
+        <div v-if="postsGetter && postsGetter.length > 0">
           <div class="feed-post" v-for="(post, key) in postsGetter" :key="key">
             <one-post :post="post" />
           </div>
+          <q-btn
+            v-if="paginationIndex && paginationIndex !== 'Last index'"
+            :loading="isLoading"
+            color="primary"
+            class="show-more"
+            @click="showMorePosts"
+            label="More"
+          />
+        </div>
+        <div
+          v-if="(!postsGetter || postsGetter.length === 0) && !isLoading"
+          class="text-center q-pa-md"
+        >No more posts left</div>
+        <q-spinner
+          v-if="isLoading && paginationIndex === 'Last index'"
+          color="primary"
+          size="7em"
+          class="fixed-center"
+        />
+        <div v-if="authorized" class="big-btn" @click="$router.push('/addpost')">
+          <i class="fas fa-2x fa-plus"></i>
         </div>
         <div
           v-if="(!postsGetter || postsGetter.length === 0) && !isLoading"
@@ -46,8 +67,8 @@
 <script>
 import SinglePost from './SinglePost'
 import { mapGetters, mapActions } from 'vuex'
-
 import { isAuthorized } from '../Authentication/Authorized'
+
 export default {
   name: 'Feed',
   data () {
@@ -55,134 +76,113 @@ export default {
       isModelVisible: false,
       authorized: false,
       isSearch: false,
-      tab: 'by-views',
-      emptyPostsMessage: "You don't have any posts"
-    }
-  },
-
-  methods: {
-    ...mapActions({
-      getMyProfile: 'profile/getMyProfile',
-      getPostsByViews: 'posts/getPostsByViewsAction',
-      getPostsByPreferences: 'posts/getPostsByPreferencesAction',
-      getPostsByFollowings: 'posts/getPostsByFollowingsAction',
-      getPostsByTag: 'posts/getPostsByTagAction',
-      clearPosts: 'posts/clearPostsAction'
-    }),
-    getPosts: function (action) {
-      switch (action) {
-        case 'preferences':
-          if (this.$route.query.tab !== 'recommended') {
-            this.$router.replace({ query: { tab: 'recommended' } })
-          }
-          this.clearPosts()
-          this.emptyPostsMessage =
-            "You don't have any recommended posts. Please go to settings and choose your preferences"
-          this.getPostsByPreferences()
-          break
-        case 'popular': {
-          if (this.$route.query.tab !== 'popular') {
-            this.$router.replace({ query: { tab: 'popular' } })
-          }
-          this.clearPosts()
-          this.emptyPostsMessage = "You don't have any posts"
-          this.getPostsByViews()
-          break
-        }
-        case 'followings': {
-          if (this.$route.query.tab !== 'followings') {
-            this.$router.replace({ query: { tab: 'followings' } })
-          }
-          this.clearPosts()
-          this.emptyPostsMessage =
-            "You don't have any posts from your followings. Follow your friends or someone else and get fun with us ^_^"
-          this.getPostsByFollowings()
-          break
-        }
-      }
-    },
-    handleSwipe: function (obj) {
-      let dir = obj.direction
-      if (this.tab === 'by-views') {
-        if (dir === 'right') {
-          this.tab = 'by-preferences'
-          this.getPosts('preferences')
-        }
-        if (dir === 'left') {
-          this.tab = 'by-followings'
-          this.getPosts('followings')
-        }
-      } else {
-        if (dir === 'left' && this.tab === 'by-preferences') {
-          this.tab = 'by-views'
-          this.getPosts('popular')
-        }
-        if (dir === 'right' && this.tab === 'by-followings') {
-          this.tab = 'by-views'
-          this.getPosts('popular')
-        }
-      }
+      tab: 'popular'
     }
   },
   beforeRouteUpdate (to, from, next) {
     if (to.query.tab === 'search') {
-      this.emptyPostsMessage = 'There is no posts with given tags'
       this.isSearch = true
-      this.getPostsByTag(to.query.tag)
+      this.getPostsAction({ type: 'search', tags: to.query.tags })
       next()
-    }
-    if (to.path === '/' && to.query.tab !== 'search') {
-      if (isAuthorized()) {
-        this.authorized = true
-        this.isSearch = false
-        this.getPostsByFollowings()
-      } else {
-        this.isSearch = false
-        this.getPostsByViews()
-      }
     }
     next()
   },
-  created () {
+  beforeCreated () {
     this.getMyProfile()
   },
   mounted () {
     if (this.$route.query.tab === 'search') {
-      this.emptyPostsMessage = 'There is no posts with given tags'
       this.isSearch = true
-      this.getPostsByTag(this.$route.query.tag)
+      this.getPostsAction({ type: 'search', tags: this.$route.query.tags })
     } else {
       if (isAuthorized()) {
         this.authorized = true
-        if (this.$route.query.tab === 'recommended') {
-          this.tab = 'by-preferences'
-          this.emptyPostsMessage =
-            "You don't have any recommended posts. Please go to settings and choose your preferences"
-          this.getPostsByPreferences()
+        if (this.$route.query.tab === 'preferences') {
+          this.tab = 'preferences'
+          this.getPostsAction({ type: 'preferences' })
         } else {
           if (this.$route.query.tab !== 'followings') {
             this.$router.replace({ query: { tab: 'followings' } })
           }
           this.showAddButton = true
-          this.tab = 'by-followings'
-          this.getPostsByFollowings()
+          this.tab = 'followings'
+          this.getPostsAction({ type: 'followings' })
         }
       } else {
         if (this.$route.query.tab !== 'popular') {
           this.$router.replace({ query: { tab: 'popular' } })
         }
-        this.getPostsByViews()
+        this.getPostsAction({ type: 'popular' })
       }
     }
   },
   beforeDestroy () {
     this.clearPosts()
   },
+  methods: {
+    ...mapActions({
+      getMyProfile: 'profile/getMyProfile',
+      getPostsAction: 'posts/getPostsAction',
+      clearPosts: 'posts/clearPostsAction'
+    }),
+    getPosts: function (action) {
+      switch (action) {
+        case 'preferences':
+          if (this.$route.query.tab !== 'preferences') {
+            this.$router.replace({ query: { tab: 'preferences' } })
+          }
+          break
+        case 'popular': {
+          if (this.$route.query.tab !== 'popular') {
+            this.$router.replace({ query: { tab: 'popular' } })
+          }
+          break
+        }
+        case 'followings': {
+          if (this.$route.query.tab !== 'followings') {
+            this.$router.replace({ query: { tab: 'followings' } })
+          }
+          break
+        }
+      }
+      this.getPostsAction({ type: action })
+    },
+    showMorePosts: function () {
+      if (this.$route.query.tab === 'search') {
+        this.getPostsAction({ type: this.$route.query.tab, index: this.paginationIndex, tags: this.$route.query.tags })
+      } else {
+        this.getPostsAction({ type: this.$route.query.tab, index: this.paginationIndex })
+      }
+    },
+    handleSwipe: function (obj) {
+      let dir = obj.direction
+      if (this.tab === 'popular') {
+        if (dir === 'right') {
+          this.tab = 'preferences'
+          this.getPosts('preferences')
+        }
+        if (dir === 'left') {
+          this.tab = 'followings'
+          this.getPosts('followings')
+        }
+      } else {
+        if (dir === 'left' && this.tab === 'preferences') {
+          this.tab = 'popular'
+          this.getPosts('popular')
+        }
+        if (dir === 'right' && this.tab === 'followings') {
+          this.tab = 'popular'
+          this.getPosts('popular')
+        }
+      }
+    }
+  },
   computed: {
     ...mapGetters({
       postsGetter: 'posts/postsGetter',
       myProfile: 'profile/myProfile',
-      isLoading: 'posts/loadingGetter'
+      isLoading: 'posts/loadingGetter',
+      paginationIndex: 'posts/paginationIndexGetter'
     })
   },
   components: {
@@ -190,7 +190,9 @@ export default {
   }
 }
 </script>
+
 <style lang="scss">
+
 .empty-message {
   width: 350px;
 }
@@ -345,5 +347,9 @@ export default {
   .big-btn {
     display: none;
   }
+}
+.show-more {
+  display: block;
+  margin: 0 auto 20px;
 }
 </style>

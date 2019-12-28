@@ -2,39 +2,18 @@
   <div class="header" @click="visible">
     <q-header bordered class="bg-white text-primary">
       <q-toolbar ref="toolbar">
-        <router-link :to="{ path: '/' }" class="homeRouterLink">
+        <div class="homeRouterLink" @click="navigate">
           <img src="@/assets/img/logoSmall.jpg" class="logo lt-sm" />
           <img src="@/assets/img/logo.jpeg" class="logo gt-xs" />
-        </router-link>
+        </div>
         <q-space></q-space>
         <div
           id="input-search"
           ref="search"
           class="fixed-top-center"
-          :style="{ visibility: 'hidden' }"
-          >
-        <q-space></q-space>
-        <div id="input-search" ref="search" class="fixed-top-center" :style="{ visibility: 'hidden'}">
-          <q-input v-model='nickname' @input="searchByNick" />
-          <nickname-search v-if="list" id="search-result" :results="nicknameSearchResults"/>
-        </div>
-        <div id="search-wrapper" ref="searchWrapper">
-          <q-btn
-            flat
-            round
-            dense
-            icon="search"
-            @click="visible"
-            class="q-mr-xs text-cyan" />
-        </div>
-        <q-btn
-          flat
-          round
-          dense
-          icon="menu"
-          class="text-cyan"
+          :style="{ visibility: 'hidden'}"
         >
-          <q-input v-model="userInput" @input="searchByNick" @keyup.enter="searchTag" />
+          <q-input v-model="nickname" @input="searchByNick" @keyup.enter="searchTag" />
           <nickname-search
             v-if="showSearch"
             id="search-result"
@@ -89,13 +68,11 @@ export default {
       nicknameSearchResults: []
     }
   },
-
   computed: {
     isAuthenticated () {
       return this.$store.getters['auth/getToken']
     }
   },
-
   methods: {
     searchByNick: debounce(function (value) {
       if (!/^#/.test(value) && value !== '') {
@@ -151,7 +128,24 @@ export default {
         this.$refs.search.style.visibility = 'visible'
       }
     },
-
+    searchTag: function () {
+      if (/^#/.test(this.userInput) && this.userInput !== '') {
+        const tagsArray = this.userInput.split(' ').map(item => {
+          if (item.startsWith('#')) { return item.trim().slice(1) }
+        }).join('-')
+        if (this.$route.name === 'Feed') {
+          if (
+            this.$route.query.tab === 'search' &&
+            this.$route.query.tags === tagsArray
+          ) {
+            this.$router.replace({ query: { tab: 'search', tags: '' } })
+          }
+          this.$router.replace({ query: { tab: 'search', tags: tagsArray } })
+        } else {
+          this.$router.push(`/?tab=search&tags=${tagsArray}`)
+        }
+      }
+    },
     logOut () {
       this.$store.dispatch('auth/signin', { token: '', user: '' })
       window.localStorage.removeItem('token')
@@ -165,7 +159,16 @@ export default {
       })
       this.$router.push('/login')
     },
-
+    navigate () {
+      if (this.$route.path === '/') {
+        if (this.$route.query.tab === 'search') {
+          this.$router.replace({ query: { tab: 'popular' } })
+        }
+        this.$router.go()
+      } else {
+        this.$router.push('/')
+      }
+    },
     closeSearchComponent () {
       this.showSearch = false
       this.nickname = ''
@@ -183,6 +186,7 @@ export default {
   height: 60px;
   display: block;
   padding: 8px 0;
+  cursor: pointer;
 }
 
 #input-search .q-field__control {
