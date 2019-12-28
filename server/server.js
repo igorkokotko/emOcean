@@ -12,8 +12,6 @@ global.XMLHttpRequest = XMLHttpRequest
 const auth = require('./routes/auth')
 const profiles = require('./routes/profiles')
 const posts = require('./routes/posts')
-const preferences = require('./routes/preferences')
-const feed = require('./routes/feed')
 
 // Run server
 const app = express()
