@@ -58,11 +58,11 @@ const savePost = async (userId, postData) => {
   return post
 }
 
-const getPostsByViews = async (paginateId, postsCount) => {
+const getPostsByViews = async (paginateId, postsLimit) => {
   let postsRefQuery = db
     .collection('posts')
     .orderBy('views', 'desc')
-    .limit(postsCount)
+    .limit(postsLimit)
   if (paginateId) {
     const paginateRef = db.collection('posts').doc(paginateId)
     const postsSnapshot = await paginateRef.get()
@@ -71,23 +71,30 @@ const getPostsByViews = async (paginateId, postsCount) => {
   const docSnapshots = await postsRefQuery.get()
   const { length } = docSnapshots.docs
   if (length > 0) {
-    const lastIndex = docSnapshots.docs[length - 1].id
+    const lastIndex =
+      length >= postsLimit
+        ? docSnapshots.docs[length - 1].id
+        : 'Last index'
     const data = []
     docSnapshots.forEach(doc => {
       data.push(doc.data())
     })
     return { data, lastIndex }
   } else {
-    return 'No more posts left'
+    throw new CustomError({
+      name: 'Bad Request',
+      message: 'No more posts left',
+      status: 404
+    })
   }
 }
 
-const getPostsByTags = async (tags, paginateId, postsCount) => {
+const getPostsByTags = async (tags, paginateId, postsLimit) => {
   let postsRefQuery = db
     .collection('posts')
     .orderBy('createdAt', 'desc')
     .where('tags', 'array-contains-any', tags)
-    .limit(postsCount)
+    .limit(postsLimit)
   if (paginateId) {
     const paginateRef = db.collection('posts').doc(paginateId)
     const snapshot = await paginateRef.get()
@@ -96,25 +103,32 @@ const getPostsByTags = async (tags, paginateId, postsCount) => {
   const docSnapshots = await postsRefQuery.get()
   const { length } = docSnapshots.docs
   if (length > 0) {
-    const lastIndex = docSnapshots.docs[length - 1].id
+    const lastIndex =
+      length >= postsLimit
+        ? docSnapshots.docs[length - 1].id
+        : 'Last index'
     const data = []
     docSnapshots.forEach(doc => {
       data.push(doc.data())
     })
     return { data, lastIndex }
   } else {
-    return 'No more posts left'
+    throw new CustomError({
+      name: 'Bad Request',
+      message: 'No more posts left',
+      status: 404
+    })
   }
 }
 
-const getPostsByPreferences = async (id, paginateId, postsCount) => {
+const getPostsByPreferences = async (id, paginateId, postsLimit) => {
   const userProfileRef = db.collection('users').doc(id)
   const userDoc = await userProfileRef.get()
   const { preferences } = userDoc.data()
   if (preferences.length === 0) {
     throw new CustomError({
       name: 'Bad Request',
-      message: 'You don\'t have any preferences, please go to settings and pick some of them',
+      message: 'No more posts left',
       status: 400
     })
   }
@@ -122,23 +136,30 @@ const getPostsByPreferences = async (id, paginateId, postsCount) => {
     .collection('posts')
     .orderBy('createdAt', 'desc')
     .where('tags', 'array-contains-any', preferences)
-    .limit(postsCount)
+    .limit(postsLimit)
   if (paginateId) {
     const paginateRef = db.collection('posts').doc(paginateId)
     const snapshot = await paginateRef.get()
     postsRefQuery = postsRefQuery.startAfter(snapshot)
   }
-  const docSnapshots = await next.get()
+  const docSnapshots = await postsRefQuery.get()
   const { length } = docSnapshots.docs
   if (length > 0) {
-    const lastIndex = docSnapshots.docs[length - 1].id
+    const lastIndex =
+      length >= postsLimit
+        ? docSnapshots.docs[length - 1].id
+        : 'Last index'
     const data = []
     docSnapshots.forEach(doc => {
       data.push(doc.data())
     })
     return { data, lastIndex }
   } else {
-    return 'No more posts left'
+    throw new CustomError({
+      name: 'Bad Request',
+      message: 'No more posts left',
+      status: 404
+    })
   }
 }
 
@@ -149,7 +170,7 @@ const getPostsByFollowings = async (id, index, postsLimit) => {
     .where('followers', 'array-contains', id)
     .limit(postsLimit)
     .orderBy('lastAction', 'desc')
-  if (index && index !== 'Last index') {
+  if (index) {
     const indexArray = index.split('-')
     lastCreated = indexArray[0]
     lastAction = indexArray[1]
@@ -257,7 +278,7 @@ const getUserPosts = async userId => {
       post.nickname = nickname
       post.avatarUrl = avatarUrl
       return post
-    })
+    }).reverse()
   }
 }
 
@@ -270,7 +291,5 @@ module.exports = {
   getPostsByFollowings,
   getPostsByTags,
   getPostsByPreferences,
-  updateLikes,
-  incrementViewsCounter,
   getUserPosts
 }

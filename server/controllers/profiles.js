@@ -31,6 +31,7 @@ const getProfile = asyncMiddleware(async (req, res, next) => {
 const uploadImage = asyncMiddleware(async (req, res, next) => {
   const { type } = req.query
   const image = req.file
+  const id = req.userId
   if (type && image) {
     let validatedImageError, dest
     switch (type) {
@@ -58,7 +59,7 @@ const uploadImage = asyncMiddleware(async (req, res, next) => {
     if (validatedImageError !== undefined) {
       return next(new CustomError(validatedImageError))
     }
-    const imageUrl = await profilesService.uploadPhoto(image, req.userId, dest)
+    const imageUrl = await profilesService.uploadPhoto(image, id, dest)
     res.status(200).json({ imageUrl })
   } else {
     return next(
@@ -113,7 +114,6 @@ const getFollowingsById = asyncMiddleware(async (req, res) => {
   res.status(200).json({ result })
 })
 
-
 const profileAction = asyncMiddleware(async (req, res, next) => {
   const actionsList = ['follow', 'unfollow', 'block', 'unblock']
   const { action, id } = req.query
@@ -140,12 +140,6 @@ const profileAction = asyncMiddleware(async (req, res, next) => {
   }
 })
 
-const deleteAccount = asyncMiddleware(async (req, res, next) => {
-  const message = await profilesService.deleteAccount(req.userId)
-  res.status(200).json({ message })
-})
-
-
 module.exports = {
   searchByNick,
   getProfile,
@@ -154,6 +148,5 @@ module.exports = {
   setPreferences,
   getFollowersById,
   getFollowingsById,
-  profileAction,
-  deleteAccount
+  profileAction
 }
