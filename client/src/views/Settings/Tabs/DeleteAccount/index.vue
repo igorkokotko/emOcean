@@ -22,6 +22,7 @@
 <script>
 import { deleteAccount } from '@/services/profile.js'
 import { mapGetters, mapActions } from 'vuex'
+import axios from 'axios'
 
 export default {
   name: 'DeleteAccount',
@@ -49,8 +50,13 @@ export default {
         })
     },
     userLogOut () {
+      this.$store.dispatch('profile/clear')
+      this.$store.dispatch('comments/clear')
+      this.$store.dispatch('clear')
+      this.$store.dispatch('auth/signin', { token: '', user: '' })
       window.localStorage.removeItem('token')
       window.localStorage.removeItem('profileId')
+      delete axios.defaults.headers.common['Authorization']
       this.$q.notify({
         textColor: 'white',
         actions: [{ icon: 'delete_forever', color: 'white' }],
