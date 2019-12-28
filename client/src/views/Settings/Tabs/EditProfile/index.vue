@@ -80,13 +80,13 @@
           </template>
           <div class="row justify-center q-mt-sm">
             <label
-              for="inputImage"
+              for="inputCoverPhoto"
               ref="backgroundUrlLabel"
             >
               <input
                 ref="background"
                 type="file"
-                id="inputImage"
+                id="inputCoverPhoto"
                 accept="image/*"
                 @input="uploadImageUrl($event, 'background')"
                 class="uploadImage"
@@ -194,7 +194,7 @@
             class='q-ml-md'
             color='primary'
             size='1em'
-            v-show='loading'
+            v-show='isLoading'
           />
         </q-btn>
         <q-btn
@@ -258,7 +258,7 @@ export default {
       isNewAvatarUploaded: false,
       isNewCoverPhotoUploaded: false,
       DefaultCoverPhoto,
-      loading: false,
+      isLoading: false,
       isProfileLoaded: false
     }
   },
@@ -286,6 +286,13 @@ export default {
 
   created () {
     this.getMyProfile()
+      .catch(() => {
+        this.$q.notify({
+          ...this.notifyParameters,
+          color: 'negative',
+          message: 'Couldn\'t load data. Please try again or contact the support.'
+        })
+      })
   },
 
   methods: {
@@ -298,8 +305,8 @@ export default {
     },
 
     deletePhotoUrl (val) {
-      this.photoUrl = ""
-      this.profile.avatarUrl = ""
+      this.photoUrl = ''
+      this.profile.avatarUrl = ''
     },
 
     uploadImageUrl (val, imageType) {
@@ -310,9 +317,9 @@ export default {
           message: 'File is too big.'
         })
         if (imageType === 'background') {
-          this.$refs.background.val = ""
+          this.$refs.background.val = ''
         } else {
-          this.$refs.avatar.val = ""
+          this.$refs.avatar.val = ''
         }
         return
       }
@@ -332,8 +339,8 @@ export default {
     },
 
     deleteBackgroundUrl (val) {
-      this.backgroundUrl = ""
-      this.profile.backgroundUrl = ""
+      this.backgroundUrl = ''
+      this.profile.backgroundUrl = ''
     },
 
     onCreatedAvatarBlob (blob) {
@@ -347,7 +354,12 @@ export default {
           this.sendProfile()
         })
         .catch(() => {
-          this.loading = false
+          this.isLoading = false
+          this.$q.notify({
+            ...this.notifyParameters,
+            color: 'negative',
+            message: 'Couldn\'t save avatar. Please try again or contact the support.'
+          })
         })
     },
 
@@ -362,12 +374,17 @@ export default {
           this.sendProfile()
         })
         .catch(() => {
-          this.loading = false
+          this.isLoading = false
+          this.$q.notify({
+            ...this.notifyParameters,
+            color: 'negative',
+            message: 'Couldn\'t save cover photo. Please try again or contact the support.'
+          })
         })
     },
 
     onSubmit () {
-      this.loading = true
+      this.isLoading = true
       this.isNewAvatarUploaded = false
       this.isNewCoverPhotoUploaded = false
       if (this.isNewAvatarSelected) {
@@ -396,8 +413,8 @@ export default {
             color: 'primary',
             message: 'Your profile was edited.'
           })
-          this.photoUrl = ""
-          this.backgroundUrl = ""
+          this.photoUrl = ''
+          this.backgroundUrl = ''
         })
         .catch(err => {
           this.$q.notify({
@@ -407,14 +424,14 @@ export default {
           })
         })
         .finally(() => {
-          this.loading = false
+          this.isLoading = false
         })
     },
 
     onReset () {
       this.loadDataFromStore()
-      this.backgroundUrl = ""
-      this.photoUrl = ""
+      this.backgroundUrl = ''
+      this.photoUrl = ''
     },
 
     loadDataFromStore () {
@@ -426,10 +443,10 @@ export default {
       }
       this.profile = { ...this.emptyProfile, ...this.profileGetter, socialAccounts }
       if (this.profile.avatarUrl && JSON.stringify(this.profile.avatarUrl) === JSON.stringify({})) {
-        this.profile.avatarUrl = ""
+        this.profile.avatarUrl = ''
       }
       if (this.profile.backgroundUrl && JSON.stringify(this.profile.backgroundUrl) === JSON.stringify({})) {
-        this.profile.backgroundUrl = ""
+        this.profile.backgroundUrl = ''
       }
     },
 
@@ -442,10 +459,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.q-avatar__content, .q-avatar img:not(.q-icon) {
-  width: auto;
-}
-
 .coverPhoto {
   max-width: 100%;
   @media (min-width: 600px) {

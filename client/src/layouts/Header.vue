@@ -55,6 +55,7 @@ import debounce from 'lodash/debounce'
 import { searchByNick } from '@/services/profile.js'
 import { isAuthorized } from '@/services/Authorized.js'
 import { mapGetters } from 'vuex'
+import axios from 'axios'
 
 export default {
   name: 'Header',
@@ -142,9 +143,13 @@ export default {
       }
     },
     logOut () {
+      this.$store.dispatch('profile/clear')
+      this.$store.dispatch('comments/clear')
+      this.$store.dispatch('clear')
       this.$store.dispatch('auth/signin', { token: '', user: '' })
       window.localStorage.removeItem('token')
       window.localStorage.removeItem('profileId')
+      delete axios.defaults.headers.common['Authorization']
       this.$q.notify({
         textColor: 'white',
         actions: [{ icon: 'close', color: 'white' }],
