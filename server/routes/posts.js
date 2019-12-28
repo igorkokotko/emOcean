@@ -12,8 +12,7 @@ const {
   getPostsByTags,
   editPost,
   deletePost,
-  getUserPosts,
-  searchPosts
+  getUserPosts
 } = require('../controllers/posts')
 
 router.post(
@@ -32,7 +31,5 @@ router.get('/by-views', getPostsByViews)
 router.get('/by-followings', protected, getPostsByFollowings)
 router.get('/by-preferences', protected, getPostsByPreferences)
 router.get('/get-user-posts', getUserPosts)
-
-router.get('/search', searchPosts)
 
 module.exports = router;

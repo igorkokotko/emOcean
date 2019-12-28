@@ -61,8 +61,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({      getProfile: 'profile/myProfileId',
-      getToken: 'auth/getToken'    })
+    ...mapGetters({
+      getProfile: 'profile/myProfileId',
+      getToken: 'auth/getToken'
+    })
   }
 }
 

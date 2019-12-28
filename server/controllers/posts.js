@@ -2,8 +2,6 @@ const asyncMiddleware = require('../middleware/asyncMiddleware')
 const postsService = require('../services/PostsService')
 const VideoHandler = require('../videoHandling/videoHandler')
 const clearTempFiles = require('../common/clearTempFiles')
-const CustomError = require('../common/CustomError')
-const searchService = require('../services/SearchService')
 
 // @desc    Handling and uploading video to database
 // @route   POST /api/posts/upload-videos?type=single-video
@@ -125,33 +123,8 @@ const getUserPosts = asyncMiddleware(async (req, res) => {
   })
 })
 
-const searchPosts = function (req, res) {
-  if (!req.query.tag) {
-    return res.status(400).send('no tag specified!')
-  }
-  const tagName = req.query.tag
-
-  let postsDocs = searchService.findByTag(tagName)
-  postsDocs
-    .then(snapshot => {
-      if (snapshot.empty) {
-        return res.send(400).send('No matching documents.')
-      }
-      posts = [];
-      snapshot.forEach(doc => {
-        posts.push(doc.data());
-      });
-      res.json({ posts })
-    })
-    .catch(err => {
-      console.log('Error getting documents', err);
-      res.status(500).send(err)
-    });
-}
-
 module.exports = {
   savePost,
-  searchPosts,
   deletePost,
   editPost,
   uploadVideos,

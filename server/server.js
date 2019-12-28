@@ -30,13 +30,8 @@ app.use('/api/posts', posts)
 
 //Profiles route
 app.use('/api/profiles', profiles)
-//addPref
-app.use('/api/preferences', preferences)
-
-app.use('/api/feed', feed)
 
 app.use(errorHandler)
-
 
 const PORT = process.env.port || 5000
 
