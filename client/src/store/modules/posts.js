@@ -107,7 +107,6 @@ const actions = {
       })
   },
   getPostsByPreferencesAction ({ commit }, payload) {
-    console.log(payload)
     commit('clearPosts')
     commit('setLoading', true)
     getPostsByPreferences(payload)
