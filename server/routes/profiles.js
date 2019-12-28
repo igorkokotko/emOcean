@@ -4,6 +4,7 @@ const multer = require('multer')
 const storage = multer.memoryStorage()
 const upload = multer({ storage })
 const protected = require('../middleware/protectRoute')
+const blocked = require('../middleware/blockedUser')
 const {
   searchByNick,
   getProfile,
@@ -12,7 +13,8 @@ const {
   setPreferences,
   getFollowersById,
   getFollowingsById,
-  profileAction
+  profileAction,
+  deleteAccount
 } = require('../controllers/profiles')
 
 // edit profile
@@ -20,10 +22,10 @@ router.post('/save-profile', protected, saveProfile)
 router.post('/upload-image', protected, upload.single('file'), uploadImage)
 
 // get some profiles
-router.get('/get-profile', getProfile)
+router.get('/get-profile', blocked, getProfile)
 
 // profile actions (Block, unblock, follow, unfollow)
-router.get('/profile-action', protected, profileAction)
+router.get('/profile-action', protected, blocked, profileAction)
 
 // preferences
 router.post('/set-preferences', protected, setPreferences)

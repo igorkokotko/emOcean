@@ -353,6 +353,17 @@ const getSubscriptionsById = async (type, profileId, usersLimit, paginationId) =
   }
 }
 
+const deleteAccount = function (userId) {
+  const userProfile = db.collection('users').doc(userId).delete()
+  userProfile
+    .then(() => {
+      return 'User succesfully deleted'
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
 module.exports = {
   saveProfile,
   setPreferences,

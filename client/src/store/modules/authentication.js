@@ -25,6 +25,10 @@ const mutations = {
   },
   notifyReset (state, boolean) {
     state.notifyReset = boolean
+  },
+  logOut (state, payload) {
+    state.token = payload.token
+    state.user = payload.user
   }
 }
 const actions = {
@@ -36,6 +40,10 @@ const actions = {
   },
   notifyReset ({ commit }, boolean) {
     return commit('notifyReset', boolean)
+  },
+  logOut ({ commit }) {
+    let payload = { token: '', user: '' }
+    commit('logOut', payload)
   }
 }
 

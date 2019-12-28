@@ -140,6 +140,12 @@ const profileAction = asyncMiddleware(async (req, res, next) => {
   }
 })
 
+const deleteAccount = asyncMiddleware(async (req, res, next) => {
+  const message = await profilesService.deleteAccount(req.userId)
+  res.status(200).json({ message })
+})
+
+
 module.exports = {
   searchByNick,
   getProfile,
@@ -148,5 +154,6 @@ module.exports = {
   setPreferences,
   getFollowersById,
   getFollowingsById,
-  profileAction
+  profileAction,
+  deleteAccount
 }

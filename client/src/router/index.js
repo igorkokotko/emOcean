@@ -1,21 +1,17 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
 import Error404 from '../views/Error404/Error404.vue'
 import Feed from '../views/Feed/Feed'
 import AddPost from '../views/Feed/AddPost'
+
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
-    name: 'home',
-    component: Home
-  },
-  {
     path: '/feed',
     name: 'Feed',
-    component: Feed
+    component: Feed,
+    alias: '/'
   },
   {
     path: '/addpost',

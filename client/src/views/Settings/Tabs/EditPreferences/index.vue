@@ -9,83 +9,56 @@
       class="q-ma-xs"
     >
       <q-avatar size="120px">
-        <img :src="preference.src" :class ="{chosen: preference.chosen}"/>
-          <div :class="[preference.chosen ? 'chosen' : 'img-caption',
+        <img :src="preference.src" :class="{chosen: preference.chosen}" />
+        <div
+          :class="[preference.chosen ? 'chosen' : 'img-caption',
             'absolute-center',
             'text-subtitle1',
             'text-center']"
-          >
-          {{preference.hashtag}}
-          </div>
+        >{{preference.hashtag}}</div>
       </q-avatar>
     </q-btn>
-    <q-btn
-      size="40px"
-      round
-      color="teal"
-      @click="savePreferences(getPreferences)"
-      to="/feed"
-    > go
-    </q-btn>
+    <q-btn size="40px" round color="teal" @click="savePreferences(getPreferences)">go</q-btn>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import axios from 'axios'
-
-const Authorized = require('../../../Authentication/Authorized.js')
+import { isAuthorized } from '../../../Authentication/Authorized'
 
 export default {
   name: 'EditPreferences',
   data: function () {
     return {
-      tags: []
+      preferences: []
     }
   },
-  beforeMount () {
-    if (Authorized.isAuthorized()) {
-      axios.get('/api/preferences/get')
-        .then((response) => {
-          this.updateTagState(response.data)
-        })
-        .catch(error => {
-          if (error.response) {
-            this.showNotifErr('Failed to retrieve preferences!')
-          }
-        })
+  async beforeMount () {
+    if (isAuthorized()) {
+      await this.getMyProfile()
+      if (this.myProfile.preferences.length !== 0) {
+        this.updateTagState(this.myProfile.preferences)
+      }
     }
   },
 
   methods: {
-    ...mapActions('preferences', ['updatePreference', 'rollbackChanges', 'updateTagState']),
+    ...mapActions('preferences', ['updatePreference', 'updateTagState']),
+    ...mapActions({ getMyProfile: 'profile/getMyProfile', setPreferences: 'profile/setPreferencesAction' }),
+    ...mapActions({ getPostsAction: 'posts/getPostsAction' }),
     getChosenTags: function (state) {
       for (let obj in state) {
         if (state[obj].chosen) {
-          this.tags.push(state[obj].hashtag)
+          this.preferences.push(state[obj].hashtag)
         }
       }
     },
-
-    savePreferences: function (state) {
+    savePreferences: async function (state) {
       this.getChosenTags(state)
-      axios.post('/api/preferences/save', this.tags)
-        .then((response) => {
-          this.showNotifSaveData()
-        })
-        .catch(error => {
-          this.rollbackChanges(this.tags)
-          if (error.response) {
-            this.showNotifErr('Failed to save preferences!')
-          }
-        })
-    },
-
-    showNotifErr (message) {
-      this.$q.notify({
-        message: message,
-        icon: 'announcement'
-      })
+      await this.setPreferences(this.preferences)
+      this.showNotifSaveData()
+      await this.getPostsAction({ type: 'preferences' })
+      this.$router.push('/feed?tab=preferences')
     },
     showNotifSaveData () {
       this.$q.notify({
@@ -96,7 +69,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('preferences', ['getPreferences'])
+    ...mapGetters('preferences', ['getPreferences']),
+    ...mapGetters({ myProfile: 'profile/myProfile' })
   }
 }
 </script>
@@ -109,7 +83,7 @@ export default {
   height: 20%;
   align-self: center;
   border-radius: 0 40px 0 40px;
-  }
+}
 
 img.chosen {
   filter: grayscale(100%);
@@ -121,7 +95,6 @@ img.chosen {
   width: 90%;
   height: 20%;
   align-self: center;
-  border-radius: 0 40px 0 40px
+  border-radius: 0 40px 0 40px;
 }
-
 </style>

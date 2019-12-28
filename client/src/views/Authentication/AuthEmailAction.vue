@@ -42,7 +42,7 @@
 import { validationMixin } from '../../utilities/validationMixin.js'
 import { mapActions } from 'vuex'
 import { resetPass } from '@/services/auth.js'
-const Authorized = require('./Authorized.js')
+import { isAuthorized } from '@/services/Authorized.js'
 
 export default {
   mixins: [validationMixin],
@@ -95,10 +95,13 @@ export default {
   },
 
   beforeRouteEnter: (to, from, next) => {
-    if (Authorized.isAuthorized()) {
-      return next('/feed')
-    }
-    next()
+    isAuthorized()
+      .then(res => {
+        return res ? next('/feed') : next()
+      })
+      .catch(() => {
+        return next()
+      })
   }
 }
 </script>
