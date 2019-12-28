@@ -63,65 +63,19 @@ const getPostsByViews = async (paginateId, postsLimit) => {
     .collection('posts')
     .orderBy('views', 'desc')
     .limit(postsLimit)
-  if (paginateId) {
-    const paginateRef = db.collection('posts').doc(paginateId)
-    const postsSnapshot = await paginateRef.get()
-    postsRefQuery = postsRefQuery.startAfter(postsSnapshot)
-  }
-  const docSnapshots = await postsRefQuery.get()
-  const { length } = docSnapshots.docs
-  if (length > 0) {
-    const lastIndex =
-      length >= postsLimit
-        ? docSnapshots.docs[length - 1].id
-        : 'Last index'
-    const data = []
-    docSnapshots.forEach(doc => {
-      data.push(doc.data())
-    })
-    return { data, lastIndex }
-  } else {
-    throw new CustomError({
-      name: 'Bad Request',
-      message: 'No more posts left',
-      status: 404
-    })
-  }
+  return await getPostsByQuery(postsRefQuery, paginateId)
 }
 
-const getPostsByTags = async (tags, paginateId, postsLimit) => {
+const getPostsByTags = async (paginateId, postsLimit, tags) => {
   let postsRefQuery = db
     .collection('posts')
     .orderBy('createdAt', 'desc')
     .where('tags', 'array-contains-any', tags)
     .limit(postsLimit)
-  if (paginateId) {
-    const paginateRef = db.collection('posts').doc(paginateId)
-    const snapshot = await paginateRef.get()
-    postsRefQuery = postsRefQuery.startAfter(snapshot)
-  }
-  const docSnapshots = await postsRefQuery.get()
-  const { length } = docSnapshots.docs
-  if (length > 0) {
-    const lastIndex =
-      length >= postsLimit
-        ? docSnapshots.docs[length - 1].id
-        : 'Last index'
-    const data = []
-    docSnapshots.forEach(doc => {
-      data.push(doc.data())
-    })
-    return { data, lastIndex }
-  } else {
-    throw new CustomError({
-      name: 'Bad Request',
-      message: 'No more posts left',
-      status: 404
-    })
-  }
+  return await getPostsByQuery(postsRefQuery, paginateId)
 }
 
-const getPostsByPreferences = async (id, paginateId, postsLimit) => {
+const getPostsByPreferences = async (paginateId, postsLimit, id) => {
   const userProfileRef = db.collection('users').doc(id)
   const userDoc = await userProfileRef.get()
   const { preferences } = userDoc.data()
@@ -137,33 +91,10 @@ const getPostsByPreferences = async (id, paginateId, postsLimit) => {
     .orderBy('createdAt', 'desc')
     .where('tags', 'array-contains-any', preferences)
     .limit(postsLimit)
-  if (paginateId) {
-    const paginateRef = db.collection('posts').doc(paginateId)
-    const snapshot = await paginateRef.get()
-    postsRefQuery = postsRefQuery.startAfter(snapshot)
-  }
-  const docSnapshots = await postsRefQuery.get()
-  const { length } = docSnapshots.docs
-  if (length > 0) {
-    const lastIndex =
-      length >= postsLimit
-        ? docSnapshots.docs[length - 1].id
-        : 'Last index'
-    const data = []
-    docSnapshots.forEach(doc => {
-      data.push(doc.data())
-    })
-    return { data, lastIndex }
-  } else {
-    throw new CustomError({
-      name: 'Bad Request',
-      message: 'No more posts left',
-      status: 404
-    })
-  }
+  return await getPostsByQuery(postsRefQuery, paginateId)
 }
 
-const getPostsByFollowings = async (id, index, postsLimit) => {
+const getPostsByFollowings = async (index, postsLimit, id) => {
   let lastCreated, lastAction, lastIndex
   let postsQueryRef = db
     .collection('users-posts')
@@ -279,6 +210,34 @@ const getUserPosts = async userId => {
       post.avatarUrl = avatarUrl
       return post
     }).reverse()
+  }
+}
+
+const getPostsByQuery = async (query, paginateId) => {
+  let postsRefQuery = query
+  if (paginateId) {
+    const paginateRef = db.collection('posts').doc(paginateId)
+    const snapshot = await paginateRef.get()
+    postsRefQuery = query.startAfter(snapshot)
+  }
+  const docSnapshots = await postsRefQuery.get()
+  const { length } = docSnapshots.docs
+  if (length > 0) {
+    const lastIndex =
+      length >= postsLimit
+        ? docSnapshots.docs[length - 1].id
+        : 'Last index'
+    const data = []
+    docSnapshots.forEach(doc => {
+      data.push(doc.data())
+    })
+    return { data, lastIndex }
+  } else {
+    throw new CustomError({
+      name: 'Bad Request',
+      message: 'No more posts left',
+      status: 404
+    })
   }
 }
 
