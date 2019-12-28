@@ -18,10 +18,6 @@ const saveProfile = async (profile, userId) => {
   const doc = await profileRef.get()
   const prevNickname = doc.data().nickname
   const prevAvatar = doc.data().avatarUrl
-  // As you ask me what's a point to do almost similar updates, let me a try to explain my logic
-  // As profile nickname must be unique, firstly we need to check if user changed it.
-  // If user didn't change it, we dont need to do additional actions like nickname checking and we could update it initially
-  // Btw added avatar checking as you ask
   if (prevNickname === profile.nickname) {
     await db.runTransaction(async t => {
       t.update(profileRef, {

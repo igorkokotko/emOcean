@@ -4,8 +4,10 @@
     <q-page-container>
       <router-view></router-view>
     </q-page-container>
-    <Footer/>
-    <v-auth-banner />
+    <Footer />
+    <v-auth-banner v-if="showBanner" />
+    <v-auth-login-modal :showLoginPage="showLoginPage" />
+    <q-scroll-observer @scroll="onScroll" />
   </q-layout>
 </template>
 
@@ -13,40 +15,55 @@
 import Footer from './layouts/Footer.vue'
 import vHeader from '@/layouts/Header.vue'
 import { setApiAuthorizationHeaders } from '@/services/auth.js'
-import Authorized from '@/views/Authentication/Authorized.js'
+import { mapActions } from 'vuex'
+import { isAuthorized } from '@/services/Authorized.js'
 import AuthBanner from './views/Authentication/AuthBanner.vue'
+import AuthModal from './views/Authentication/AuthModal.vue'
+import { authModalMixin } from './utilities/authModalMixin.js'
 
 export default {
   name: 'LayoutDefault',
-
+  mixins: [authModalMixin],
   components: {
     Footer,
     vHeader,
-    'v-auth-banner': AuthBanner
+    'v-auth-banner': AuthBanner,
+    'v-auth-login-modal': AuthModal,
   },
-
   data () {
     return {
+      showBanner: true,
+      fromRoute: null
     }
   },
-
   created () {
-    if (Authorized.isAuthorized()) {
-      const token = window.localStorage.getItem('token')
-      this.$store.commit('auth/signin', { token })
-      setApiAuthorizationHeaders(token)
-    }
+    const token = window.localStorage.getItem('token')
+    this.signIn({ token })
+    setApiAuthorizationHeaders(token)
 
     if (window.localStorage.getItem('profileId') && window.localStorage.getItem('profileId') !== '') {
       const profileId = window.localStorage.getItem('profileId')
       this.$store.commit('profile/updateMyProfileId', profileId)
     }
+  },
+  async updated () {
+    try {
+      const auth = await isAuthorized()
+      this.showBanner = !auth
+    } catch (e) {
+      this.showBanner = true
+    }
+  },
+  methods: {
+    ...mapActions({
+      signIn: 'auth/signin'
+    })
   }
 }
 </script>
 
 <style lang="scss">
-  /*reset*/
+/*reset*/
 * {
   padding: 0;
   margin: 0;
@@ -58,7 +75,10 @@ body {
   line-height: 1.5;
   letter-spacing: 0.5px;
 }
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   line-height: normal;
   margin: 0;
 }

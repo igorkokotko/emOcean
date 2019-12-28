@@ -1,104 +1,112 @@
 const { db, auth } = require('../config/databaseConfig')
 const CustomError = require('../common/CustomError')
 const nicknameKeywords = require('../common/nicknameKeywords')
+const jwt = require('jsonwebtoken')
 
-const createUserWithEmailAndPassword = (email, password, nickname) => {
+const createUserWithEmailAndPassword = async (email, password, nickname) => {
   const userProfilesRef = db.collection('users')
   const usersPostsRef = db.collection('users-posts')
-  return userProfilesRef
+  const userProfilesSnapshot = await userProfilesRef
     .where('nickname', '==', nickname)
     .get()
-    .then(snapshot => {
-      if (snapshot.empty) {
-        const keywords = nicknameKeywords.setKeywords(nickname)
-        return auth()
-          .createUserWithEmailAndPassword(email, password)
-          .then(({ user }) => {
-            const batch = db.batch()
-            const userId = user.uid
-            const singleUserRef = userProfilesRef.doc(userId)
-            const singleUserPostsRef = usersPostsRef.doc(userId)
-            batch.set(singleUserRef, {
-              nickname,
-              email,
-              userId,
-              avatarUrl: '',
-              backgroundUrl: '',
-              preferences: [],
-              followingsCount: 0,
-              followersCount: 0,
-              followingsId: [],
-              blockedProfiles: [],
-              keywords
-            })
-            batch.set(singleUserPostsRef, {
-              nickname,
-              avatarUrl: '',
-              followers: [userId],
-              posts: []
-            })
-            return batch.commit().then(() => {
-              return 'User successfully added'
-            })
-          })
-      } else {
-        {
-          throw new CustomError({
-            name: 'DatabaseError',
-            message: 'Nickname already taken. Try with something else',
-            status: 400
-          })
-        }
-      }
+  if (userProfilesSnapshot.empty) {
+    const keywords = nicknameKeywords.setKeywords(nickname)
+    const { user } = await auth().createUserWithEmailAndPassword(
+      email,
+      password
+    )
+    const batch = db.batch()
+    const userId = user.uid
+    const singleUserRef = userProfilesRef.doc(userId)
+    const singleUserPostsRef = usersPostsRef.doc(userId)
+    batch.set(singleUserRef, {
+      nickname,
+      email,
+      userId,
+      avatarUrl: '',
+      backgroundUrl: '',
+      preferences: [],
+      followingsCount: 0,
+      followersCount: 0,
+      followingsId: [],
+      blockedProfiles: [],
+      likedPosts: [],
+      keywords
     })
+    batch.set(singleUserPostsRef, {
+      nickname,
+      avatarUrl: '',
+      followers: [userId],
+      posts: []
+    })
+    await batch.commit()
+    return 'User successfully added'
+  } else {
+    {
+      throw new CustomError({
+        name: 'DatabaseError',
+        message: 'Nickname already taken. Try with something else',
+        status: 401
+      })
+    }
+  }
 }
 
-const loginWithEmailAndPassword = function(email, password) {
-  return auth()
-    .signInWithEmailAndPassword(email, password)
-    .then(({ user }) => {
-      return { uid: user.uid, email: user.email }
-    })
+const loginWithEmailAndPassword = async (email, password) => {
+  const { user } = await auth().signInWithEmailAndPassword(email, password)
+  return { uid: user.uid, email: user.email, password }
 }
 
-const changePassword = function(oldPassword, newPassword, email) {
+const changePassword = async (oldPassword, newPassword, email) => {
   const credential = auth.EmailAuthProvider.credential(email, oldPassword)
-  return auth()
-    .signInWithCredential(credential)
-    .then(() => {
-      return auth()
-        .currentUser.updatePassword(newPassword)
-        .then(() => {
-          return 'Password changed'
-        })
-    })
+  await auth().signInWithCredential(credential)
+  await auth().currentUser.updatePassword(newPassword)
+  return 'Password changed'
 }
 
-const sendPasswordResetCode = function(email) {
+const sendPasswordResetCode = async email => {
   auth().useDeviceLanguage()
-  return auth()
-    .sendPasswordResetEmail(email)
-    .then(() => {
-      return 'Email sent'
-    })
+  await auth().sendPasswordResetEmail(email)
+  return 'Email sent'
 }
 
-const resetPassword = function(actionCode, newPassword) {
+const resetPassword = async (actionCode, newPassword) => {
   auth().useDeviceLanguage()
-  return auth()
-    .confirmPasswordReset(actionCode, newPassword)
-    .then(() => {
-      return 'You can now sign in with your new password'
-    })
+  await auth().confirmPasswordReset(actionCode, newPassword)
+  return 'You can now sign in with your new password'
 }
 
-const signInWithGoogle = function(token_id) {
-  const credential = auth.GoogleAuthProvider.credential(token_id)
-  return auth()
-    .signInWithCredential(credential)
-    .then(({ user }) => {
-      return { uid: user.uid, email: user.email }
-    })
+const signInWithGoogle = async tokenId => {
+  const credential = auth.GoogleAuthProvider.credential(tokenId)
+  const { user } = await auth().signInWithCredential(credential)
+  return { uid: user.uid, email: user.email }
+}
+
+const deleteAccount = async token => {
+  const { email, password, uid } = jwt.verify(
+    token.split(' ')[1],
+    process.env.JWT_SECRET
+  ).value
+  const userRef = db.collection('users').doc(uid)
+  const userPostsRef = db.collection('users-posts').doc(uid)
+  const postsRef = db.collection('posts')
+
+  const userPostsDoc = await userPostsRef.get()
+  const postIds = userPostsDoc.data().posts.map(post => post.postId)
+  if (postIds !== []) {
+    for (let i = 0; i < postIds.length; i++) {
+      await postsRef.doc(postIds[i]).delete()
+    }
+  }
+
+  const batch = db.batch()
+  batch.delete(userRef)
+  batch.delete(userPostsRef)
+  await batch.commit()
+  const credential = auth.EmailAuthProvider.credential(email, password)
+  const { user } = await auth().signInWithCredential(credential)
+  await user.delete()
+  return 'User Deleted'
 }
 
 module.exports = {
@@ -107,5 +115,6 @@ module.exports = {
   sendPasswordResetCode,
   resetPassword,
   changePassword,
-  signInWithGoogle
+  signInWithGoogle,
+  deleteAccount
 }
