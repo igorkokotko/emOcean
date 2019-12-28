@@ -6,7 +6,12 @@ const upload = require('../config/multerConfig')
 const {
   savePost,
   uploadVideos,
-  searchPosts
+  searchPosts,
+  getUserLikedPosts,
+  updateLikes,
+  incrementViewsCounter,
+  getPostLikes,
+  getPostsByEmoji
 } = require("../controllers/posts")
 
 router.post('/save-post', protected, savePost)
@@ -14,17 +19,10 @@ router.get('/search', searchPosts)
 
 router.post("/upload-videos", protected, upload.array("file", 2), mediaValidation, uploadVideos)
 
-// /api/posts/upload-videos?type=single-video
-// /api/posts/upload-videos?type=two-videos
-// /api/posts/upload-videos?type=video-and-audio
-
-// get popular posts (by likes) with pagination
-// get recommended posts from feed with pagination
-// get posts from my followers feed with pagination
-// edit my post
-// get post by id
-// get posts by userId
-// like/unlike  post
-
+router.get('/get-user-liked-posts', getUserLikedPosts)
+router.get('/like-post/:postId', protectedMiddleware, updateLikes)
+router.get('/increment-views-counter/:postId', incrementViewsCounter)
+router.get('/get-post-likes/:postId', getPostLikes)
+router.get('/get-post-emoji', getPostsByEmoji)
 
 module.exports = router;
