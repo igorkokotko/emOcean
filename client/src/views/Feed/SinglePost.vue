@@ -32,7 +32,7 @@
         <p
           class="caption"
           ref="caption"
-          :class="[post.caption.length > 40 ? 'caption' : 'caption2']"
+          :class="[post.caption.length > this.captionCharMaxLength ? 'caption' : 'caption2']"
         >
           <router-link :to="{ path: `/profile/${post.nickname}` }">
             <span>{{ post.nickname }}</span>
