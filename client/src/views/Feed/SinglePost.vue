@@ -75,7 +75,7 @@
             <div class="content">
               <p
                 ref="caption"
-                :class="[post.caption.length > 40 ? 'caption-in-modal' : 'caption-in-modal']"
+                :class="[post.caption.length > this.captionCharMaxLength ? 'caption-in-modal' : 'caption-in-modal']"
               >
                 <router-link :to="{ path: `/profile/${post.nickname}` }">
                   <span>{{ post.nickname }}</span>
@@ -103,11 +103,13 @@ export default {
   props: {
     post: {
       type: Object,
-      default: null
+      default: null,
+      required: true
     }
   },
   data () {
     return {
+      captionCharMaxLength: 40,
       isModelVisible: false,
       dialog: false,
       likesInfo: {
