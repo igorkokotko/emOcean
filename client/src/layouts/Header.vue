@@ -7,6 +7,25 @@
           <img src="@/assets/img/logo.jpeg" class="logo gt-xs" />
         </div>
         <q-space></q-space>
+        <q-icon v-if="emojiSearch" @click="showEmoji" size="sm" name="insert_emoticon" />
+        <q-dialog
+          seamless
+          v-model="showEmojisBool"
+          transition-show="slide-up"
+          transition-hide="slide-down"
+        >
+          <q-card>
+            <q-card-section
+              style="background: #f0f0f0;"
+              class="row items-center no-wrap text-primary"
+            >
+              <div class="text-h6">Select Emogi</div>
+              <q-space />
+              <q-btn icon="close" flat round dense v-close-popup />
+            </q-card-section>
+            <VEmojiPicker @select="selectEmoji" />
+          </q-card>
+        </q-dialog>
         <div
           id="input-search"
           ref="search"
@@ -56,20 +75,25 @@ import NicknameSearch from '../components/NicknameSearch.vue'
 import debounce from 'lodash/debounce'
 import { searchByNick } from '@/services/profile.js'
 import { isAuthorized } from '@/services/Authorized.js'
+import VEmojiPicker from 'v-emoji-picker'
 import { mapGetters } from 'vuex'
 import axios from 'axios'
 
 export default {
   name: 'Header',
   components: {
-    NicknameSearch
+    NicknameSearch,
+    VEmojiPicker
   },
   data () {
     return {
       userInput: '',
+      nickname: '',
       showSearch: true,
       nicknameSearchResults: [],
-      isAuthenticated: false
+      isAuthenticated: false,
+      emojiSearch: false,
+      showEmojisBool: false
     }
   },
   computed: {
@@ -98,6 +122,22 @@ export default {
     }
   },
   methods: {
+    showEmoji () {
+      this.showEmojisBool = !this.showEmojisBool
+    },
+    selectEmoji (emoji) {
+      // console.log(emoji.data)
+      this.userInput = emoji.data
+      this.showEmojisBool = !this.showEmojisBool
+      this.searchPostByEmogi()
+    },
+    searchPostByEmogi () {
+      this.$router.push(`/?tab=search&emoji=${this.userInput}`)
+      this.userInput = ''
+      this.emojiSearch = false
+      this.showEmojisBool = false
+      this.$refs.search.style.visibility = 'hidden'
+    },
     searchByNick: debounce(function (value) {
       if (!/^#/.test(value) && value !== '') {
         this.nicknameSearchResults = []
@@ -124,7 +164,7 @@ export default {
         this.nicknameSearchResults = []
       }
     }, 300),
-
+    
     searchTag: function () {
       if (this.userInput) {
         const hashRegex = /^#/
@@ -147,8 +187,11 @@ export default {
     },
     visible (e) {
       if (e.target === this.$refs.toolbar.$el) {
+        this.emojiSearch = false
+        this.showEmojisBool = false
         this.$refs.search.style.visibility = 'hidden'
       } else if (e.target.textContent === this.$refs.searchWrapper.textContent) {
+        this.emojiSearch = true
         this.$refs.search.style.visibility = 'visible'
       }
     },
