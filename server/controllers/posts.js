@@ -2,8 +2,6 @@ const asyncMiddleware = require('../middleware/asyncMiddleware')
 const postsService = require('../services/PostsService')
 const VideoHandler = require('../videoHandling/videoHandler')
 const clearTempFiles = require('../common/clearTempFiles')
-const CustomError = require('../common/CustomError')
-const searchService = require('../services/SearchService')
 
 // @desc    Handling and uploading video to database
 // @route   POST /api/posts/upload-videos?type=single-video
@@ -82,12 +80,47 @@ const getPostsByPreferences = asyncMiddleware(async (req, res) => {
   const userId = req.userId
   const paginateId = req.query.index
   const postsLimit = 5
+
   const result = await postsService.getPostsByPreferences(
     userId,
     paginateId,
     postsLimit
   )
   res.status(200).json({ result })
+})
+
+const getPostsByType = asyncMiddleware(async (req, res, next) => {
+  const typesList = ['search', 'preferences', 'followings', 'popular']
+  const { type } = req.query
+  const paginateId = req.query.index
+  const postsLimit = 5
+  let value
+  if (typesList.includes(type)) {
+    const postsActions = {
+      search: 'getPostsByTags',
+      preferences: 'getPostsByPreferences',
+      popular: 'getPostsByViews',
+      followings: 'getPostsByFollowings'
+    }
+    const postMethod = postsActions[type]
+    if (type === 'preferences' || 'followings') {
+      value = jwt.verify(token, process.env.JWT_SECRET).value.uid
+    }
+    if (type === 'search') {
+      value = req.query.tags
+    }
+    const result = await postsService[postMethod](paginateId, postsLimit, value)
+
+    res.status(200).json({ result })
+  } else {
+    return next(
+      new CustomError({
+        name: 'Bad Request',
+        message: 'Invalid query request',
+        status: 400
+      })
+    )
+  }
 })
 
 // @desc    Delete post by Id
@@ -125,39 +158,11 @@ const getUserPosts = asyncMiddleware(async (req, res) => {
   })
 })
 
-const searchPosts = function (req, res) {
-  if (!req.query.tag) {
-    return res.status(400).send('no tag specified!')
-  }
-  const tagName = req.query.tag
-
-  let postsDocs = searchService.findByTag(tagName)
-  postsDocs
-    .then(snapshot => {
-      if (snapshot.empty) {
-        return res.send(400).send('No matching documents.')
-      }
-      posts = [];
-      snapshot.forEach(doc => {
-        posts.push(doc.data());
-      });
-      res.json({ posts })
-    })
-    .catch(err => {
-      console.log('Error getting documents', err);
-      res.status(500).send(err)
-    });
-}
-
 module.exports = {
   savePost,
-  searchPosts,
   deletePost,
   editPost,
   uploadVideos,
-  getPostsByViews,
-  getPostsByFollowings,
-  getPostsByTags,
-  getPostsByPreferences,
-  getUserPosts
+  getUserPosts,
+  getPostsByType
 }

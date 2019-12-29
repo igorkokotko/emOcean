@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { deleteAccount } from '@/services/profile.js'
+import { deleteAccount } from '@/services/auth.js'
 import { mapGetters, mapActions } from 'vuex'
 import axios from 'axios'
 
@@ -67,8 +67,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({ getProfile: 'profile/myProfileId',
-      getToken: 'auth/getToken' })
+    ...mapGetters({
+      getProfile: 'profile/myProfileId',
+      getToken: 'auth/getToken'
+    })
   }
 }
 

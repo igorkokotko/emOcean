@@ -31,6 +31,7 @@ const getProfile = asyncMiddleware(async (req, res, next) => {
 const uploadImage = asyncMiddleware(async (req, res, next) => {
   const { type } = req.query
   const image = req.file
+  const id = req.userId
   if (type && image) {
     let validatedImageError, dest
     switch (type) {
@@ -58,7 +59,7 @@ const uploadImage = asyncMiddleware(async (req, res, next) => {
     if (validatedImageError !== undefined) {
       return next(new CustomError(validatedImageError))
     }
-    const imageUrl = await profilesService.uploadPhoto(image, req.userId, dest)
+    const imageUrl = await profilesService.uploadPhoto(image, id, dest)
     res.status(200).json({ imageUrl })
   } else {
     return next(
@@ -87,32 +88,29 @@ const setPreferences = asyncMiddleware(async (req, res) => {
   res.status(200).json({ result })
 })
 
-const getFollowersById = asyncMiddleware(async (req, res) => {
-  const profileId = req.params.id
+const getSubscriptionsById = asyncMiddleware(async (req, res) => {
+  const subscriptionsList = ['folowings', 'followers']
+  const profileId = req.query.id
   const paginationId = req.query.pagination
+  const type = req.query.type
+  if (!type || !subscriptionsList.includes(type) || !profileId) {
+    return next(
+      new CustomError({
+        name: 'Bad Request',
+        message: 'Invalid query request',
+        status: 400
+      })
+    )
+  }
   const usersLimit = 10
   const result = await profilesService.getSubscriptionsById(
-    'followers',
+    type,
     profileId,
     usersLimit,
     paginationId
   )
   res.status(200).json({ result })
 })
-
-const getFollowingsById = asyncMiddleware(async (req, res) => {
-  const profileId = req.params.id
-  const paginationId = req.query.pagination
-  const usersLimit = 10
-  const result = await profilesService.getSubscriptionsById(
-    'followings',
-    profileId,
-    usersLimit,
-    paginationId
-  )
-  res.status(200).json({ result })
-})
-
 
 const profileAction = asyncMiddleware(async (req, res, next) => {
   const actionsList = ['follow', 'unfollow', 'block', 'unblock']
@@ -121,10 +119,10 @@ const profileAction = asyncMiddleware(async (req, res, next) => {
   if (action && id && actionsList.includes(action)) {
     const myProfileId = req.userId
     const profileActions = {
-      follow: 'followProfile',
-      unfollow: 'unfollowProfile',
-      block: 'blockProfile',
-      unblock: 'unblockProfile'
+      follow: 'followProfileAction',
+      unfollow: 'followProfileAction',
+      block: 'blockProfileAction',
+      unblock: 'blockProfileAction'
     }
     const followMethod = profileActions[action]
     const result = await profilesService[followMethod](myProfileId, id)
@@ -140,20 +138,12 @@ const profileAction = asyncMiddleware(async (req, res, next) => {
   }
 })
 
-const deleteAccount = asyncMiddleware(async (req, res, next) => {
-  const message = await profilesService.deleteAccount(req.userId)
-  res.status(200).json({ message })
-})
-
-
 module.exports = {
   searchByNick,
   getProfile,
   saveProfile,
   uploadImage,
   setPreferences,
-  getFollowersById,
-  getFollowingsById,
   profileAction,
-  deleteAccount
+  getSubscriptionsById
 }
