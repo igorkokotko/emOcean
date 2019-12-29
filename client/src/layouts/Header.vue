@@ -21,7 +21,9 @@
             @closeSearch="closeSearchComponent"
           />
         </div>
+        <div ref="searchWrapper">
         <q-btn flat round dense icon="search" @click="visible" class="q-mr-xs text-cyan" />
+        </div>
         <q-btn flat round dense icon="menu" class="text-cyan">
           <q-menu>
             <q-list style="min-width: 100px">
@@ -55,6 +57,7 @@ import debounce from 'lodash/debounce'
 import { searchByNick } from '@/services/profile.js'
 import { isAuthorized } from '@/services/Authorized.js'
 import { mapGetters } from 'vuex'
+import axios from 'axios'
 
 export default {
   name: 'Header',
@@ -63,7 +66,7 @@ export default {
   },
   data () {
     return {
-      nickname: '',
+      userInput: '',
       showSearch: true,
       nicknameSearchResults: [],
       isAuthenticated: false
@@ -104,7 +107,11 @@ export default {
           .then(res => {
             this.nicknameSearchResults = []
             res.data.message.forEach(element => {
-              this.nicknameSearchResults.push({ id: element.profileId, nickname: element.nickname, avatar: element.avatar_url })
+              this.nicknameSearchResults.push({
+                id: element.profileId,
+                nickname: element.nickname,
+                avatar: element.avatar_url
+              })
             })
           })
           .catch(err => {
@@ -118,33 +125,42 @@ export default {
         this.nicknameSearchResults = []
       }
     }, 300),
-    visible (e) {
-      if (e.target === this.$refs.toolbar.$el) {
-        this.$refs.search.style.visibility = 'hidden'
-      } else this.$refs.search.style.visibility = 'visible'
-    },
+
     searchTag: function () {
-      if (/^#/.test(this.userInput) && this.userInput !== '') {
-        const tagsArray = this.userInput.split(' ').map(item => {
-          if (item.startsWith('#')) { return item.trim().slice(1) }
-        }).join('-')
-        if (this.$route.name === 'Feed') {
-          if (
-            this.$route.query.tab === 'search' &&
-            this.$route.query.tags === tagsArray
-          ) {
-            this.$router.replace({ query: { tab: 'search', tags: '' } })
+      if (this.userInput) {
+        const hashRegex = /^#/
+        const tagsQuery = this.userInput.split(' ').filter(item => hashRegex.test(item)
+        ).map(item => item.replace(hashRegex, '')).join('-')
+        if (tagsQuery) {
+          if (this.$route.name === 'Feed') {
+            if (
+              this.$route.query.tab === 'search' &&
+              this.$route.query.tags === tagsQuery
+            ) {
+              this.$router.replace({ query: { tab: 'search', tags: '' } })
+            }
+            this.$router.replace({ query: { tab: 'search', tags: tagsQuery } })
+          } else {
+            this.$router.push(`/?tab=search&tags=${tagsQuery}`)
           }
-          this.$router.replace({ query: { tab: 'search', tags: tagsArray } })
-        } else {
-          this.$router.push(`/?tab=search&tags=${tagsArray}`)
         }
       }
     },
+    visible (e) {
+      if (e.target === this.$refs.toolbar.$el) {
+        this.$refs.search.style.visibility = 'hidden'
+      } else if (e.target.textContent === this.$refs.searchWrapper.textContent) {
+        this.$refs.search.style.visibility = 'visible'
+      }
+    },
     logOut () {
+      this.$store.dispatch('profile/clear')
+      this.$store.dispatch('comments/clear')
+      this.$store.dispatch('clear')
       this.$store.dispatch('auth/signin', { token: '', user: '' })
       window.localStorage.removeItem('token')
       window.localStorage.removeItem('profileId')
+      delete axios.defaults.headers.common['Authorization']
       this.$q.notify({
         textColor: 'white',
         actions: [{ icon: 'close', color: 'white' }],
