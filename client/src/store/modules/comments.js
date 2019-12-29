@@ -1,18 +1,25 @@
 import Vue from "vue"
 import { firebaseDb } from "../../config/config.js"
 
+const getDefaultState = () => {
+  return {
+    userDetails: {
+      name: "Happy emOcean User",
+      email: "johndoe@gmail.com",
+      uid: '123'
+      // uid: "456"
+    },
+    messages: {}
+  }
+}
 let messagesRef
 
-const state = {
-  userDetails: {
-    name: "Happy emOcean User",
-    email: "johndoe@gmail.com",
-    uid: '123'
-    // uid: "456"
-  },
-  messages: {}
-}
+const state = getDefaultState()
+
 const mutations = {
+  clear (state) {
+    Object.assign(state, getDefaultState())
+  },
   addMessage (state, payload) {
     Vue.set(state.messages, payload.messageId, payload.messageDetails)
   },
@@ -24,6 +31,9 @@ const mutations = {
   }
 }
 const actions = {
+  clear ({ commit }) {
+    commit('clear')
+  },
   firebaseGetMessages ({ commit, state }, postId) {
     messagesRef = firebaseDb.ref('/comments')
     messagesRef.on('child_added', snapshot => {

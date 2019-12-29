@@ -18,28 +18,28 @@
         round
         class="text-cyan"
         icon="zoom_in"
-        @click.prevent="zoom(0.2)"
+        @click="zoom(0.2)"
       />
       <q-btn
         flat
         round
         class="text-cyan"
         icon="zoom_out"
-        @click.prevent="zoom(-0.2)"
+        @click="zoom(-0.2)"
       />
       <q-btn
         flat
         round
         class="text-cyan"
         icon="rotate_left"
-        @click.prevent="rotate(-45)"
+        @click="rotate(-45)"
       />
       <q-btn
         flat
         round
         class="text-cyan"
         icon="rotate_right"
-        @click.prevent="rotate(45)"
+        @click="rotate(45)"
       />
       <q-btn
         flat
@@ -47,7 +47,7 @@
         class="text-cyan"
         ref="flipX"
         icon="flip"
-        @click.prevent="flipX"
+        @click="flipX"
       />
     </div>
   </div>

@@ -21,7 +21,9 @@
             @closeSearch="closeSearchComponent"
           />
         </div>
+        <div ref="searchWrapper">
         <q-btn flat round dense icon="search" @click="visible" class="q-mr-xs text-cyan" />
+        </div>
         <q-btn flat round dense icon="menu" class="text-cyan">
           <q-menu>
             <q-list style="min-width: 100px">
@@ -55,6 +57,7 @@ import debounce from 'lodash/debounce'
 import { searchByNick } from '@/services/profile.js'
 import { isAuthorized } from '@/services/Authorized.js'
 import { mapGetters } from 'vuex'
+import axios from 'axios'
 
 export default {
   name: 'Header',
@@ -103,7 +106,11 @@ export default {
           .then(res => {
             this.nicknameSearchResults = []
             res.data.message.forEach(element => {
-              this.nicknameSearchResults.push({ id: element.profileId, nickname: element.nickname, avatar: element.avatarUrl })
+              this.nicknameSearchResults.push({
+                id: element.profileId,
+                nickname: element.nickname,
+                avatar: element.avatar_url
+              })
             })
           })
           .catch(err => {
@@ -117,11 +124,7 @@ export default {
         this.nicknameSearchResults = []
       }
     }, 300),
-    visible (e) {
-      if (e.target === this.$refs.toolbar.$el) {
-        this.$refs.search.style.visibility = 'hidden'
-      } else this.$refs.search.style.visibility = 'visible'
-    },
+
     searchTag: function () {
       if (this.userInput) {
         const hashRegex = /^#/
@@ -142,10 +145,21 @@ export default {
         }
       }
     },
+    visible (e) {
+      if (e.target === this.$refs.toolbar.$el) {
+        this.$refs.search.style.visibility = 'hidden'
+      } else if (e.target.textContent === this.$refs.searchWrapper.textContent) {
+        this.$refs.search.style.visibility = 'visible'
+      }
+    },
     logOut () {
+      this.$store.dispatch('profile/clear')
+      this.$store.dispatch('comments/clear')
+      this.$store.dispatch('clear')
       this.$store.dispatch('auth/signin', { token: '', user: '' })
       window.localStorage.removeItem('token')
       window.localStorage.removeItem('profileId')
+      delete axios.defaults.headers.common['Authorization']
       this.$q.notify({
         textColor: 'white',
         actions: [{ icon: 'close', color: 'white' }],

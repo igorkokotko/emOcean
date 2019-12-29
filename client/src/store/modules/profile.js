@@ -1,15 +1,26 @@
 import { getProfile, updateProfile, setPreferences } from '@/services/profile'
 import axios from 'axios'
 
+const getDefaultState = () => {
+  return {
+    myProfile: {},
+    myProfileId: '',
+    profile: {},
+    profileFollowers: [],
+    profileFollowings: [],
+    currentProfileFollowings: []
+  }
+}
+
 export default {
   namespaced: true,
 
   actions: {
+    clear ({ commit }) {
+      commit('clear')
+    },
     updateMyProfile (ctx, editedData) {
       return updateProfile(editedData)
-      /* .then((response) => {
-          ctx.commit('updateMyProfile', response.data.profile)
-        }) */
     },
     getMyProfile (ctx) {
       return getProfile({ id: ctx.state.myProfileId })
@@ -84,6 +95,9 @@ export default {
   },
 
   mutations: {
+    clear (state) {
+      Object.assign(state, getDefaultState())
+    },
     updateMyProfile (state, myProfileData) {
       state.myProfile = myProfileData
     },
@@ -104,14 +118,7 @@ export default {
     }
   },
 
-  state: {
-    myProfile: {},
-    myProfileId: '',
-    profile: {},
-    profileFollowers: [],
-    profileFollowings: [],
-    currentProfileFollowings: []
-  },
+  state: getDefaultState(),
 
   getters: {
     profileGetter (state) {
