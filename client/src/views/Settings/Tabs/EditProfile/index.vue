@@ -434,6 +434,10 @@ export default {
       this.photoUrl = ''
     },
 
+    checkProfileImage (val) {
+      return this.profile[val] && JSON.stringify(this.profile[val]) === JSON.stringify({})
+    },
+
     loadDataFromStore () {
       const socialAccounts = {}
       if (this.profileGetter.socialAccounts) {
@@ -442,10 +446,10 @@ export default {
         })
       }
       this.profile = { ...this.emptyProfile, ...this.profileGetter, socialAccounts }
-      if (this.profile.avatarUrl && JSON.stringify(this.profile.avatarUrl) === JSON.stringify({})) {
+      if (this.checkProfileImage('avatarUrl')) {
         this.profile.avatarUrl = ''
       }
-      if (this.profile.backgroundUrl && JSON.stringify(this.profile.backgroundUrl) === JSON.stringify({})) {
+      if (this.checkProfileImage('backgroundUrl')) {
         this.profile.backgroundUrl = ''
       }
     },
