@@ -37,7 +37,7 @@
             </a>
             <a class="share-btn" @click="showEmoji">
               <span v-if="post.emoji === ''">Add Emoji</span>
-              <span class="emoji video-add-emoji" v-else v-html="post.emoji" />
+              <span class="text-subtitle2" v-else v-html="post.emoji" />
             </a>
             <q-dialog
               v-model="showEmojiBool"
@@ -156,9 +156,6 @@ export default {
 </script>
 
 <style lang='scss'>
-.video-add-emoji {
-  font-size: 1.5em;
-}
 .caption-container {
     height: auto;
     display: flex;
