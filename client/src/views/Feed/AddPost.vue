@@ -34,7 +34,7 @@
     </template>
     <div id="chip" ref="chip" v-if="showBanner">
       <template>
-        <q-banner inline-actions dense class="text-white bg-red">
+        <q-banner inline-actions dense class="text-white text-center bg-red">
           File format that you want to download is incorrect. Please select a
           video file.
         </q-banner>
@@ -133,8 +133,8 @@ export default {
         this.showNotif('center')
         return
       }
-      let valueArr = this.$refs.textarea.value.split(' ')
-      valueArr.filter(word => {
+      let captionArr = this.$refs.textarea.value.split(' ')
+      captionArr.filter(word => {
         if (word.match(/#\w+/)) {
           word = word.slice(1)
           this.post.tags.push(word)
@@ -221,11 +221,6 @@ export default {
   position: absolute;
   width: 100%;
   top: 0;
-}
-
-#chip .q-banner__content {
-  padding: 3px;
-  text-align: center;
 }
 
 #modal-window .q-card__section {
