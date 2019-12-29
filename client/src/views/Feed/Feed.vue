@@ -51,6 +51,14 @@
         <div v-if="authorized" class="big-btn" @click="$router.push('/addpost')">
           <i class="fas fa-2x fa-plus"></i>
         </div>
+        <div
+          v-if="(!postsGetter || postsGetter.length === 0) && !isLoading"
+          class="text-center q-pa-md"
+        >{{ this.emptyPostsMessage }}</div>
+        <q-spinner v-if="isLoading" color="primary" size="7em" class="fixed-center" />
+        <div v-if="authorized" class="big-btn" @click="$router.push('/addpost')">
+          <i class="fas fa-2x fa-plus"></i>
+        </div>
       </div>
     </div>
   </div>
@@ -182,7 +190,9 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+
+<style lang="scss">
+
 .empty-message {
   width: 350px;
 }
@@ -313,7 +323,7 @@ export default {
 #feed {
   position: relative;
   width: 100%;
-  max-width: 1440px;
+  max-width: 4200px;
   display: grid;
   justify-content: center;
 }
