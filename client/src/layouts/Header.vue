@@ -128,24 +128,6 @@ export default {
         this.$refs.search.style.visibility = 'visible'
       }
     },
-    searchTag: function () {
-      if (/^#/.test(this.userInput) && this.userInput !== '') {
-        const tagsArray = this.userInput.split(' ').map(item => {
-          if (item.startsWith('#')) { return item.trim().slice(1) }
-        }).join('-')
-        if (this.$route.name === 'Feed') {
-          if (
-            this.$route.query.tab === 'search' &&
-            this.$route.query.tags === tagsArray
-          ) {
-            this.$router.replace({ query: { tab: 'search', tags: '' } })
-          }
-          this.$router.replace({ query: { tab: 'search', tags: tagsArray } })
-        } else {
-          this.$router.push(`/?tab=search&tags=${tagsArray}`)
-        }
-      }
-    },
     logOut () {
       this.$store.dispatch('auth/signin', { token: '', user: '' })
       window.localStorage.removeItem('token')
