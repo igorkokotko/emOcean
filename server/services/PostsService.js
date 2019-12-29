@@ -354,7 +354,7 @@ const getPostInfo = function (postId) {
 }
 const getPostsByEmoji = async (emoji, paginateId, postsCount) => {
   let postsRefQuery = db
-    .collection('posts1')
+    .collection('posts')
     .orderBy('createdAt', 'desc')
     .where('emoji', '==', emoji)
     .limit(postsCount)
