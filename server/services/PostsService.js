@@ -259,41 +259,28 @@ const updateLikes = function (postId, userId) {
             likedPosts
           } = userPostsDoc.data().posts
 
-          if (likedPosts.includes(postId) && likes.includes(userId)) {
-            // dislike
-            t.update(userPostsRef, {
-              likedPosts: likedPosts.filter(like => like !== postId),
-              posts: posts.map(post => {
-                if (post.postId === postId) {
-                  post.likes--
-                }
-                return post
-              })
-            })
+          let like = (likedPosts.includes(postId) && likes.includes(userId))? false : true
 
-            t.update(postRef, {
-              likes: likes.filter(like => like !== userId),
-              likesCount: --likesCount
-            })
-            return 'dislike'
-          } else {
-            // like
-            t.update(userPostsRef, {
-              likedPosts: likedPosts.push(postId),
-              posts: posts.map(post => {
-                if (post.postId === postId) {
-                  post.likes++
-                }
-                return post
-              })
-            })
+          const newLikes = (like) ? likes.push(userId) : likes.filter(like => like !== userId)
+          const newLikesCount = (like) ? likesCount++ : likesCount--
+          const newLikedPosts = (like) ? likedPosts.push(postId) : likedPosts.filter(like => like !== postId)
+          const newPosts = posts.map(post => {
+            if (post.postId === postId) {
+              (like) ? post.likes++ : post.likes--
+            }
+            return post
+          })
+          
+          t.update(postRef, {
+            likes: newLikes,
+            likesCount: newLikesCount
+          })
+          t.update(userPostsRef, {
+            likedPosts: newLikedPosts,
+            posts: newPosts
+          })
 
-            t.update(postRef, {
-              likes: likes.push(userId),
-              likesCount: ++likesCount
-            })
-            return 'like'
-          }
+          return like ? 'like' : 'dislike'
         })
       })
     })
