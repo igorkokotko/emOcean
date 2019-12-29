@@ -3,6 +3,7 @@ import Vue from 'vue'
 import './styles/quasar.styl'
 import '@quasar/extras/material-icons/material-icons.css'
 import '@quasar/extras/fontawesome-v5/fontawesome-v5.css'
+import { customCollor } from './utilities/customCollors'
 import {
   Quasar,
   QLayout,
@@ -47,13 +48,17 @@ import {
   ClosePopup,
   QVirtualScroll,
   QBanner,
+  QSpinnerHourglass,
   QScrollObserver,
-  QChatMessage
+  QChatMessage,
+  QResizeObserver,
+  QSpinner,
+  colors,
+  TouchSwipe
 } from 'quasar'
 
 Vue.use(Quasar, {
-  config: {
-  },
+  config: {},
   components: {
     QLayout,
     QHeader,
@@ -95,13 +100,22 @@ Vue.use(Quasar, {
     QVirtualScroll,
     QScrollObserver,
     QChatMessage,
-    QBar
+    QBar,
+    QResizeObserver,
+    QSpinnerHourglass,
+    QSpinner,
+    colors
   },
   directives: {
     Ripple,
-    ClosePopup
+    ClosePopup,
+    TouchSwipe
   },
   plugins: {
     Notify
   }
+})
+
+customCollor.forEach(val => {
+  colors.setBrand(val.type, val.value)
 })

@@ -1,5 +1,5 @@
 import preferences from './modules/preferences'
-import posts from './posts'
+import posts from './modules/posts'
 
 import Vue from 'vue'
 import Vuex from 'vuex'
