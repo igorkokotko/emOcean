@@ -40,7 +40,9 @@
             @closeSearch="closeSearchComponent"
           />
         </div>
+        <div ref="searchWrapper">
         <q-btn flat round dense icon="search" @click="visible" class="q-mr-xs text-cyan" />
+        </div>
         <q-btn flat round dense icon="menu" class="text-cyan">
           <q-menu>
             <q-list style="min-width: 100px">
@@ -144,7 +146,11 @@ export default {
           .then(res => {
             this.nicknameSearchResults = []
             res.data.message.forEach(element => {
-              this.nicknameSearchResults.push({ id: element.profileId, nickname: element.nickname, avatar: element.avatar_url })
+              this.nicknameSearchResults.push({
+                id: element.profileId,
+                nickname: element.nickname,
+                avatar: element.avatar_url
+              })
             })
           })
           .catch(err => {
@@ -158,32 +164,35 @@ export default {
         this.nicknameSearchResults = []
       }
     }, 300),
+    
+    searchTag: function () {
+      if (this.userInput) {
+        const hashRegex = /^#/
+        const tagsQuery = this.userInput.split(' ').filter(item => hashRegex.test(item)
+        ).map(item => item.replace(hashRegex, '')).join('-')
+        if (tagsQuery) {
+          if (this.$route.name === 'Feed') {
+            if (
+              this.$route.query.tab === 'search' &&
+              this.$route.query.tags === tagsQuery
+            ) {
+              this.$router.replace({ query: { tab: 'search', tags: '' } })
+            }
+            this.$router.replace({ query: { tab: 'search', tags: tagsQuery } })
+          } else {
+            this.$router.push(`/?tab=search&tags=${tagsQuery}`)
+          }
+        }
+      }
+    },
     visible (e) {
       if (e.target === this.$refs.toolbar.$el) {
         this.emojiSearch = false
         this.showEmojisBool = false
         this.$refs.search.style.visibility = 'hidden'
-      } else {
+      } else if (e.target.textContent === this.$refs.searchWrapper.textContent) {
         this.emojiSearch = true
         this.$refs.search.style.visibility = 'visible'
-      }
-    },
-    searchTag: function () {
-      if (/^#/.test(this.userInput) && this.userInput !== '') {
-        const tagsArray = this.userInput.split(' ').map(item => {
-          if (item.startsWith('#')) { return item.trim().slice(1) }
-        }).join('-')
-        if (this.$route.name === 'Feed') {
-          if (
-            this.$route.query.tab === 'search' &&
-            this.$route.query.tags === tagsArray
-          ) {
-            this.$router.replace({ query: { tab: 'search', tags: '' } })
-          }
-          this.$router.replace({ query: { tab: 'search', tags: tagsArray } })
-        } else {
-          this.$router.push(`/?tab=search&tags=${tagsArray}`)
-        }
       }
     },
     logOut () {
