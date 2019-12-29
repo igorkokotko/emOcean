@@ -18,26 +18,19 @@ export const editPost = (postData, postId) =>
 export const deletePost = postId =>
   axios.delete(`${apiRoute}/delete-post/${postId}`)
 
-export const getPostsByType = (params) => {
-  let route
-  switch (params.type) {
-    case 'followings':
-      route = `${apiRoute}/by-followings`
-      break
-    case 'popular':
-      route = `${apiRoute}/by-views`
-      break
-    case 'preferences':
-      route = `${apiRoute}/by-preferences`
-      break
-    case 'search':
-      route = `${apiRoute}/by-tags?tags=${params.tags}`
-      break
+export const getPostsByType = (payload) => {
+  let route = `${apiRoute}/get-posts?type=${payload.type}`
+  if (payload.type === 'search') {
+    route = `${route}&tags=${payload.tags}`
   }
-  if (params.index && params.index !== 'Last index') {
-    return axios.get(route, { params: { index: params.index } })
+  if (payload.index && payload.index !== 'Last index') {
+    return axios.get(route, { params: { index: payload.index } })
   }
   return axios.get(route)
+}
+
+export const getUserPostsById = id => {
+  return axios.get(`/api/posts/get-user-posts?id=${id}`)
 }
 
 export const getLikedList = (videoId) => {
@@ -49,4 +42,3 @@ export const getLikedList = (videoId) => {
       return error.statusText
     })
 }
-

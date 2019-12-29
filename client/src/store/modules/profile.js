@@ -50,7 +50,6 @@ export default {
           commit('updateFollowers', response.data.followers)
         })
         .catch(error => {
-          console.log(error)
           if (error) {
             commit('updateFollowers', [])
           }
@@ -75,7 +74,6 @@ export default {
           commit('updateCurrentFollowings', response.data.followings)
         })
         .catch(error => {
-          console.log(error)
           if (error) {
             commit('updateCurrentFollowings', [])
           }
@@ -86,7 +84,6 @@ export default {
       axios
         .get('/api/profiles/profile-action?action=' + data.action + '&id=' + data.id)
         .then(response => {
-          console.log(response)
           commit('', response.data)
         })
         .catch(error => console.log(error.response.data))

@@ -1,9 +1,6 @@
 <template>
   <q-page>
-    <q-form
-      class="q-gutter-md"
-      @submit="onFormSubmit"
-    >
+    <q-form class="q-gutter-md" @submit="onFormSubmit">
       <q-input
         label="Current password"
         placeholder="Type your current password"
@@ -52,13 +49,8 @@
         </template>
       </q-input>
       <div class="q-pt-md">
-        <q-btn
-          label="Change password"
-          type="submit"
-          rounded
-          color="secondary"
-        />
-        <br>
+        <q-btn label="Change password" type="submit" rounded color="secondary" />
+        <br />
         <q-btn
           label="Forgot password?"
           @click="onForgotPasswordClick"

@@ -39,6 +39,7 @@ const saveProfile = async (profile, userId) => {
   }
 
   await db.runTransaction(async t => {
+
     if (prevNickname !== profile.nickname) {
       profileFields.nickname = profile.nickname
     }

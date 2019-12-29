@@ -1,11 +1,6 @@
 <template>
   <q-page>
-    <q-form
-      class="q-gutter-md"
-      @submit="onSubmit"
-      @reset="onReset"
-    >
-
+    <q-form class="q-gutter-md" @submit="onSubmit" @reset="onReset">
       <q-card class="my-card">
         <q-card-section>
           <div class="text-h6">Avatar</div>
@@ -25,10 +20,7 @@
             />
           </template>
           <div class="row justify-center q-mt-sm">
-            <label
-              for="inputAvatar"
-              ref="photoUrlLabel"
-            >
+            <label for="inputAvatar" ref="photoUrlLabel">
               <input
                 ref="avatar"
                 type="file"
@@ -36,7 +28,7 @@
                 accept="image/*"
                 @input="uploadImageUrl($event, 'avatar')"
                 class="uploadImage"
-              >
+              />
               <q-btn
                 round
                 color="secondary"
@@ -45,12 +37,7 @@
                 class="q-mr-md"
               />
             </label>
-            <q-btn
-              round
-              color="negative"
-              icon="delete"
-              @click="deletePhotoUrl"
-            />
+            <q-btn round color="negative" icon="delete" @click="deletePhotoUrl" />
           </div>
         </q-card-section>
       </q-card>
@@ -90,7 +77,7 @@
                 accept="image/*"
                 @input="uploadImageUrl($event, 'background')"
                 class="uploadImage"
-              >
+              />
               <q-btn
                 round
                 color="secondary"
@@ -99,12 +86,7 @@
                 class="q-mr-md"
               />
             </label>
-            <q-btn
-              round
-              color="negative"
-              icon="delete"
-              @click="deleteBackgroundUrl"
-            />
+            <q-btn round color="negative" icon="delete" @click="deleteBackgroundUrl" />
           </div>
         </q-card-section>
       </q-card>
@@ -197,16 +179,8 @@
             v-show='isLoading'
           />
         </q-btn>
-        <q-btn
-          label="Reset"
-          type="reset"
-          color="secondary"
-          flat
-          rounded
-          class="q-ml-sm"
-        />
+        <q-btn label="Reset" type="reset" color="secondary" flat rounded class="q-ml-sm" />
       </div>
-
     </q-form>
   </q-page>
 </template>
@@ -480,7 +454,8 @@ export default {
   display: none;
 }
 
-.inputFile .q-field__control:before, .q-field__control:after {
+.inputFile .q-field__control:before,
+.q-field__control:after {
   content: none;
 }
 
@@ -494,7 +469,7 @@ export default {
 }
 
 .youtube {
-  color: #FF0000;
+  color: #ff0000;
 }
 
 .instagram {

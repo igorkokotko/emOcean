@@ -13,7 +13,7 @@
           class="fixed-top-center"
           :style="{ visibility: 'hidden'}"
         >
-          <q-input v-model="nickname" @input="searchByNick" @keyup.enter="searchTag" />
+          <q-input v-model="userInput" @input="searchByNick" @keyup.enter="searchTag" />
           <nickname-search
             v-if="showSearch"
             id="search-result"
@@ -77,7 +77,6 @@ export default {
       token: 'auth/getToken'
     })
   },
-
   async created () {
     try {
       const auth = await isAuthorized()
@@ -137,7 +136,7 @@ export default {
               this.$route.query.tab === 'search' &&
               this.$route.query.tags === tagsQuery
             ) {
-              this.$router.replace({ query: { tab: 'search', tags: '' } })
+              this.$router.replace({ query: { tab: '', tags: '' } })
             }
             this.$router.replace({ query: { tab: 'search', tags: tagsQuery } })
           } else {
@@ -182,7 +181,7 @@ export default {
     },
     closeSearchComponent () {
       this.showSearch = false
-      this.nickname = ''
+      this.userInput = ''
     }
   }
 }
