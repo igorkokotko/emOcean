@@ -106,9 +106,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-      addPostAction: 'posts/addPostAction'
-    }),
+    ...mapActions('posts', ['addPost']),
     showEmoji () {
       this.showEmojiBool = !this.showEmojiBool
     },
@@ -133,6 +131,7 @@ export default {
         this.showNotif('center')
         return
       }
+
       let captionArr = this.$refs.textarea.value.split(' ')
       captionArr.filter(word => {
         if (word.match(/#\w+/)) {
@@ -140,6 +139,7 @@ export default {
           this.post.tags.push(word)
         }
       })
+
       this.post.caption = this.$refs.textarea.value
       this.addPostAction(this.post)
       this.$router.push('/feed?tab=followings')
@@ -181,14 +181,8 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.video-add-emoji {
-  font-size: 1.5em;
-}
-.step-buttons {
-  display: flex;
-  align-items: center;
-}
+<style lang='scss'>
+
 .caption-container {
   height: auto;
   display: flex;
