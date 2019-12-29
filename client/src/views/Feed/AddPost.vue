@@ -37,7 +37,7 @@
             </a>
             <a class="share-btn" @click="showEmoji">
               <span v-if="post.emoji === ''">Add Emoji</span>
-              <span class="text-subtitle2" v-else v-html="post.emoji" />
+              <span class="emoji text-subtitle2" v-else v-html="post.emoji" />
             </a>
             <q-dialog
               v-model="showEmojiBool"
