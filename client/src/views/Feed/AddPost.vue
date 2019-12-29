@@ -35,6 +35,18 @@
               @click="$router.push('/feed')">
                 Cancel
             </a>
+            <a class="share-btn" @click="showEmoji">
+              <span v-if="post.emoji === ''">Add Emoji</span>
+              <span class="emoji video-add-emoji" v-else v-html="post.emoji" />
+            </a>
+            <q-dialog
+              v-model="showEmojiBool"
+              transition-show="slide-up"
+              transition-hide="slide-down"
+              position="bottom"
+            >
+              <VEmojiPicker @select="selectEmoji" />
+            </q-dialog>
             <a class="share-btn"
             @click="addToFeed"
               >
@@ -69,27 +81,58 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import VEmojiPicker from 'v-emoji-picker'
+
 export default {
   name: 'AddPost',
   data () {
     return {
       dialog: true,
       display: 'block',
+      showEmojiBool: false,
       post: {
         createdOn: new Date(),
         username: 'fullstack_vue',
         userImage: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1211695/vue_lg_bg.png',
         postVideo: '',
-        likes: 0,
+        likesCount: 0,
+        likes: [],
+        emoji: '',
         hasBeenLiked: false,
         caption: '',
         comments: []
       }
     }
   },
+  components: {
+    VEmojiPicker
+  },
   methods: {
     ...mapActions('posts', ['addPost']),
+    showEmoji () {
+      this.showEmojiBool = !this.showEmojiBool
+    },
+    selectEmoji (emoji) {
+      this.post.emoji = emoji.data
+      this.showEmojiBool = !this.showEmojiBool
+    },
+    showNotif (position) {
+      this.$q.notify({
+        message: `<span style="font-size:1.3em;">Please, add an emoji to describe your post</span>`,
+        color: 'primary',
+        position,
+        html: true,
+        actions: [
+          { label: 'Add emoji', color: 'yellow', handler: () => { this.showEmoji() } },
+          { label: 'Cancel', color: 'accent', handler: () => { this.$router.push('/feed') } }
+        ]
+      })
+    },
     addToFeed () {
+      if (this.post.emoji === '') {
+        this.showNotif('center')
+        return
+      }
       this.post.caption = this.$refs.textarea.value
       this.addPost(this.post)
       this.$router.push('/feed')
@@ -113,8 +156,8 @@ export default {
 </script>
 
 <style lang='scss'>
-body{
-  background: linear-gradient(90deg, rgba(38,183,233,0.7903536414565826) 0%, rgba(34,218,197,1) 100%);
+.video-add-emoji {
+  font-size: 1.5em;
 }
 .caption-container {
     height: auto;
