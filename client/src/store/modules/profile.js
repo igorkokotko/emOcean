@@ -1,4 +1,9 @@
-import { getProfile, updateProfile, setPreferences } from '@/services/profile'
+import {
+  getProfile,
+  updateProfile,
+  setPreferences,
+  getSubscriptionsById
+} from '@/services/profile'
 import axios from 'axios'
 
 const getDefaultState = () => {
@@ -55,31 +60,21 @@ export default {
           }
         })
     },
-    uploadFollowings ({ commit }, id) {
-      axios
-        .get('/api/profiles/get-followings/' + id)
-        .then(response => {
-          commit('updateFollowings', response.data.followings)
-        })
-        .catch(error => {
-          if (error) {
-            commit('updateFollowings', [])
-          }
-        })
+    clearSubs ({ commit }) {
+      commit('clearSubscriptions')
     },
-    uploadCurrentFollowings ({ commit }, id) {
-      axios
-        .get('/api/profiles/get-followings/' + id)
-        .then(response => {
-          commit('updateCurrentFollowings', response.data.followings)
-        })
-        .catch(error => {
-          if (error) {
-            commit('updateCurrentFollowings', [])
-          }
-        })
+    async uploadSubscriptions ({ commit }, data) {
+      try {
+        commit('setLoading', true)
+        const response = await getSubscriptionsById(data.id, data.type)
+        commit('setLoading', false)
+        commit('updateSubscriptions', { type: data.type, data: response.data.result.data })
+      } catch (error) {
+        commit('setLoading', false)
+        commit('setErrors', error.response.data)
+        commit('updateSubscriptions', { type: data.type, data: [] })
+      }
     },
-    // action for follow/unfollow, block/unblock user
     uploadProfileAction ({ commit }, data) {
       axios
         .get('/api/profiles/profile-action?action=' + data.action + '&id=' + data.id)
@@ -107,14 +102,16 @@ export default {
     updateProfile (state, profileData) {
       state.profile = profileData
     },
-    updateFollowers (state, profileData) {
-      state.profileFollowers = profileData
+    clearSubscriptions (state) {
+      state.profileFollowers = []
+      state.profileFollowings = []
     },
-    updateFollowings (state, profileData) {
-      state.profileFollowings = profileData
-    },
-    updateCurrentFollowings (state, profileData) {
-      state.currentProfileFollowings = profileData
+    updateSubscriptions (state, profileData) {
+      if (profileData.type === 'followings') {
+        state.profileFollowings = profileData.data
+      } else if (profileData.type === 'followers') {
+        state.profileFollowers = profileData.data
+      }
     }
   },
 
@@ -122,7 +119,6 @@ export default {
 
   getters: {
     profileGetter (state) {
-      // localStorage.lastProfileId = state.profile.profile_id
       window.localStorage.setItem('lastProfileId', state.profile.profile_id)
       return state.profile
     },
@@ -137,13 +133,6 @@ export default {
     },
     myProfileId (state) {
       return state.myProfileId
-    },
-    followingIdsGetter (state) {
-      let followingIds = []
-      state.currentProfileFollowings.map(function (value, key) {
-        followingIds.push(value.id)
-      })
-      return followingIds
     },
     setPreferences (state, data) {
       state.myProfile.preferences = data
