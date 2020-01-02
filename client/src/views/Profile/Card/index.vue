@@ -37,6 +37,19 @@ import FollowButton from './followBtn'
 import Avatar from '../../../components/Avatar'
 
 export default {
+  components: {
+    CardFooter,
+    FollowButton,
+    Avatar
+  },
+  props: {
+    profile: Object
+  },
+  data () {
+    return {
+      popularAccountLimit: 1
+    }
+  },
   computed: {
     ...mapGetters({ myProfile: 'profile/myProfile' }),
     currentUserId () {
@@ -46,6 +59,9 @@ export default {
       return this.profile.followersCount > this.popularAccountLimit
     }
   },
+  async created () {
+    await this.getMyProfile()
+  },
   methods: {
     ...mapActions({
       getMyProfile: 'profile/getMyProfile'
@@ -53,22 +69,6 @@ export default {
     updateFollowersCount (value) {
       this.profile.followersCount = this.profile.followersCount + value
     }
-  },
-  data () {
-    return {
-      popularAccountLimit: 1
-    }
-  },
-  props: {
-    profile: Object
-  },
-  components: {
-    CardFooter,
-    FollowButton,
-    Avatar
-  },
-  async created () {
-    await this.getMyProfile()
   }
 }
 </script>
