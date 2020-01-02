@@ -1,19 +1,29 @@
-import authService from '@/services/auth'
-import { setPreferences } from '@/services/profile'
+import { getProfile, updateProfile, setPreferences } from '@/services/profile'
 import axios from 'axios'
+
+const getDefaultState = () => {
+  return {
+    myProfile: {},
+    myProfileId: '',
+    profile: {},
+    profileFollowers: [],
+    profileFollowings: [],
+    currentProfileFollowings: []
+  }
+}
 
 export default {
   namespaced: true,
 
   actions: {
+    clear ({ commit }) {
+      commit('clear')
+    },
     updateMyProfile (ctx, editedData) {
-      return authService.updateProfile(editedData)
-      /* .then((response) => {
-          ctx.commit('updateMyProfile', response.data.profile)
-        }) */
+      return updateProfile(editedData)
     },
     getMyProfile (ctx) {
-      return authService.getProfile({ id: ctx.state.myProfileId })
+      return getProfile({ id: ctx.state.myProfileId })
         .then((response) => {
           ctx.commit('updateMyProfile', response.data.profile)
         })
@@ -40,7 +50,6 @@ export default {
           commit('updateFollowers', response.data.followers)
         })
         .catch(error => {
-          console.log(error)
           if (error) {
             commit('updateFollowers', [])
           }
@@ -65,7 +74,6 @@ export default {
           commit('updateCurrentFollowings', response.data.followings)
         })
         .catch(error => {
-          console.log(error)
           if (error) {
             commit('updateCurrentFollowings', [])
           }
@@ -76,7 +84,6 @@ export default {
       axios
         .get('/api/profiles/profile-action?action=' + data.action + '&id=' + data.id)
         .then(response => {
-          console.log(response)
           commit('', response.data)
         })
         .catch(error => console.log(error.response.data))
@@ -88,6 +95,9 @@ export default {
   },
 
   mutations: {
+    clear (state) {
+      Object.assign(state, getDefaultState())
+    },
     updateMyProfile (state, myProfileData) {
       state.myProfile = myProfileData
     },
@@ -108,14 +118,7 @@ export default {
     }
   },
 
-  state: {
-    myProfile: {},
-    myProfileId: '',
-    profile: {},
-    profileFollowers: [],
-    profileFollowings: [],
-    currentProfileFollowings: []
-  },
+  state: getDefaultState(),
 
   getters: {
     profileGetter (state) {
@@ -131,6 +134,9 @@ export default {
     },
     myProfile (state) {
       return state.myProfile
+    },
+    myProfileId (state) {
+      return state.myProfileId
     },
     followingIdsGetter (state) {
       let followingIds = []

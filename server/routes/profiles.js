@@ -11,8 +11,7 @@ const {
   saveProfile,
   uploadImage,
   setPreferences,
-  getFollowersById,
-  getFollowingsById,
+  getSubscriptionsById,
   profileAction
 } = require('../controllers/profiles')
 
@@ -29,30 +28,10 @@ router.get('/profile-action', protected, blocked, profileAction)
 // preferences
 router.post('/set-preferences', protected, setPreferences)
 
-// FOLLOWERS
-router.get('/get-followers/:id', protected, blocked, getFollowersById)
-
-// FOLLOWING
-router.get('/get-followings/:id', protected, blocked, getFollowingsById)
+// Followers followings
+router.get('/get-subscriptions', getSubscriptionsById)
 
 // Search logic
 router.post('/search-by-nick', searchByNick)
 
-// TODO
-
-// custom profile settings
-// delete profile
-
 module.exports = router
-
-// examples of correct queries with axios
-// GET api/profiles/get-profile?id=12345
-// GET api/profiles/get-profile?nickname=johndoe
-
-// POST api/profiles/upload-image?type=avatar  (with form data file, image format .png,.jpeg,.jpg)
-// POST api/profiles/upload-image?type=background  (with form data file, image format .png,.jpeg,.jpg)
-
-// GET api/profiles/profile-action?action=follow&id=12345
-// GET api/profiles/profile-action?action=unfollow&id=12345
-// GET api/profiles/profile-action?action=block&id=12345
-// GET api/profiles/profile-action?action=unblock&id=12345

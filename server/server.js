@@ -12,8 +12,6 @@ global.XMLHttpRequest = XMLHttpRequest
 const auth = require('./routes/auth')
 const profiles = require('./routes/profiles')
 const posts = require('./routes/posts')
-const preferences = require('./routes/preferences')
-const feed = require('./routes/feed')
 
 // Run server
 const app = express()
@@ -30,15 +28,11 @@ app.use('/api/posts', posts)
 
 //Profiles route
 app.use('/api/profiles', profiles)
-//addPref
-app.use('/api/preferences', preferences)
-
-app.use('/api/feed', feed)
 
 app.use(errorHandler)
 
-
-const PORT = process.env.port || 5000
+// const PORT = process.env.port || 5000
+const PORT = 5000
 
 app.listen(
   PORT,

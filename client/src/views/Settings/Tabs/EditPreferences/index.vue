@@ -24,7 +24,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { isAuthorized } from '../../../Authentication/Authorized'
+import { isAuthorized } from '@/services/Authorized.js'
 
 export default {
   name: 'EditPreferences',
@@ -33,15 +33,22 @@ export default {
       preferences: []
     }
   },
+  async created () {
+    try {
+      const auth = await isAuthorized()
+      this.isAuthenticated = auth
+    } catch (e) {
+      this.isAuthenticated = false
+    }
+  },
   async beforeMount () {
-    if (isAuthorized()) {
+    if (this.isAuthenticated) {
       await this.getMyProfile()
       if (this.myProfile.preferences.length !== 0) {
         this.updateTagState(this.myProfile.preferences)
       }
     }
   },
-
   methods: {
     ...mapActions('preferences', ['updatePreference', 'updateTagState']),
     ...mapActions({ getMyProfile: 'profile/getMyProfile', setPreferences: 'profile/setPreferencesAction' }),

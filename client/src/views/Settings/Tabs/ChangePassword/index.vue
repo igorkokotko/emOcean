@@ -1,19 +1,16 @@
 <template>
   <q-page>
-    <q-form
-      class="q-gutter-md"
-      @submit="onFormSubmit"
-    >
+    <q-form class="q-gutter-md" @submit="onFormSubmit">
       <q-input
         label="Current password"
         placeholder="Type your current password"
         v-model="formModel.currentPassword"
-        :type="isCurrentPassVisible ? 'password' : 'text'"
+        :type="isCurrentPassVisible ? 'text' : 'password'"
         :rules="[requiredField]"
       >
         <template v-slot:append>
           <q-icon
-            :name="isCurrentPassVisible ? 'visibility_off' : 'visibility'"
+            :name="isCurrentPassVisible ? 'visibility' : 'visibility_off'"
             class="cursor-pointer"
             @click="isCurrentPassVisible = !isCurrentPassVisible"
           />
@@ -23,13 +20,13 @@
         label="New password"
         placeholder="Type your new password"
         v-model="formModel.newPassword"
-        :type="isNewPassVisible ? 'password' : 'text'"
+        :type="isNewPassVisible ? 'text' : 'password'"
         :rules="[checkPasswordField, requiredField]"
         lazy-rules
       >
         <template v-slot:append>
           <q-icon
-            :name="isNewPassVisible ? 'visibility_off' : 'visibility'"
+            :name="isNewPassVisible ? 'visibility' : 'visibility_off'"
             class="cursor-pointer"
             @click="isNewPassVisible = !isNewPassVisible"
           />
@@ -39,26 +36,21 @@
         label="Confirm new password"
         placeholder="Confirm your new password"
         v-model="formModel.confirmNewPassword"
-        :type="isConfirmNewPassVisible ? 'password' : 'text'"
+        :type="isConfirmNewPassVisible ? 'text' : 'password'"
         :rules="[checkConfirmPassword, requiredField]"
         lazy-rules
       >
         <template v-slot:append>
           <q-icon
-            :name="isConfirmNewPassVisible ? 'visibility_off' : 'visibility'"
+            :name="isConfirmNewPassVisible ? 'visibility' : 'visibility_off'"
             class="cursor-pointer"
             @click="isConfirmNewPassVisible = !isConfirmNewPassVisible"
           />
         </template>
       </q-input>
       <div class="q-pt-md">
-        <q-btn
-          label="Change password"
-          type="submit"
-          rounded
-          color="secondary"
-        />
-        <br>
+        <q-btn label="Change password" type="submit" rounded color="secondary" />
+        <br />
         <q-btn
           label="Forgot password?"
           @click="onForgotPasswordClick"
@@ -78,14 +70,14 @@ import {
   checkPasswordField,
   checkRepeatPasswordField
 } from '@/utilities/validation.js'
-import authService from '@/services/auth.js'
+import { changePassword } from '@/services/auth.js'
 
 export default {
   data () {
     return {
-      isCurrentPassVisible: true,
-      isNewPassVisible: true,
-      isConfirmNewPassVisible: true,
+      isCurrentPassVisible: false,
+      isNewPassVisible: false,
+      isConfirmNewPassVisible: false,
       formModel: {
         currentPassword: '',
         newPassword: '',
@@ -109,7 +101,7 @@ export default {
         actions: [{ icon: 'close', color: 'white' }],
         timeout: 3000
       }
-      authService.changePassword({
+      changePassword({
         oldPassword: this.formModel.currentPassword,
         newPassword: this.formModel.newPassword
       })

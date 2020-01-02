@@ -1,16 +1,23 @@
 import {
   getPostsByType,
   savePost
-} from '@/services/posts'
+} from '@/services/post'
 
-const state = {
-  posts: [],
-  index: 'Last index',
-  errors: [],
-  loading: false
+const getDefaultState = () => {
+  return {
+    posts: [],
+    index: 'Last index',
+    errors: [],
+    loading: false
+  }
 }
 
+const state = getDefaultState()
+
 const mutations = {
+  clear (state) {
+    Object.assign(state, getDefaultState())
+  },
   addPost (state, payload) {
     state.posts = [payload.post, ...state.posts]
   },
@@ -52,6 +59,9 @@ const mutations = {
 }
 
 const actions = {
+  clear ({ commit }) {
+    commit('clear')
+  },
   async getUserPostsAction ({ commit }, payload) {
     commit('setLoading', true)
     commit('clearUserPosts')
@@ -173,6 +183,9 @@ const actions = {
       commit('updateErrors', error.response.data)
       commit('setLoading', false)
     }
+  },
+  clearPostsAction ({ commit }) {
+    commit('clearPosts')
   }
 }
 

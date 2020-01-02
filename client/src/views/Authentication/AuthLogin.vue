@@ -10,17 +10,20 @@
 
 <script>
 import AuthLoginComponent from './AuthLoginComponent.vue'
-const Authorized = require('./Authorized.js')
+import { isAuthorized } from '@/services/Authorized.js'
 
 export default {
   components: {
     AuthLoginComponent
   },
   beforeRouteEnter: (to, from, next) => {
-    if (Authorized.isAuthorized()) {
-      return next('/feed')
-    }
-    next()
+    isAuthorized()
+      .then(res => {
+        return res ? next('/feed') : next()
+      })
+      .catch(() => {
+        return next()
+      })
   }
 }
 </script>

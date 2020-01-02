@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { isAuthorized } from './Authorized.js'
+import { isAuthorized } from '@/services/Authorized.js'
 
 export default {
   data () {
@@ -31,8 +31,13 @@ export default {
       this.showBanner = false
     }
   },
-  created () {
-    if (isAuthorized()) this.showBanner = false
+  async created () {
+    try {
+      const auth = await isAuthorized()
+      this.showBanner = !auth
+    } catch (e) {
+      this.showBanner = true
+    }
   }
 }
 </script>

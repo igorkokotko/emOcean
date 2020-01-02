@@ -58,63 +58,31 @@ const savePost = async (userId, postData) => {
   return post
 }
 
-const getPostsByViews = async (paginateId, postsCount) => {
+const getPostsByViews = async (paginateId, postsLimit) => {
   let postsRefQuery = db
     .collection('posts')
     .orderBy('views', 'desc')
-    .limit(postsCount)
-  if (paginateId) {
-    const paginateRef = db.collection('posts').doc(paginateId)
-    const postsSnapshot = await paginateRef.get()
-    postsRefQuery = postsRefQuery.startAfter(postsSnapshot)
-  }
-  const docSnapshots = await postsRefQuery.get()
-  const { length } = docSnapshots.docs
-  if (length > 0) {
-    const lastIndex = docSnapshots.docs[length - 1].id
-    const data = []
-    docSnapshots.forEach(doc => {
-      data.push(doc.data())
-    })
-    return { data, lastIndex }
-  } else {
-    return 'No more posts left'
-  }
+    .limit(postsLimit)
+  return await getPostsByQuery(postsRefQuery, paginateId, postsLimit)
 }
 
-const getPostsByTags = async (tags, paginateId, postsCount) => {
+const getPostsByTags = async (paginateId, postsLimit, tags) => {
   let postsRefQuery = db
     .collection('posts')
     .orderBy('createdAt', 'desc')
     .where('tags', 'array-contains-any', tags)
-    .limit(postsCount)
-  if (paginateId) {
-    const paginateRef = db.collection('posts').doc(paginateId)
-    const snapshot = await paginateRef.get()
-    postsRefQuery = postsRefQuery.startAfter(snapshot)
-  }
-  const docSnapshots = await postsRefQuery.get()
-  const { length } = docSnapshots.docs
-  if (length > 0) {
-    const lastIndex = docSnapshots.docs[length - 1].id
-    const data = []
-    docSnapshots.forEach(doc => {
-      data.push(doc.data())
-    })
-    return { data, lastIndex }
-  } else {
-    return 'No more posts left'
-  }
+    .limit(postsLimit)
+  return await getPostsByQuery(postsRefQuery, paginateId, postsLimit)
 }
 
-const getPostsByPreferences = async (id, paginateId, postsCount) => {
+const getPostsByPreferences = async (paginateId, postsLimit, id) => {
   const userProfileRef = db.collection('users').doc(id)
   const userDoc = await userProfileRef.get()
   const { preferences } = userDoc.data()
   if (preferences.length === 0) {
     throw new CustomError({
       name: 'Bad Request',
-      message: 'You don\'t have any preferences, please go to settings and pick some of them',
+      message: 'No more posts left',
       status: 400
     })
   }
@@ -122,34 +90,18 @@ const getPostsByPreferences = async (id, paginateId, postsCount) => {
     .collection('posts')
     .orderBy('createdAt', 'desc')
     .where('tags', 'array-contains-any', preferences)
-    .limit(postsCount)
-  if (paginateId) {
-    const paginateRef = db.collection('posts').doc(paginateId)
-    const snapshot = await paginateRef.get()
-    postsRefQuery = postsRefQuery.startAfter(snapshot)
-  }
-  const docSnapshots = await next.get()
-  const { length } = docSnapshots.docs
-  if (length > 0) {
-    const lastIndex = docSnapshots.docs[length - 1].id
-    const data = []
-    docSnapshots.forEach(doc => {
-      data.push(doc.data())
-    })
-    return { data, lastIndex }
-  } else {
-    return 'No more posts left'
-  }
+    .limit(postsLimit)
+  return await getPostsByQuery(postsRefQuery, paginateId, postsLimit)
 }
 
-const getPostsByFollowings = async (id, index, postsLimit) => {
+const getPostsByFollowings = async (index, postsLimit, id) => {
   let lastCreated, lastAction, lastIndex
   let postsQueryRef = db
     .collection('users-posts')
     .where('followers', 'array-contains', id)
     .limit(postsLimit)
     .orderBy('lastAction', 'desc')
-  if (index && index !== 'Last index') {
+  if (index) {
     const indexArray = index.split('-')
     lastCreated = indexArray[0]
     lastAction = indexArray[1]
@@ -257,12 +209,187 @@ const getUserPosts = async userId => {
       post.nickname = nickname
       post.avatarUrl = avatarUrl
       return post
+    }).reverse()
+  }
+}
+
+const getPostsByQuery = async (query, paginateId, postsLimit) => {
+  let postsRefQuery = query
+  if (paginateId) {
+    const paginateRef = db.collection('posts').doc(paginateId)
+    const snapshot = await paginateRef.get()
+    postsRefQuery = query.startAfter(snapshot)
+  }
+  const docSnapshots = await postsRefQuery.get()
+  const { length } = docSnapshots.docs
+  if (length > 0) {
+    const lastIndex =
+      length >= postsLimit
+        ? docSnapshots.docs[length - 1].id
+        : 'Last index'
+    const data = []
+    docSnapshots.forEach(doc => {
+      data.push(doc.data())
     })
+    return { data, lastIndex }
+  } else {
+    throw new CustomError({
+      name: 'Bad Request',
+      message: 'No more posts left',
+      status: 404
+    })
+  }
+}
+
+const updateLikes = function (postId, userId) {
+  const postRef = db.collection('posts').doc(postId)
+
+  return db
+    .runTransaction(t => {
+      return t.get(postRef).then(docPost => {
+        const postOwnerId = docPost.data().userId
+        const userPostsRef = db.collection('users-posts').doc(postOwnerId)
+        return t.get(userPostsRef).then(userPostsDoc => {
+          const {
+            likes,
+            likesCount
+          } = docPost.data()
+          const {
+            posts,
+            likedPosts
+          } = userPostsDoc.data().posts
+
+          let like = (likedPosts.includes(postId) && likes.includes(userId))? false : true
+
+          const newLikes = (like) ? likes.push(userId) : likes.filter(like => like !== userId)
+          const newLikesCount = (like) ? likesCount++ : likesCount--
+          const newLikedPosts = (like) ? likedPosts.push(postId) : likedPosts.filter(like => like !== postId)
+          const newPosts = posts.map(post => {
+            if (post.postId === postId) {
+              (like) ? post.likes++ : post.likes--
+            }
+            return post
+          })
+          
+          t.update(postRef, {
+            likes: newLikes,
+            likesCount: newLikesCount
+          })
+          t.update(userPostsRef, {
+            likedPosts: newLikedPosts,
+            posts: newPosts
+          })
+
+          return like ? 'like' : 'dislike'
+        })
+      })
+    })
+    .then(res => {
+      return res
+    })
+}
+
+const incrementViewsCounter = function (postId, userId) {
+  const postRef = db.collection('posts').doc(postId)
+
+  return db.runTransaction(t => {
+      return t.get(postRef).then(docPost => {
+        const postOwnerId = docPost.data().userId
+        const userPostsRef = db.collection('users-posts').doc(postOwnerId)
+        return t.get(userPostsRef).then(userPostsDoc => {
+          const ownerPosts = userPostsDoc.data().posts
+          const views = docPost.data().views || 0
+          views++
+          t.update(postRef, {
+            views: views
+          })
+          t.update(userPostsDoc, {
+            posts: ownerPosts.map(post => {
+              if (post.postId === postId) {
+                post.views = views
+              }
+              return post
+            })
+          })
+          return views
+        })
+      })
+    })
+    .then(res => {
+      return res
+    })
+}
+
+const getUserLikedPosts = async function (userId) {
+  const userRef = db.collection('users-posts').doc(userId)
+
+  return userRef.get().then(doc => {
+    if (!doc.exists) {
+      throw new CustomError({
+        name: 'DatabaseError',
+        message: 'No user with given id',
+        status: 404
+      })
+    }
+    const postsId = doc.data().likedPosts || []
+    return postsId
+  })
+}
+
+const getPostInfo = function (postId) {
+  const postRef = db.collection('posts').doc(postId)
+
+  return postRef.get().then(doc => {
+    if (!doc.exists) {
+      throw new CustomError({
+        name: 'DatabaseError',
+        message: 'No post with given id',
+        status: 404
+      })
+    }
+
+    const info = doc.data() || []
+    return info
+  })
+}
+const getPostsByEmoji = async (emoji, paginateId, postsCount) => {
+  let postsRefQuery = db
+    .collection('posts')
+    .orderBy('createdAt', 'desc')
+    .where('emoji', '==', emoji)
+    .limit(postsCount)
+
+  if (paginateId) {
+    const paginadeDocRef = db.collection('posts1').doc(paginateId)
+    const snapshot = await paginadeDocRef.get()
+    postsRefQuery = postsRefQuery.startAfter(snapshot)
+  }
+  const docSnapshots = await postsRefQuery.get()
+  const {
+    length
+  } = docSnapshots.docs
+  if (length > 0) {
+    const lastIndex = docSnapshots.docs[length - 1].id
+    const data = []
+    docSnapshots.forEach(doc => {
+      data.push(doc.data())
+    })
+    return {
+      data,
+      lastIndex
+    }
+  } else {
+    return 'No more posts left'
   }
 }
 
 module.exports = {
   uploadVideo,
+  updateLikes,
+  incrementViewsCounter,
+  getUserLikedPosts,
+  getPostInfo,
+  getPostsByEmoji,
   savePost,
   editPost,
   deletePost,
@@ -270,7 +397,5 @@ module.exports = {
   getPostsByFollowings,
   getPostsByTags,
   getPostsByPreferences,
-  updateLikes,
-  incrementViewsCounter,
   getUserPosts
 }
