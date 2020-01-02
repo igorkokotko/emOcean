@@ -2,6 +2,7 @@ import {
   getProfile,
   updateProfile,
   setPreferences,
+  profileAction,
   getSubscriptionsById
 } from '@/services/profile'
 import axios from 'axios'
@@ -10,10 +11,10 @@ const getDefaultState = () => {
   return {
     myProfile: {},
     myProfileId: '',
+    message: [],
     profile: {},
     profileFollowers: [],
-    profileFollowings: [],
-    currentProfileFollowings: []
+    profileFollowings: []
   }
 }
 
@@ -48,40 +49,26 @@ export default {
           }
         })
     },
-    uploadFollowers ({ commit }, id) {
-      axios
-        .get('/api/profiles/get-followers/' + id)
-        .then(response => {
-          commit('updateFollowers', response.data.followers)
-        })
-        .catch(error => {
-          if (error) {
-            commit('updateFollowers', [])
-          }
-        })
-    },
     clearSubs ({ commit }) {
       commit('clearSubscriptions')
     },
     async uploadSubscriptions ({ commit }, data) {
       try {
-        commit('setLoading', true)
         const response = await getSubscriptionsById(data.id, data.type)
-        commit('setLoading', false)
         commit('updateSubscriptions', { type: data.type, data: response.data.result.data })
       } catch (error) {
-        commit('setLoading', false)
         commit('setErrors', error.response.data)
         commit('updateSubscriptions', { type: data.type, data: [] })
       }
     },
     uploadProfileAction ({ commit }, data) {
-      axios
-        .get('/api/profiles/profile-action?action=' + data.action + '&id=' + data.id)
+      profileAction(data)
         .then(response => {
-          commit('', response.data)
+          commit('updateMessage', response.data)
         })
-        .catch(error => console.log(error.response.data))
+        .catch(error => {
+          commit('setErrors', error.response.data)
+        })
     },
     async setPreferencesAction ({ commit }, preferences) {
       await setPreferences({ preferences })
@@ -92,6 +79,9 @@ export default {
   mutations: {
     clear (state) {
       Object.assign(state, getDefaultState())
+    },
+    updateMessage (state, myProfileData) {
+      state.message = []
     },
     updateMyProfile (state, myProfileData) {
       state.myProfile = myProfileData
@@ -119,7 +109,7 @@ export default {
 
   getters: {
     profileGetter (state) {
-      window.localStorage.setItem('lastProfileId', state.profile.profile_id)
+      window.localStorage.setItem('lastProfileId', state.profile.userId)
       return state.profile
     },
     followingGetter (state) {
