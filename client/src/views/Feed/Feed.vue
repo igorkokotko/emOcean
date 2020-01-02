@@ -278,9 +278,7 @@ export default {
 }
 .content p {
   color: #dbe4e2;
-}
-.test-wrapper {
-  background: #000;
+  text-align: left;
 }
 .video-container {
   padding: 7px;

@@ -134,10 +134,10 @@ export default {
         return
       }
       let captionArr = this.$refs.textarea.value.split(' ')
-      captionArr.filter(word => {
-        if (word.match(/#\w+/)) {
-          word = word.slice(1)
-          this.post.tags.push(word)
+      captionArr.forEach((el) => {
+        if (el.match(/#\w+/)) {
+          el = el.slice(1)
+          this.post.tags.push(el)
         }
       })
       this.post.caption = this.$refs.textarea.value
