@@ -191,7 +191,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
 .empty-message {
   width: 350px;
@@ -212,112 +212,6 @@ export default {
     top: 23px;
   }
 }
-.heart-and-comments {
-  flex-direction: column;
-  position: absolute;
-  right: 3%;
-  top: 35%;
-  bottom: 65%;
-  cursor: pointer;
-  .heart i {
-    display: inline;
-    color: #dbe4e2;
-  }
-  .likes {
-    display: inline-block;
-    text-align: center;
-    font-size: 3.2vmin;
-    width: 7vmin;
-    margin: 5px 0;
-    font-weight: 100;
-    color: #dbe4e2;
-  }
-  .comments-icon {
-    display: inline-block;
-    font-size: large;
-    height: 25px;
-    cursor: pointer;
-  }
-  .comments-icon i::before,
-  .heart i::before {
-    font-size: 4vmin;
-    color: #dbe4e2;
-  }
-  .comments-icon p {
-    display: inline-block;
-    vertical-align: bottom;
-    font-size: 3.2vmin;
-    width: 7vmin;
-    margin: 5px 0;
-    text-align: center;
-    color: #dbe4e2;
-  }
-  .comments-counter {
-    text-align: center;
-  }
-}
-.content .caption {
-  position: absolute;
-  bottom: 3%;
-  width: 90%;
-  font-size: 0.85rem;
-  word-wrap: break-word;
-  span {
-    font-weight: bold;
-  }
-}
-.content .caption2 {
-  position: absolute;
-  width: 88%;
-  bottom: 4%;
-  font-size: 0.85rem;
-  word-wrap: break-word;
-  span {
-    font-weight: bold;
-  }
-}
-.content p {
-  color: #dbe4e2;
-  text-align: left;
-}
-.video-container {
-  padding: 7px;
-  max-width: 800px;
-  position: relative;
-  background: #87e0f5;
-  border-radius: 11px;
-  box-shadow: 1px 1px 18px;
-  img {
-    border-radius: 99px;
-    top: 17%;
-  }
-  .image {
-    right: 5%;
-    position: absolute;
-    top: 8%;
-    margin: 0;
-  }
-  .image.is-32x32 img {
-    height: 32px;
-    width: 32px;
-  }
-}
-.feed-post {
-  position: relative;
-  padding: 10px;
-  .content-wrapper {
-    margin: 7.5px 10px;
-  }
-  video {
-    max-width: 100%;
-    padding: 0px;
-    background: #000;
-    margin-bottom: -6px;
-  }
-  .fas.fa-heart {
-    color: #f06595;
-  }
-}
 #feed {
   position: relative;
   width: 100%;
@@ -325,22 +219,7 @@ export default {
   display: grid;
   justify-content: center;
 }
-::-webkit-scrollbar {
-  display: none;
-}
-.caption-container {
-  display: flex;
-  textarea {
-    border: 0;
-    font-size: 1rem;
-    width: 100%;
-    padding: 10px;
-    border-bottom: 1px solid #eeeeee;
-  }
-  textarea:focus {
-    outline: 0;
-  }
-}
+
 @media (max-width: 699px) {
   .big-btn {
     display: none;

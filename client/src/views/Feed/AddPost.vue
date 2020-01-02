@@ -181,7 +181,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .video-add-emoji {
   font-size: 1.5em;
 }
