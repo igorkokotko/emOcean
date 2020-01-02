@@ -1,30 +1,30 @@
 <template>
   <q-item class="follow-item" v-if="item">
     <q-item-section avatar>
-      <avatar
-        class="follow-avatar"
-        :img="item.avatar_url"
-        :size="'30'"
-      />
+      <avatar class="follow-avatar" :img="item.avatarUrl" :size="'30'" />
     </q-item-section>
 
     <q-item-section>
       <q-item-label class="name">
         <router-link :to="{ name: 'profile', params: { nickname: item.nickname }}">
-          <strong>{{ item.nickname }} </strong>
+          <strong>{{ item.nickname }}</strong>
         </router-link>
       </q-item-label>
     </q-item-section>
     <q-item-section side>
-      <FollowButton class="follow-btn" v-if="currentUserId !== item.id" :following="followingIdsGetter.includes(item.id)" :id="item.id"></FollowButton>
+      <FollowButton class="follow-btn" v-if="currentUserId !== item.userId" :id="item.userId"
+        :following="
+          (myProfile.followingsId &&
+           myProfile.followingsId.includes(item.userId))">
+      </FollowButton>
     </q-item-section>
   </q-item>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
 import FollowButton from '../Profile/Card/followBtn'
 import Avatar from '../../components/Avatar'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -34,19 +34,17 @@ export default {
   props: {
     item: Object
   },
-  data () {
-    return {
-    }
-  },
-  computed: { ...mapGetters({ followingIdsGetter: 'profile/followingIdsGetter' }),
+  computed: {
+    ...mapGetters({ myProfile: 'profile/myProfile' }),
     currentUserId () {
       return localStorage.getItem('profileId')
     }
   },
-  mounted () {
-    this.uploadCurrentFollowings(this.currentUserId)
-  },
-  methods: mapActions({ uploadCurrentFollowings: 'profile/uploadCurrentFollowings' })
+  methods: {
+    ...mapActions({
+      getMyProfile: 'profile/getMyProfile'
+    })
+  }
 }
 </script>
 
