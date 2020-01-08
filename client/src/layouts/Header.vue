@@ -7,7 +7,7 @@
           <img src="@/assets/img/logo.jpeg" class="logo gt-xs" />
         </div>
         <div v-if="isAuthenticated" class="backToProfile">
-          <span>Hi, there,</span>
+          <span>Hi there,</span>
           <router-link
             class="myProfileRouterlink"
             :to="{
