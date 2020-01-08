@@ -8,6 +8,20 @@ const uploadVideo = async (video, userId, dest) => {
   return videoRef.getDownloadURL()
 }
 
+const searchPostsByQuery = async (paginateId, postsLimit, query) => {
+  let postsRefQuery = db
+    .collection('posts')
+    .orderBy('createdAt', 'desc')
+    .limit(postsLimit)
+  if (typeof query === 'object') {
+    postsRefQuery = postsRefQuery.where('tags', 'array-contains-any', query)
+  }
+  if (typeof query === 'string') {
+    postsRefQuery = postsRefQuery.where('emoji', '==', query)
+  }
+  return await getPostsByQuery(postsRefQuery, paginateId, postsLimit)
+}
+
 const savePost = async (userId, postData) => {
   const { caption, videoUrl, emoji, tags } = postData
   const createdAt = Date.now()
@@ -62,15 +76,6 @@ const getPostsByViews = async (paginateId, postsLimit) => {
   let postsRefQuery = db
     .collection('posts')
     .orderBy('views', 'desc')
-    .limit(postsLimit)
-  return await getPostsByQuery(postsRefQuery, paginateId, postsLimit)
-}
-
-const getPostsByTags = async (paginateId, postsLimit, tags) => {
-  let postsRefQuery = db
-    .collection('posts')
-    .orderBy('createdAt', 'desc')
-    .where('tags', 'array-contains-any', tags)
     .limit(postsLimit)
   return await getPostsByQuery(postsRefQuery, paginateId, postsLimit)
 }
@@ -221,17 +226,22 @@ const getPostsByQuery = async (query, paginateId, postsLimit) => {
     postsRefQuery = query.startAfter(snapshot)
   }
   const docSnapshots = await postsRefQuery.get()
-  const { length } = docSnapshots.docs
+  const {
+    length
+  } = docSnapshots.docs
   if (length > 0) {
     const lastIndex =
-      length >= postsLimit
-        ? docSnapshots.docs[length - 1].id
-        : 'Last index'
+      length >= postsLimit ?
+      docSnapshots.docs[length - 1].id :
+      'Last index'
     const data = []
     docSnapshots.forEach(doc => {
       data.push(doc.data())
     })
-    return { data, lastIndex }
+    return {
+      data,
+      lastIndex
+    }
   } else {
     throw new CustomError({
       name: 'Bad Request',
@@ -241,69 +251,69 @@ const getPostsByQuery = async (query, paginateId, postsLimit) => {
   }
 }
 
-const updateLikes = function (postId, userId) {
+const updateLikes = async (postId, userId) => {
   const postRef = db.collection('posts').doc(postId)
+  return await db.runTransaction(async t => {
+    const docPost = await t.get(postRef)
+    const postOwnerId = docPost.data().userId
+    const userPostsRef = db.collection('users-posts').doc(postOwnerId)
+    const myPostsRef = db.collection('users-posts').doc(userId)
+    const userPostsDoc = await t.get(userPostsRef)
+    const myPostsDoc = await t.get(myPostsRef)
+    const {
+      likes,
+      likesCount
+    } = docPost.data()
+    const {
+      posts
+    } = userPostsDoc.data()
+    const {
+      likedPosts
+    } = myPostsDoc.data()
+    let like = (!likedPosts.includes(postId)) ? true : false
+    const newLike = {
+      userId: userId,
+      date: Date.now()
+    }
 
-  return db
-    .runTransaction(t => {
-      return t.get(postRef).then(docPost => {
-        const postOwnerId = docPost.data().userId
-        const userPostsRef = db.collection('users-posts').doc(postOwnerId)
-        return t.get(userPostsRef).then(userPostsDoc => {
-          const {
-            likes,
-            likesCount
-          } = docPost.data()
-          const {
-            posts,
-            likedPosts
-          } = userPostsDoc.data().posts
-
-          let like = (likedPosts.includes(postId) && likes.includes(userId))? false : true
-
-          const newLikes = (like) ? likes.push(userId) : likes.filter(like => like !== userId)
-          const newLikesCount = (like) ? likesCount++ : likesCount--
-          const newLikedPosts = (like) ? likedPosts.push(postId) : likedPosts.filter(like => like !== postId)
-          const newPosts = posts.map(post => {
-            if (post.postId === postId) {
-              (like) ? post.likes++ : post.likes--
-            }
-            return post
-          })
-          
-          t.update(postRef, {
-            likes: newLikes,
-            likesCount: newLikesCount
-          })
-          t.update(userPostsRef, {
-            likedPosts: newLikedPosts,
-            posts: newPosts
-          })
-
-          return like ? 'like' : 'dislike'
-        })
-      })
+    const newLikes = (like) ? [...likes, newLike] : likes.filter(el => el.userId !== userId)
+    const newLikesCount = (like) ? likesCount + 1 : likesCount - 1
+    const newLikedPosts = (like) ? [...likedPosts, postId] : likedPosts.filter(el => el !== postId)
+    const newPosts = posts.map(post => {
+      if (post.postId === postId) {
+        (like) ? post.likesCount++: post.likesCount--
+        post.likes = newLikes
+      }
+      return post
     })
-    .then(res => {
-      return res
+    t.update(postRef, {
+      likes: newLikes,
+      likesCount: newLikesCount
     })
+    t.update(userPostsRef, {
+      posts: newPosts
+    })
+    t.update(myPostsRef, {
+      likedPosts: newLikedPosts
+    })
+    return like ? 'like' : 'dislike'
+  })
 }
 
 const incrementViewsCounter = function (postId, userId) {
   const postRef = db.collection('posts').doc(postId)
-
   return db.runTransaction(t => {
       return t.get(postRef).then(docPost => {
         const postOwnerId = docPost.data().userId
         const userPostsRef = db.collection('users-posts').doc(postOwnerId)
         return t.get(userPostsRef).then(userPostsDoc => {
           const ownerPosts = userPostsDoc.data().posts
-          const views = docPost.data().views || 0
+          let views = docPost.data().views || 0
           views++
           t.update(postRef, {
             views: views
           })
-          t.update(userPostsDoc, {
+          t.update(userPostsRef, {
             posts: ownerPosts.map(post => {
               if (post.postId === postId) {
                 post.views = views
@@ -336,6 +346,23 @@ const getUserLikedPosts = async function (userId) {
   })
 }
 
+const getPostLikes = function (postId) {
+  const postRef = db.collection('posts').doc(postId)
+
+  return postRef.get().then(doc => {
+    if (!doc.exists) {
+      throw new CustomError({
+        name: 'DatabaseError',
+        message: 'No post with given id',
+        status: 404
+      })
+    }
+
+    const likesArr = doc.data().likes || []
+    return likesArr
+  })
+}
+
 const getPostInfo = function (postId) {
   const postRef = db.collection('posts').doc(postId)
 
@@ -352,36 +379,6 @@ const getPostInfo = function (postId) {
     return info
   })
 }
-const getPostsByEmoji = async (emoji, paginateId, postsCount) => {
-  let postsRefQuery = db
-    .collection('posts')
-    .orderBy('createdAt', 'desc')
-    .where('emoji', '==', emoji)
-    .limit(postsCount)
-
-  if (paginateId) {
-    const paginadeDocRef = db.collection('posts1').doc(paginateId)
-    const snapshot = await paginadeDocRef.get()
-    postsRefQuery = postsRefQuery.startAfter(snapshot)
-  }
-  const docSnapshots = await postsRefQuery.get()
-  const {
-    length
-  } = docSnapshots.docs
-  if (length > 0) {
-    const lastIndex = docSnapshots.docs[length - 1].id
-    const data = []
-    docSnapshots.forEach(doc => {
-      data.push(doc.data())
-    })
-    return {
-      data,
-      lastIndex
-    }
-  } else {
-    return 'No more posts left'
-  }
-}
 
 module.exports = {
   uploadVideo,
@@ -389,13 +386,13 @@ module.exports = {
   incrementViewsCounter,
   getUserLikedPosts,
   getPostInfo,
-  getPostsByEmoji,
   savePost,
   editPost,
   deletePost,
   getPostsByViews,
   getPostsByFollowings,
-  getPostsByTags,
+  searchPostsByQuery,
   getPostsByPreferences,
-  getUserPosts
+  getUserPosts,
+  getPostLikes
 }

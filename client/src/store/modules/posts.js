@@ -1,6 +1,10 @@
 import {
-  getPostsByType,
-  savePost
+  savePost,
+  getUserPostsById,
+  getPostsByViews,
+  getPostsByPreferences,
+  getPostsByFollowings,
+  getPostsByTag
 } from '@/services/post'
 
 const getDefaultState = () => {
@@ -153,39 +157,7 @@ const actions = {
     commit('dislikePost', postId)
   },
   likePost ({ commit }, postId) {
-    commit('likePost', postId),
-  async addPostAction ({ commit }, payload) {
-    try {
-      commit('setLoading', true)
-      const response = await savePost(payload)
-      commit('addPost', { post: response.data.result })
-      commit('setLoading', false)
-    } catch (err) {
-      commit('updateErrors', err.response.data)
-      commit('setLoading', false)
-    }
-  },
-  async getPostsAction ({ commit }, payload) {
-    try {
-      commit('setLoading', true)
-      if (!payload.index) {
-        commit('clearPosts')
-        commit('setIndex', 'Last index')
-      }
-      const response = await getPostsByType(payload)
-      commit('setPosts', response.data.result.data)
-      commit('setIndex', response.data.result.lastIndex)
-      commit('setLoading', false)
-    } catch (error) {
-      if (error.response.data.error === 'No more posts left') {
-        commit('setIndex', 'Last index')
-      }
-      commit('updateErrors', error.response.data)
-      commit('setLoading', false)
-    }
-  },
-  clearPostsAction ({ commit }) {
-    commit('clearPosts')
+    commit('likePost', postId)
   }
 }
 
