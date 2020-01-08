@@ -1,7 +1,11 @@
 <template>
   <q-item class="follow-item" v-if="item">
     <q-item-section avatar>
-      <avatar class="follow-avatar" :img="item.avatarUrl" :size="'30'" />
+      <avatar
+        class="follow-avatar"
+        :img="item.avatarUrl"
+        :size="'30'"
+      />
     </q-item-section>
 
     <q-item-section>
