@@ -1,11 +1,6 @@
 <template>
   <div>
-    <div class="profile-header" :style="{ backgroundImage: userBackground }">
-      <div class="view-counter" v-if="profileGetter.counters">
-        <i class="fas fa-eye"></i>
-<!--        {{profileGetter.counters.views}}-->
-      </div>
-    </div>
+    <div class="profile-header" :style="{ backgroundImage: userBackground }"></div>
     <div class="row wrapp">
       <div class="col-12 col-md-3 profile-card" >
         <profile-card :profile="profileGetter"/>
@@ -16,6 +11,7 @@
           </div>
         </div>
     </div>
+    <to-top-anchor></to-top-anchor>
   </div>
 </template>
 
@@ -23,11 +19,13 @@
 import { mapGetters, mapActions } from 'vuex'
 import ProfileCard from './Card/index'
 import switchVideo from './Card/switchVideo'
+import toTopAnchor from '../../components/ToTopAnchor'
 
 export default {
   components: {
     ProfileCard,
-    switchVideo
+    switchVideo,
+    toTopAnchor
   },
   computed: {
     ...mapGetters({ profileGetter: 'profile/profileGetter' }),
@@ -49,7 +47,10 @@ export default {
 
 <style lang="scss" scoped>
   .wrapp {
-    height: 500px;
+    min-height: calc(100vh - 260px);
+    .profile-content {
+      background: url("https://img5.goodfon.ru/wallpaper/nbig/1/ab/zima-sneg-snezhinki-fon-christmas-blue-winter-background-s-7.jpg");
+    }
   }
   .profile-header {
     background-position: center;
@@ -72,8 +73,5 @@ export default {
         color: blue;
       }
     }
-  }
-  .profile-content {
-    background-color: #9C27B0;
   }
 </style>
