@@ -1,6 +1,5 @@
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const postsService = require('../services/PostsService')
-const profilesService = require('../services/ProfilesService')
 const VideoHandler = require('../videoHandling/videoHandler')
 const clearTempFiles = require('../common/clearTempFiles')
 const CustomError = require('../common/CustomError')
@@ -44,7 +43,7 @@ const getPostsByType = asyncMiddleware(async (req, res, next) => {
   let value
   if (typesList.includes(type)) {
     const postsActions = {
-      search: 'searchPostsByQuery',
+      search: 'getPostsByTags',
       preferences: 'getPostsByPreferences',
       popular: 'getPostsByViews',
       followings: 'getPostsByFollowings'
@@ -55,13 +54,10 @@ const getPostsByType = asyncMiddleware(async (req, res, next) => {
       value = jwt.verify(token, process.env.JWT_SECRET).value.uid
     }
     if (type === 'search') {
-      if (req.query.tags) {
-        value = req.query.tags.split('-')
-      } else {
-        value = req.query.emoji
-      }
+      value = req.query.tags.split('-')
     }
     const result = await postsService[postMethod](paginateId, postsLimit, value)
+
     res.status(200).json({ result })
   } else {
     return next(
@@ -127,17 +123,18 @@ const incrementViewsCounter = asyncMiddleware(async (req, res) => {
 })
 
 const getPostLikes = asyncMiddleware(async (req, res, next) => {
-  const post_id = req.query.id
+  const post_id = req.params.postId
   const users_ids = await postsService.getPostLikes(post_id)
-  
-  const result = []
+
+  const users = []
   for (let i = 0; i < users_ids.length; i++) {
-    const userInfo = await profilesService.getProfileById(users_ids[i].userId)
-    userInfo.date = users_ids[i].date
-    result.push(userInfo)
+    const userInfo = await profilesService.getProfileById(users_ids[i])
+    users.push(userInfo)
   }
-  
-  res.status(200).json({ result })
+
+  res.status(200).json({
+    result: users
+  })
 })
 
 const getUserLikedPosts = asyncMiddleware(async (req, res) => {
@@ -145,7 +142,7 @@ const getUserLikedPosts = asyncMiddleware(async (req, res) => {
     id
   } = req.query
   const postsId = await postsService.getUserLikedPosts(id)
-  
+
   const posts = []
   for (let i = 0; i < postsId.length; i++) {
     const post = await postsService.getPostInfo(postsId[i])
@@ -156,15 +153,31 @@ const getUserLikedPosts = asyncMiddleware(async (req, res) => {
   })
 })
 
+const getPostsByEmoji = asyncMiddleware(async (req, res) => {
+  const {
+    emoji,
+    index,
+  } = req.query
+
+  const postsLimit = 5
+  const posts = await postsService.getPostsByEmoji(emoji, index, postsLimit)
+
+  res.status(200).json({
+    result: posts
+  })
+})
+
 module.exports = {
   savePost,
   deletePost,
   editPost,
   uploadVideos,
+  searchPosts,
   updateLikes,
   incrementViewsCounter,
   getPostLikes,
   getUserLikedPosts,
+  getPostsByEmoji,
   getUserPosts,
   getPostsByType
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="header" id="main-header" @click="visible">
+  <div class="header" @click="visible">
     <q-header bordered class="bg-white text-primary">
       <q-toolbar ref="toolbar">
         <div class="homeRouterLink" @click="navigate">
@@ -164,6 +164,7 @@ export default {
         this.nicknameSearchResults = []
       }
     }, 300),
+    
     searchTag: function () {
       if (this.userInput) {
         const hashRegex = /^#/
