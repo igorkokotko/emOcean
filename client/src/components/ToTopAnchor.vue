@@ -13,6 +13,9 @@ export default {
       scrollLimit: 150
     }
   },
+  mounted () {
+    window.addEventListener('scroll', this.onScroll)
+  },
   methods: {
     backToHeader () {
       let header = document.getElementById("main-header")
@@ -22,9 +25,6 @@ export default {
       let currentScrollPosition = window.pageYOffset
       this.showAnchor = currentScrollPosition > this.scrollLimit
     }
-  },
-  mounted () {
-    window.addEventListener('scroll', this.onScroll)
   }
 }
 </script>
