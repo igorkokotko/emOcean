@@ -2,7 +2,7 @@ import {
   getPostsByType,
   savePost,
   getUserPostsById
-} from '@/services/post'
+} from '@/services/posts'
 
 const getDefaultState = () => {
   return {

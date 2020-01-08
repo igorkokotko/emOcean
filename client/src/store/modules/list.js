@@ -1,4 +1,4 @@
-import { getLikedList } from '@/services/post'
+import { getLikedList } from '@/services/posts'
 
 const getDefaultState = () => {
   return {
