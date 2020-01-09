@@ -89,7 +89,9 @@ a {
 li {
   list-style: none;
 }
-
+::-webkit-scrollbar {
+  display: none;
+}
 .follow-item {
   .q-item__section {
     .follow-avatar {

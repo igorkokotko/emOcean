@@ -1,62 +1,70 @@
 <template>
-<div class="video-switch">
-  <q-tabs
-    v-model="tab"
-    class="text-white  inline-label shadow-2"
-  >
-    <q-tab name="my-videos">
-      <i class="far fa-play-circle"></i>
-    </q-tab>
-    <q-tab name="liked-videos">
-      <i class="far fa-heart"></i>
-    </q-tab>
-    <q-tab name="saved-videos">
-      <i class="far fa-bookmark"></i>
-    </q-tab>
-  </q-tabs>
+  <div class="video-switch">
+    <q-tabs v-model="tab" class="text-white inline-label shadow-2">
+      <q-tab name="my-videos">
+        <i class="far fa-play-circle"></i>
+      </q-tab>
+    </q-tabs>
     <q-tab-panels
       v-model="tab"
       animated
       transition-prev="scale"
       transition-next="scale"
-      class="bg-purple text-white text-center"
+      class="text-white text-center"
     >
-      <q-tab-panel name="my-videos">
-        <div class="text-h6">
-          My videos
+      <q-tab-panel name="my-videos" class="my-profile-videos">
+        <div id="switch-video-wrapper" v-if="userPosts && userPosts.length > 0 && !isLoading">
+          <div class="feed-post" v-for="post in userPosts" :key="post.postId">
+            <one-post :post="post" />
+          </div>
         </div>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-      </q-tab-panel>
-
-      <q-tab-panel name="liked-videos">
-        <div class="text-h6">Liked videos</div>
-        Ad molestiae non facere animi nobis, similique nemo velit reiciendis corporis impedit nam in.
-      </q-tab-panel>
-      <q-tab-panel name="saved-videos">
-        <div class="text-h6">Saved videos</div>
-        Nostrum necessitatibus expedita dolores? Voluptatem repudiandae magni ea.
+        <div v-else>This user have no posts=(</div>
       </q-tab-panel>
     </q-tab-panels>
-</div>
+  </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import SinglePost from '../../Feed/SinglePost'
+
 export default {
   data () {
     return {
       tab: 'my-videos'
     }
+  },
+  computed: {
+    ...mapGetters({ userPosts: 'posts/userPostsGetter', isLoading: 'posts/loadingGetter' })
+  },
+  components: {
+    'one-post': SinglePost
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.video-switch {
+  .q-tab-panels {
+    background-color: inherit;
+  }
   .q-tabs {
-    background: linear-gradient(45deg, blue, #F05924);
+    background: linear-gradient(45deg, blue, #f05924);
     font-family: "Roboto Slab", "Times New Roman", serif;
   }
   .far {
     font-size: 19px;
     color: white;
   }
+}
+#switch-video-wrapper{
+  display: grid;
+  justify-content: center;
+    .feed-post {
+        margin-bottom: 25px;
+        position: relative;
+        width: fit-content;
+      }
+}
+
 </style>
