@@ -30,6 +30,12 @@ const searchByNick = nickname => {
     })
 }
 
+const findByTag = (val) => {
+  let postsRef = db.collection('posts');
+  return postsRef.where('tag', 'array-contains', val).get()
+}
+
 module.exports = {
-  searchByNick
+  searchByNick,
+  findByTag
 }
