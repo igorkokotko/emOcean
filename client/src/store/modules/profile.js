@@ -1,5 +1,11 @@
-import { getProfile, updateProfile, setPreferences } from '@/services/profile'
-import axios from 'axios'
+import {
+  getProfileById,
+  getProfileByNickname,
+  updateProfile,
+  setPreferences,
+  getSubscriptionsById,
+  profileAction
+} from '@/services/profile'
 
 const getDefaultState = () => {
   return {
@@ -8,7 +14,9 @@ const getDefaultState = () => {
     profile: {},
     profileFollowers: [],
     profileFollowings: [],
-    currentProfileFollowings: []
+    errors: [],
+    message: [],
+    isLoading: false
   }
 }
 
@@ -21,82 +29,70 @@ export default {
     },
     updateMyProfile (ctx, editedData) {
       return updateProfile(editedData)
-    },
-    getMyProfile (ctx) {
-      return getProfile({ id: ctx.state.myProfileId })
-        .then((response) => {
-          ctx.commit('updateMyProfile', response.data.profile)
+        .then(() => {
+          ctx.commit('updateMyProfile', editedData)
         })
+    },
+    async getMyProfile (ctx) {
+      try {
+        const response = await getProfileById(ctx.state.myProfileId)
+        ctx.commit('updateMyProfile', response.data.profile)
+      } catch (error) {
+        ctx.commit('setErrors', error.response.data)
+      }
     },
     updateMyProfileId (ctx, myProfileId) {
       return ctx.commit('updateMyProfileId', myProfileId)
     },
-    uploadProfile ({ commit }, nickname) {
-      axios
-        .get('/api/profiles/get-profile?nickname=' + nickname)
-        .then(response => {
-          commit('updateProfile', response.data.profile)
-        })
-        .catch(error => {
-          if (error) {
-            commit('updateProfile', [])
-          }
-        })
+    async uploadProfile ({ commit }, nickname) {
+      try {
+        const response = await getProfileByNickname(nickname)
+        commit('updateProfile', response.data.profile)
+      } catch (error) {
+        if (error) {
+          commit('setErrors', error.response.data)
+        }
+      }
     },
-    uploadFollowers ({ commit }, id) {
-      axios
-        .get('/api/profiles/get-followers/' + id)
-        .then(response => {
-          commit('updateFollowers', response.data.followers)
-        })
-        .catch(error => {
-          if (error) {
-            commit('updateFollowers', [])
-          }
-        })
-    },
-    uploadFollowings ({ commit }, id) {
-      axios
-        .get('/api/profiles/get-followings/' + id)
-        .then(response => {
-          commit('updateFollowings', response.data.followings)
-        })
-        .catch(error => {
-          if (error) {
-            commit('updateFollowings', [])
-          }
-        })
-    },
-    uploadCurrentFollowings ({ commit }, id) {
-      axios
-        .get('/api/profiles/get-followings/' + id)
-        .then(response => {
-          commit('updateCurrentFollowings', response.data.followings)
-        })
-        .catch(error => {
-          if (error) {
-            commit('updateCurrentFollowings', [])
-          }
-        })
-    },
-    // action for follow/unfollow, block/unblock user
     uploadProfileAction ({ commit }, data) {
-      axios
-        .get('/api/profiles/profile-action?action=' + data.action + '&id=' + data.id)
+      profileAction(data)
         .then(response => {
-          commit('', response.data)
+          commit('updateMessage', response.data)
         })
-        .catch(error => console.log(error.response.data))
+        .catch(error => {
+          commit('setErrors', error.response.data)
+        })
     },
     async setPreferencesAction ({ commit }, preferences) {
       await setPreferences({ preferences })
       commit('setPreferences', preferences)
+    },
+    clearSubs ({ commit }) {
+      commit('clearSubscriptions')
+    },
+    async uploadSubscriptions ({ commit }, data) {
+      try {
+        commit('setLoading', true)
+        const response = await getSubscriptionsById(data.id, data.type)
+        commit('setLoading', false)
+        commit('updateSubscriptions', { type: data.type, data: response.data.result.data })
+      } catch (error) {
+        commit('setLoading', false)
+        commit('setErrors', error.response.data)
+        commit('updateSubscriptions', { type: data.type, data: [] })
+      }
+    },
+    deleteError ({ commit }) {
+      commit('deleteError')
     }
   },
 
   mutations: {
     clear (state) {
       Object.assign(state, getDefaultState())
+    },
+    updateMessage (state, myProfileData) {
+      state.message = []
     },
     updateMyProfile (state, myProfileData) {
       state.myProfile = myProfileData
@@ -107,14 +103,31 @@ export default {
     updateProfile (state, profileData) {
       state.profile = profileData
     },
-    updateFollowers (state, profileData) {
-      state.profileFollowers = profileData
-    },
-    updateFollowings (state, profileData) {
-      state.profileFollowings = profileData
-    },
     updateCurrentFollowings (state, profileData) {
       state.currentProfileFollowings = profileData
+    },
+    setPreferences (state, data) {
+      state.myProfile.preferences = data
+    },
+    clearSubscriptions (state) {
+      state.profileFollowers = []
+      state.profileFollowings = []
+    },
+    updateSubscriptions (state, profileData) {
+      if (profileData.type === 'followings') {
+        state.profileFollowings = profileData.data
+      } else if (profileData.type === 'followers') {
+        state.profileFollowers = profileData.data
+      }
+    },
+    setLoading (state, payload) {
+      state.isLoading = payload
+    },
+    setErrors (state, data) {
+      state.errors = [...state.errors, data]
+    },
+    deleteError (state) {
+      state.errors = state.errors.filter(el => el.error !== "You have been blocked by this user")
     }
   },
 
@@ -122,8 +135,7 @@ export default {
 
   getters: {
     profileGetter (state) {
-      // localStorage.lastProfileId = state.profile.profile_id
-      window.localStorage.setItem('lastProfileId', state.profile.profile_id)
+      window.localStorage.setItem('lastProfileId', state.profile.userId)
       return state.profile
     },
     followingGetter (state) {
@@ -138,15 +150,17 @@ export default {
     myProfileId (state) {
       return state.myProfileId
     },
-    followingIdsGetter (state) {
-      let followingIds = []
-      state.currentProfileFollowings.map(function (value, key) {
-        followingIds.push(value.id)
-      })
-      return followingIds
-    },
     setPreferences (state, data) {
       state.myProfile.preferences = data
+    },
+    isLoading (state) {
+      return state.isLoading
+    },
+    deleteError (state) {
+      state.errors = state.errors.filter(el => el.error !== "You have been blocked by this user")
+    },
+    errorGetter (state) {
+      return state.errors
     }
   }
 }

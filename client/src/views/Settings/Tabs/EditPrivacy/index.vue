@@ -12,82 +12,98 @@
       <q-separator spaced />
       <q-item-label header>Notifications</q-item-label>
 
-      <q-item tag='label' v-ripple>
+      <q-item tag="label" v-ripple>
         <q-item-section>
           <q-item-label>Comment to video</q-item-label>
           <q-item-label caption>Allow notification</q-item-label>
         </q-item-section>
         <q-item-section side>
-          <q-toggle color='teal' v-model='comment' />
+          <q-toggle color="teal" v-model="comment" />
         </q-item-section>
       </q-item>
 
-      <q-item tag='label' v-ripple>
+      <q-item tag="label" v-ripple>
         <q-item-section>
           <q-item-label>Like post</q-item-label>
           <q-item-label caption>Allow notification</q-item-label>
         </q-item-section>
         <q-item-section side top>
-          <q-toggle color='teal' v-model='like' />
+          <q-toggle color="teal" v-model="like" />
         </q-item-section>
       </q-item>
 
-      <q-item tag='label' v-ripple>
+      <q-item tag="label" v-ripple>
         <q-item-section>
           <q-item-label>Reply</q-item-label>
           <q-item-label caption>Allow notification</q-item-label>
         </q-item-section>
         <q-item-section side top>
-          <q-toggle color='teal' v-model='reply' />
+          <q-toggle color="teal" v-model="reply" />
         </q-item-section>
       </q-item>
 
-      <q-item tag='label' v-ripple>
+      <q-item tag="label" v-ripple>
         <q-item-section>
           <q-item-label>Video uploaded</q-item-label>
           <q-item-label caption>Allow notification</q-item-label>
         </q-item-section>
         <q-item-section side top>
-          <q-toggle color='teal' v-model='uploadPost' />
+          <q-toggle color="teal" v-model="uploadPost" />
         </q-item-section>
       </q-item>
 
       <q-separator spaced />
       <q-item-label header>Filters</q-item-label>
 
-      <q-item tag='label' v-ripple>
+      <q-item tag="label" v-ripple>
         <q-item-section>
           <q-item-label>Hide offensive comments</q-item-label>
           <q-item-label caption>Hide comments</q-item-label>
         </q-item-section>
         <q-item-section side>
-          <q-toggle color='blue' v-model='hideOffencive' />
+          <q-toggle color="blue" v-model="hideOffencive" />
         </q-item-section>
       </q-item>
-
       <q-separator spaced />
       <q-item-label header>Black list</q-item-label>
-      <div class='row justify-between'>
-        <div class='input-search col' ref='search' >
-          <q-input v-model='nickname' @input='searchByNick' />
+      <div class="row justify-between">
+        <div class="col" id="input-search" ref="search">
+          <q-input v-model="nickname" @input="searchByNick" />
           <block-search
-            v-if='showSearch'
-            class='search-result'
-            :results='nicknameSearchResults'
-            @handleChoose='handleChoose'
+            v-if="showSearch"
+            class="search-result"
+            :results="nicknameSearchResults"
+            @handleChoose="handleChoose"
           />
         </div>
-        <q-btn @click='blockUser' class='block-button col' :disabled='!enableBlock'>Block</q-btn>
+        <q-spinner-bars class="col q-ml-md" color="teal" size="3em" v-show="loading" />
+        <div>
+          <q-btn @click="blockUser" class="col" id="block-button" :disabled="!enableBlock">Block</q-btn>
+        </div>
       </div>
-      <p v-if='userToBlockNick'>
+      <p v-if="userToBlockNick">
         {{userToBlockNick}}
-        <q-btn round color='teal' size='xs' icon='close' @click="userToBlockNick = ''" />
+        <q-btn
+          round
+          color="teal"
+          size="xs"
+          icon="close"
+          id="close-user"
+          @click="userToBlockNick = ''"
+        />
       </p>
-      <p class='error-message' v-if='errorMessage'>
+      <p class="error-message" v-if="errorMessage">
         {{errorMessage}}
-        <q-btn round color='red' size='xs' icon='close' @click="errorMessage = ''" />
+        <q-btn
+          round
+          color="red"
+          size="xs"
+          icon="close"
+          id="close-error"
+          @click="errorMessage = ''"
+        />
       </p>
-      <blocked-list class='blocked-list' @unblock='unblockUser' :list='blockedProfilesList'></blocked-list>
+      <blocked-list class="blocked-list" @unblock="unblockUser" :list="blockedProfilesList"></blocked-list>
     </q-list>
   </div>
 </template>
@@ -124,7 +140,8 @@ export default {
       errorMessage: '',
       enableBlock: false,
       blockedIdList: [],
-      blockedProfilesList: []
+      blockedProfilesList: [],
+      loading: false
     }
   },
   created () {
@@ -168,6 +185,7 @@ export default {
       }
     },
     blockUser () {
+      this.loading = true
       const action = 'block'
       const id = this.userToBlockId
       profileAction({ action, id })
@@ -183,9 +201,11 @@ export default {
           } else {
             this.errorMessage = 'Sorry, something went wrong...'
           }
+          this.loading = false
         })
     },
     unblockUser (id) {
+      this.loading = true
       const action = 'unblock'
       profileAction({ action, id })
         .then(response => {
@@ -197,6 +217,7 @@ export default {
           } else {
             this.errorMessage = 'Sorry, something went wrong...'
           }
+          this.loading = false
         })
     },
     displayBlockedIds () {
@@ -205,6 +226,7 @@ export default {
         .then(res => {
           if (res.data.profile.blockedProfiles.length === 0) {
             this.blockedProfilesList = []
+            this.loading = false
           } else {
             this.blockedIdList = res.data.profile.blockedProfiles
             this.getBlockedProfiles()
@@ -212,6 +234,7 @@ export default {
         })
         .catch(() => {
           this.errorMessage = 'Sorry, something went wrong...'
+          this.loading = false
         })
     },
     getBlockedProfiles () {
@@ -221,9 +244,11 @@ export default {
           .then(res => {
             const profile = res.data.profile
             this.blockedProfilesList.push({ id: profile.userId, nickname: profile.nickname, avatar: profile.avatarUrl })
+            this.loading = false
           })
           .catch(() => {
             this.errorMessage = 'Sorry, something went wrong...'
+            this.loading = false
           })
       })
     }
@@ -231,10 +256,10 @@ export default {
 }
 </script>
 <style scoped>
-.input-search {
+#input-search {
   max-width: 200px;
 }
-.block-button {
+#block-button {
   max-width: 100px;
 }
 .error-message {
