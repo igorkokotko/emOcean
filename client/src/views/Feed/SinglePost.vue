@@ -3,8 +3,15 @@
     <v-comments :isModelVisible="isModelVisible" :closePopup="closePopup" :id="post.postId" />
     <div class="video-container" @click="play">
       <figure class="image is-32x32">
-        <span class="emoji video-emoji" v-html="post.emoji" />
-        <avatar :img="post.avatarUrl" :size="'30px'" />
+        <span class="emoji video-emoji" v-html="post.emoji"/>
+        <router-link :to="{ path: `/profile/${post.nickname}` }">
+          <div ref="avatar" class="avatar" @click="$router.replace(`profile/${post.nickname}`)">
+            <avatar
+            :img="post.avatarUrl"
+            :size="'30px'"
+            />
+          </div>
+        </router-link>
       </figure>
      <video ref="videoElm" width="480" v-observe-visibility="visibilityChanged" @click.once="incrementViewsCounter(post)">
         <q-resize-observer @resize="onResize" />
@@ -49,7 +56,14 @@
           <template>
           <div class="video-container" @click="play">
             <figure class="image is-32x32">
-              <avatar :img="post.avatarUrl" :size="'30px'" />
+              <router-link :to="{ path: `/profile/${post.nickname}` }">
+                <div ref="avatar" class="avatar" @click="$router.replace(`profile/${post.nickname}`)">
+                  <avatar
+                  :img="post.avatarUrl"
+                  :size="'30px'"
+                  />
+                </div>
+              </router-link>
             </figure>
             <video ref="modalVideo">
                 <q-resize-observer @resize="onResize" />
@@ -218,13 +232,14 @@ export default {
     },
     play (event) {
       let currentVideo = event.target
-      if (event.target.className === this.$refs.bigVideo.className) {
+      if ((event.target !== this.$refs.videoElm) && (event.target !== this.$refs.modalVideo)) {
         return false
-      }
-      if (currentVideo.paused) {
-        currentVideo.play()
       } else {
-        currentVideo.pause()
+        if (currentVideo.paused) {
+          currentVideo.play()
+        } else {
+          currentVideo.pause()
+        }
       }
     }
   },
@@ -281,6 +296,10 @@ export default {
       font-weight: bold;
     }
   }
+}
+.q-avatar{
+   z-index: 10;
+   cursor: pointer;
 }
 .bigger-video {
   position: absolute;
