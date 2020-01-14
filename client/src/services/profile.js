@@ -17,8 +17,6 @@ export const getProfileById = id => axios.get(`${apiProfile}/get-profile?id=${id
 
 export const getProfileByNickname = nickname => axios.get(`${apiProfile}/get-profile?nickname=${nickname}`)
 
-export const getFollowingsById = id => axios.get(`${apiProfile}/get-subscriptions?id=${id}&type=followings`)
-
-export const getFollowersById = id => axios.get(`${apiProfile}/get-subscriptions?id=${id}&type=followers`)
+export const getSubscriptionsById = (id, type) => axios.get(`${apiProfile}/get-subscriptions?id=${id}&type=${type}`)
 
 export const setPreferences = data => axios.post(`${apiProfile}/set-preferences`, data)

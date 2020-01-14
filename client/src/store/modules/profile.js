@@ -1,14 +1,20 @@
-import { getProfile, updateProfile, setPreferences } from '@/services/profile'
+import {
+  getProfile,
+  updateProfile,
+  setPreferences,
+  profileAction,
+  getSubscriptionsById
+} from '@/services/profile'
 import axios from 'axios'
 
 const getDefaultState = () => {
   return {
     myProfile: {},
     myProfileId: '',
+    message: [],
     profile: {},
     profileFollowers: [],
-    profileFollowings: [],
-    currentProfileFollowings: []
+    profileFollowings: []
   }
 }
 
@@ -43,50 +49,26 @@ export default {
           }
         })
     },
-    uploadFollowers ({ commit }, id) {
-      axios
-        .get('/api/profiles/get-followers/' + id)
-        .then(response => {
-          commit('updateFollowers', response.data.followers)
-        })
-        .catch(error => {
-          if (error) {
-            commit('updateFollowers', [])
-          }
-        })
+    clearSubs ({ commit }) {
+      commit('clearSubscriptions')
     },
-    uploadFollowings ({ commit }, id) {
-      axios
-        .get('/api/profiles/get-followings/' + id)
-        .then(response => {
-          commit('updateFollowings', response.data.followings)
-        })
-        .catch(error => {
-          if (error) {
-            commit('updateFollowings', [])
-          }
-        })
+    async uploadSubscriptions ({ commit }, data) {
+      try {
+        const response = await getSubscriptionsById(data.id, data.type)
+        commit('updateSubscriptions', { type: data.type, data: response.data.result.data })
+      } catch (error) {
+        commit('setErrors', error.response.data)
+        commit('updateSubscriptions', { type: data.type, data: [] })
+      }
     },
-    uploadCurrentFollowings ({ commit }, id) {
-      axios
-        .get('/api/profiles/get-followings/' + id)
-        .then(response => {
-          commit('updateCurrentFollowings', response.data.followings)
-        })
-        .catch(error => {
-          if (error) {
-            commit('updateCurrentFollowings', [])
-          }
-        })
-    },
-    // action for follow/unfollow, block/unblock user
     uploadProfileAction ({ commit }, data) {
-      axios
-        .get('/api/profiles/profile-action?action=' + data.action + '&id=' + data.id)
+      profileAction(data)
         .then(response => {
-          commit('', response.data)
+          commit('updateMessage', response.data)
         })
-        .catch(error => console.log(error.response.data))
+        .catch(error => {
+          commit('setErrors', error.response.data)
+        })
     },
     async setPreferencesAction ({ commit }, preferences) {
       await setPreferences({ preferences })
@@ -98,6 +80,9 @@ export default {
     clear (state) {
       Object.assign(state, getDefaultState())
     },
+    updateMessage (state, myProfileData) {
+      state.message = []
+    },
     updateMyProfile (state, myProfileData) {
       state.myProfile = myProfileData
     },
@@ -107,14 +92,16 @@ export default {
     updateProfile (state, profileData) {
       state.profile = profileData
     },
-    updateFollowers (state, profileData) {
-      state.profileFollowers = profileData
+    clearSubscriptions (state) {
+      state.profileFollowers = []
+      state.profileFollowings = []
     },
-    updateFollowings (state, profileData) {
-      state.profileFollowings = profileData
-    },
-    updateCurrentFollowings (state, profileData) {
-      state.currentProfileFollowings = profileData
+    updateSubscriptions (state, profileData) {
+      if (profileData.type === 'followings') {
+        state.profileFollowings = profileData.data
+      } else if (profileData.type === 'followers') {
+        state.profileFollowers = profileData.data
+      }
     }
   },
 
@@ -122,8 +109,7 @@ export default {
 
   getters: {
     profileGetter (state) {
-      // localStorage.lastProfileId = state.profile.profile_id
-      window.localStorage.setItem('lastProfileId', state.profile.profile_id)
+      window.localStorage.setItem('lastProfileId', state.profile.userId)
       return state.profile
     },
     followingGetter (state) {
@@ -137,13 +123,6 @@ export default {
     },
     myProfileId (state) {
       return state.myProfileId
-    },
-    followingIdsGetter (state) {
-      let followingIds = []
-      state.currentProfileFollowings.map(function (value, key) {
-        followingIds.push(value.id)
-      })
-      return followingIds
     },
     setPreferences (state, data) {
       state.myProfile.preferences = data
