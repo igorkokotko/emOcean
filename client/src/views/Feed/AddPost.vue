@@ -106,7 +106,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('posts', ['addPost']),
+    ...mapActions('posts', ['addPostAction']),
     showEmoji () {
       this.showEmojiBool = !this.showEmojiBool
     },

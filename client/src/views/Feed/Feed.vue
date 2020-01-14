@@ -51,10 +51,10 @@
         <div v-if="authorized" class="big-btn" @click="$router.push('/addpost')">
           <i class="fas fa-2x fa-plus"></i>
         </div>
-        <div
+        <!-- <div
           v-if="(!postsGetter || postsGetter.length === 0) && !isLoading"
           class="text-center q-pa-md"
-        >{{ this.emptyPostsMessage }}</div>
+        >{{ this.emptyPostsMessage }}</div> -->
         <q-spinner v-if="isLoading" color="primary" size="7em" class="fixed-center" />
         <div v-if="authorized" class="big-btn" @click="$router.push('/addpost')">
           <i class="fas fa-2x fa-plus"></i>
@@ -82,7 +82,12 @@ export default {
   beforeRouteUpdate (to, from, next) {
     if (to.query.tab === 'search') {
       this.isSearch = true
-      this.getPostsAction({ type: 'search', tags: to.query.tags })
+      if (to.query.tags) {
+        this.getPostsAction({ type: 'search', tags: to.query.tags })
+      }
+      if (to.query.emoji) {
+        this.getPostsAction({ type: 'search', emoji: to.query.emoji })
+      }
       next()
     }
     next()
@@ -94,7 +99,12 @@ export default {
     try {
       if (this.$route.query.tab === 'search') {
         this.isSearch = true
-        this.getPostsAction({ type: 'search', tags: this.$route.query.tags })
+        if (this.$route.query.tags) {
+          this.getPostsAction({ type: 'search', tags: this.$route.query.tags })
+        }
+        if (this.$route.query.emoji) {
+          this.getPostsAction({ type: 'search', emoji: this.$route.query.emoji })
+        }
       } else {
         this.authorized = await isAuthorized()
         if (this.$route.query.tab === 'preferences') {
@@ -149,7 +159,12 @@ export default {
     },
     showMorePosts: function () {
       if (this.$route.query.tab === 'search') {
-        this.getPostsAction({ type: this.$route.query.tab, index: this.paginationIndex, tags: this.$route.query.tags })
+        if (this.$route.query.tags) {
+          this.getPostsAction({ type: this.$route.query.tab, index: this.paginationIndex, tags: this.$route.query.tags })
+        }
+        if (this.$route.query.emoji) {
+          this.getPostsAction({ type: this.$route.query.tab, index: this.paginationIndex, emoji: this.$route.query.emoji })
+        }
       } else {
         this.getPostsAction({ type: this.$route.query.tab, index: this.paginationIndex })
       }

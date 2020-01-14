@@ -18,7 +18,7 @@ export const deletePost = postId =>
   axios.delete(`${apiRoute}/delete-post/${postId}`)
 
 export const getPostsByType = (payload) => {
-  let route = `${apiRoute}/get-posts?type=${payload.type}`
+  let route = `${apiRoute}/get-posts/?type=${payload.type}`
   if (payload.type === 'search') {
     if (payload.tags) {
       route = `${route}&tags=${payload.tags}`
