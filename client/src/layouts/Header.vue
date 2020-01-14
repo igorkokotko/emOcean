@@ -1,10 +1,22 @@
 <template>
-  <div class="header" @click="visible">
+  <div class="header" id="main-header" @click="visible">
     <q-header bordered class="bg-white text-primary">
       <q-toolbar ref="toolbar">
         <div class="homeRouterLink" @click="navigate">
           <img src="@/assets/img/logoSmall.jpg" class="logo lt-sm" />
           <img src="@/assets/img/logo.jpeg" class="logo gt-xs" />
+        </div>
+        <div v-if="isAuthenticated" class="backToProfile">
+          <span>Hi there,</span>
+          <router-link
+            class="myProfileRouterlink"
+            :to="{
+              name: 'profile',
+              params: { nickname: myProfile.nickname }
+            }"
+          >
+            {{myProfile.nickname}}
+          </router-link>
         </div>
         <q-space></q-space>
         <q-icon v-if="emojiSearch" @click="showEmoji" size="sm" name="insert_emoticon" />
@@ -41,7 +53,7 @@
           />
         </div>
         <div ref="searchWrapper">
-        <q-btn flat round dense icon="search" @click="visible" class="q-mr-xs text-cyan" />
+          <q-btn flat round dense icon="search" @click="visible" class="q-mr-xs text-cyan" />
         </div>
         <q-btn flat round dense icon="menu" class="text-cyan">
           <q-menu>
@@ -76,7 +88,7 @@ import debounce from 'lodash/debounce'
 import { searchByNick } from '@/services/profile.js'
 import { isAuthorized } from '@/services/Authorized.js'
 import VEmojiPicker from 'v-emoji-picker'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import axios from 'axios'
 
 export default {
@@ -98,7 +110,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      token: 'auth/getToken'
+      token: 'auth/getToken',
+      myProfile: 'profile/myProfile'
     })
   },
   async created () {
@@ -108,6 +121,7 @@ export default {
     } catch (e) {
       this.isAuthenticated = false
     }
+    await this.getMyProfile()
   },
 
   watch: {
@@ -122,11 +136,13 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      getMyProfile: 'profile/getMyProfile'
+    }),
     showEmoji () {
       this.showEmojisBool = !this.showEmojisBool
     },
     selectEmoji (emoji) {
-      // console.log(emoji.data)
       this.userInput = emoji.data
       this.showEmojisBool = !this.showEmojisBool
       this.searchPostByEmogi()
@@ -149,7 +165,7 @@ export default {
               this.nicknameSearchResults.push({
                 id: element.profileId,
                 nickname: element.nickname,
-                avatar: element.avatar_url
+                avatar: element.avatarUrl
               })
             })
           })
@@ -164,7 +180,6 @@ export default {
         this.nicknameSearchResults = []
       }
     }, 300),
-    
     searchTag: function () {
       if (this.userInput) {
         const hashRegex = /^#/
@@ -197,7 +212,6 @@ export default {
     },
     logOut () {
       this.$store.dispatch('profile/clear')
-      this.$store.dispatch('comments/clear')
       this.$store.dispatch('clear')
       this.$store.dispatch('auth/signin', { token: '', user: '' })
       window.localStorage.removeItem('token')
@@ -235,6 +249,7 @@ export default {
   height: 100%;
   margin: 0;
 }
+
 .homeRouterLink {
   height: 60px;
   display: block;
@@ -249,5 +264,24 @@ export default {
 
 #search-result {
   position: absolute;
+}
+
+.backToProfile {
+  margin-left: 20px;
+  text-align: center;
+}
+
+.backToProfile .myProfileRouterlink {
+  font-size: 17px;
+}
+
+.backToProfile .myProfileRouterlink:hover {
+    color: #DE5235;
+}
+
+@media screen and (max-width: 699px){
+  .backToProfile {
+    display: none;
+  }
 }
 </style>

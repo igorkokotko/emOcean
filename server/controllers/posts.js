@@ -1,5 +1,6 @@
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const postsService = require('../services/PostsService')
+const profilesService = require('../services/ProfilesService')
 const VideoHandler = require('../videoHandling/videoHandler')
 const clearTempFiles = require('../common/clearTempFiles')
 const CustomError = require('../common/CustomError')
@@ -37,13 +38,15 @@ const savePost = asyncMiddleware(async (req, res) => {
 
 const getPostsByType = asyncMiddleware(async (req, res, next) => {
   const typesList = ['search', 'preferences', 'followings', 'popular']
-  const { type } = req.query
+  const {
+    type
+  } = req.query
   const paginateId = req.query.index
   const postsLimit = 5
   let value
   if (typesList.includes(type)) {
     const postsActions = {
-      search: 'getPostsByTags',
+      search: 'searchPostsByQuery',
       preferences: 'getPostsByPreferences',
       popular: 'getPostsByViews',
       followings: 'getPostsByFollowings'
@@ -54,11 +57,16 @@ const getPostsByType = asyncMiddleware(async (req, res, next) => {
       value = jwt.verify(token, process.env.JWT_SECRET).value.uid
     }
     if (type === 'search') {
-      value = req.query.tags.split('-')
+      if (req.query.tags) {
+        value = req.query.tags.split('-')
+      } else {
+        value = req.query.emoji
+      }
     }
     const result = await postsService[postMethod](paginateId, postsLimit, value)
-
-    res.status(200).json({ result })
+    res.status(200).json({
+      result
+    })
   } else {
     return next(
       new CustomError({
@@ -123,17 +131,18 @@ const incrementViewsCounter = asyncMiddleware(async (req, res) => {
 })
 
 const getPostLikes = asyncMiddleware(async (req, res, next) => {
-  const post_id = req.params.postId
+  const post_id = req.query.id
   const users_ids = await postsService.getPostLikes(post_id)
 
-  const users = []
+  const result = []
   for (let i = 0; i < users_ids.length; i++) {
-    const userInfo = await profilesService.getProfileById(users_ids[i])
-    users.push(userInfo)
+    const userInfo = await profilesService.getProfileById(users_ids[i].userId)
+    userInfo.date = users_ids[i].date
+    result.push(userInfo)
   }
 
   res.status(200).json({
-    result: users
+    result
   })
 })
 
@@ -153,31 +162,15 @@ const getUserLikedPosts = asyncMiddleware(async (req, res) => {
   })
 })
 
-const getPostsByEmoji = asyncMiddleware(async (req, res) => {
-  const {
-    emoji,
-    index,
-  } = req.query
-
-  const postsLimit = 5
-  const posts = await postsService.getPostsByEmoji(emoji, index, postsLimit)
-
-  res.status(200).json({
-    result: posts
-  })
-})
-
 module.exports = {
   savePost,
   deletePost,
   editPost,
   uploadVideos,
-  searchPosts,
   updateLikes,
   incrementViewsCounter,
   getPostLikes,
   getUserLikedPosts,
-  getPostsByEmoji,
   getUserPosts,
   getPostsByType
 }

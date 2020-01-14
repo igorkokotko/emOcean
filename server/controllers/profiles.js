@@ -88,8 +88,8 @@ const setPreferences = asyncMiddleware(async (req, res) => {
   res.status(200).json({ result })
 })
 
-const getSubscriptionsById = asyncMiddleware(async (req, res) => {
-  const subscriptionsList = ['folowings', 'followers']
+const getSubscriptionsById = asyncMiddleware(async (req, res, next) => {
+  const subscriptionsList = ['followings', 'followers']
   const profileId = req.query.id
   const paginationId = req.query.pagination
   const type = req.query.type
@@ -125,7 +125,7 @@ const profileAction = asyncMiddleware(async (req, res, next) => {
       unblock: 'blockProfileAction'
     }
     const followMethod = profileActions[action]
-    const result = await profilesService[followMethod](myProfileId, id)
+    const result = await profilesService[followMethod](myProfileId, id, action)
     res.status(200).json({ result })
   } else {
     return next(

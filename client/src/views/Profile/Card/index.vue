@@ -1,18 +1,31 @@
 <template>
   <div class="profile-card">
-      <div class="user-avatar">
-        <img :src="profile.avatar_url" alt="avatar"/>
-<!--        <i v-if="popularAccount" class="fas fa-star" title="Popular account"></i>-->
-      </div>
+    <div class="user-avatar">
+      <avatar :img="profile.avatarUrl || ''" :size="'140px'" />
+      <i v-if="popularAccount" class="fas fa-star" title="Popular account"></i>
+    </div>
     <div class="card-content">
-      <h2 class="name">
-        {{profile.nickname}}
-      </h2>
-      <follow-button v-if="currentUserId !== profile.profile_id" :following="followingIdsGetter.includes(profile.profile_id)" :id="profile.profile_id"></follow-button>
-      <p class="decription">
-        {{profile.status}}
+      <h2 class="name">{{ profile.nickname }}</h2>
+      <follow-button
+        v-if="currentUserId !== null && currentUserId !== profile.userId"
+        :following="
+          (this.myProfile.followingsId &&
+            this.myProfile.followingsId.includes(profile.userId))
+        "
+        @update-count="updateFollowersCount"
+        :id="profile.userId"
+      >
+      </follow-button>
+      <p class="decription">{{ profile.status }}</p>
+      <p class="bio" v-if="profile.bio">
+        <span class="about-me">About Me:</span>
+        {{profile.bio}}
       </p>
-      <card-footer :following="profile.followings" :followers="profile.followers" :socialAccounts="profile.socialAccounts"></card-footer>
+      <card-footer
+        :followingsCount="profile.followingsCount"
+        :followersCount="profile.followersCount"
+        :socialAccounts="profile.socialAccounts"
+      ></card-footer>
     </div>
   </div>
 </template>
@@ -21,35 +34,41 @@
 import { mapGetters, mapActions } from 'vuex'
 import CardFooter from './cardFooter'
 import FollowButton from './followBtn'
+import Avatar from '../../../components/Avatar'
 
 export default {
-  computed: {
-    ...mapGetters({ followingIdsGetter: 'profile/followingIdsGetter' }),
-    lastProfileId () {
-      return localStorage.getItem('lastProfileId')
-    },
-    currentUserId () {
-      return localStorage.getItem('profileId')
-    }
-  },
-  methods: mapActions(
-    { uploadCurrentFollowings: 'profile/uploadCurrentFollowings' }
-  ),
-  data () {
-    return {
-      popularAccountLimit: 100,
-      isFollowing: false
-    }
+  components: {
+    CardFooter,
+    FollowButton,
+    Avatar
   },
   props: {
     profile: Object
   },
-  components: {
-    CardFooter,
-    FollowButton
+  data () {
+    return {
+      popularAccountLimit: 1
+    }
   },
-  mounted () {
-    this.uploadCurrentFollowings(this.currentUserId)
+  computed: {
+    ...mapGetters({ myProfile: 'profile/myProfile' }),
+    currentUserId () {
+      return localStorage.getItem('profileId')
+    },
+    popularAccount () {
+      return this.profile.followersCount > this.popularAccountLimit
+    }
+  },
+  async created () {
+    await this.getMyProfile()
+  },
+  methods: {
+    ...mapActions({
+      getMyProfile: 'profile/getMyProfile'
+    }),
+    updateFollowersCount (value) {
+      this.profile.followersCount = this.profile.followersCount + value
+    }
   }
 }
 </script>
@@ -65,7 +84,6 @@ export default {
       right: 50%;
       width: 140px;
       height: 140px;
-      border: 2px white solid;
       border-radius: 50%;
       .fa-star {
         display: inline-block;
@@ -99,6 +117,15 @@ export default {
       .decription {
         color: #3C4857;
         font-weight: 300;
+      }
+      .bio {
+        margin-bottom: 25px;
+        .about-me {
+          font-weight: 600;
+          padding: 0 2px;
+          font-size: 15px;
+          border-bottom: 1px solid blue;
+        }
       }
     }
   }

@@ -1,16 +1,19 @@
 import {
   getProfileById,
   getProfileByNickname,
+  getProfile,
   updateProfile,
   setPreferences,
-  getSubscriptionsById,
-  profileAction
+  profileAction,
+  getSubscriptionsById
 } from '@/services/profile'
+import axios from 'axios'
 
 const getDefaultState = () => {
   return {
     myProfile: {},
     myProfileId: '',
+    message: [],
     profile: {},
     profileFollowers: [],
     profileFollowings: [],
@@ -52,6 +55,18 @@ export default {
         if (error) {
           commit('setErrors', error.response.data)
         }
+      }
+    },
+    clearSubs ({ commit }) {
+      commit('clearSubscriptions')
+    },
+    async uploadSubscriptions ({ commit }, data) {
+      try {
+        const response = await getSubscriptionsById(data.id, data.type)
+        commit('updateSubscriptions', { type: data.type, data: response.data.result.data })
+      } catch (error) {
+        commit('setErrors', error.response.data)
+        commit('updateSubscriptions', { type: data.type, data: [] })
       }
     },
     uploadProfileAction ({ commit }, data) {
@@ -102,12 +117,6 @@ export default {
     },
     updateProfile (state, profileData) {
       state.profile = profileData
-    },
-    updateCurrentFollowings (state, profileData) {
-      state.currentProfileFollowings = profileData
-    },
-    setPreferences (state, data) {
-      state.myProfile.preferences = data
     },
     clearSubscriptions (state) {
       state.profileFollowers = []

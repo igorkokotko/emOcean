@@ -26,6 +26,7 @@ import { mapGetters, mapActions } from 'vuex'
 import ProfileCard from './Card/index'
 import switchVideo from './Card/switchVideo'
 import toTopAnchor from '../../components/ToTopAnchor'
+
 export default {
   components: {
     ProfileCard,
