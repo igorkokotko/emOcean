@@ -1,4 +1,6 @@
 import {
+  getProfileById,
+  getProfileByNickname,
   getProfile,
   updateProfile,
   setPreferences,
@@ -14,7 +16,10 @@ const getDefaultState = () => {
     message: [],
     profile: {},
     profileFollowers: [],
-    profileFollowings: []
+    profileFollowings: [],
+    errors: [],
+    message: [],
+    isLoading: false
   }
 }
 
@@ -27,27 +32,30 @@ export default {
     },
     updateMyProfile (ctx, editedData) {
       return updateProfile(editedData)
-    },
-    getMyProfile (ctx) {
-      return getProfile({ id: ctx.state.myProfileId })
-        .then((response) => {
-          ctx.commit('updateMyProfile', response.data.profile)
+        .then(() => {
+          ctx.commit('updateMyProfile', editedData)
         })
+    },
+    async getMyProfile (ctx) {
+      try {
+        const response = await getProfileById(ctx.state.myProfileId)
+        ctx.commit('updateMyProfile', response.data.profile)
+      } catch (error) {
+        ctx.commit('setErrors', error.response.data)
+      }
     },
     updateMyProfileId (ctx, myProfileId) {
       return ctx.commit('updateMyProfileId', myProfileId)
     },
-    uploadProfile ({ commit }, nickname) {
-      axios
-        .get('/api/profiles/get-profile?nickname=' + nickname)
-        .then(response => {
-          commit('updateProfile', response.data.profile)
-        })
-        .catch(error => {
-          if (error) {
-            commit('updateProfile', [])
-          }
-        })
+    async uploadProfile ({ commit }, nickname) {
+      try {
+        const response = await getProfileByNickname(nickname)
+        commit('updateProfile', response.data.profile)
+      } catch (error) {
+        if (error) {
+          commit('setErrors', error.response.data)
+        }
+      }
     },
     clearSubs ({ commit }) {
       commit('clearSubscriptions')
@@ -73,6 +81,24 @@ export default {
     async setPreferencesAction ({ commit }, preferences) {
       await setPreferences({ preferences })
       commit('setPreferences', preferences)
+    },
+    clearSubs ({ commit }) {
+      commit('clearSubscriptions')
+    },
+    async uploadSubscriptions ({ commit }, data) {
+      try {
+        commit('setLoading', true)
+        const response = await getSubscriptionsById(data.id, data.type)
+        commit('setLoading', false)
+        commit('updateSubscriptions', { type: data.type, data: response.data.result.data })
+      } catch (error) {
+        commit('setLoading', false)
+        commit('setErrors', error.response.data)
+        commit('updateSubscriptions', { type: data.type, data: [] })
+      }
+    },
+    deleteError ({ commit }) {
+      commit('deleteError')
     }
   },
 
@@ -102,6 +128,15 @@ export default {
       } else if (profileData.type === 'followers') {
         state.profileFollowers = profileData.data
       }
+    },
+    setLoading (state, payload) {
+      state.isLoading = payload
+    },
+    setErrors (state, data) {
+      state.errors = [...state.errors, data]
+    },
+    deleteError (state) {
+      state.errors = state.errors.filter(el => el.error !== "You have been blocked by this user")
     }
   },
 
@@ -126,6 +161,15 @@ export default {
     },
     setPreferences (state, data) {
       state.myProfile.preferences = data
+    },
+    isLoading (state) {
+      return state.isLoading
+    },
+    deleteError (state) {
+      state.errors = state.errors.filter(el => el.error !== "You have been blocked by this user")
+    },
+    errorGetter (state) {
+      return state.errors
     }
   }
 }

@@ -1,17 +1,23 @@
 <template>
-  <div>
+  <div v-if="!blocked">
     <div class="profile-header" :style="{ backgroundImage: userBackground }"></div>
     <div class="row wrapp">
-      <div class="col-12 col-md-3 profile-card" >
-        <profile-card :profile="profileGetter"/>
+      <div class="col-12 col-md-3 profile-card">
+        <profile-card :profile="profileGetter" />
       </div>
-        <div class="col-12 col-md-9 profile-content">
-          <div class="col-12">
-            <switch-video></switch-video>
-          </div>
+      <div class="col-12 col-md-9 profile-content">
+        <div class="col-12">
+          <switch-video></switch-video>
         </div>
+      </div>
     </div>
     <to-top-anchor></to-top-anchor>
+  </div>
+  <div v-else>
+    <q-banner class="bg-primary text-white banner">
+      <q-icon name="warning" class="text-white" style="font-size: 4rem;" />
+      <p class="block-banner-message">Unfortunately, you have been blocked by this user</p>
+    </q-banner>
   </div>
 </template>
 
@@ -27,8 +33,17 @@ export default {
     switchVideo,
     toTopAnchor
   },
+  data () {
+    return {
+      blocked: false
+    }
+  },
   computed: {
-    ...mapGetters({ profileGetter: 'profile/profileGetter' }),
+    ...mapGetters({
+      profileGetter: 'profile/profileGetter',
+      userPosts: 'posts/userPostsGetter',
+      errorGetter: 'profile/errorGetter'
+    }),
     userBackground () {
       return this.profileGetter.user_background ? 'url(' + this.profileGetter.user_background + ')' : 'url(https://i.ytimg.com/vi/DiS7ZMwTA0I/maxresdefault.jpg)'
     },
@@ -36,11 +51,44 @@ export default {
       return this.$route.params.nickname
     }
   },
+  async created () {
+    await this.uploadProfile(this.nickname)
+    const blocks = this.errorGetter.filter(el => el.error === "You have been blocked by this user")
+    if (blocks.length !== 0) {
+      this.blocked = true
+      this.deleteError()
+    } else {
+      this.blocked = false
+    }
+    this.getUserPosts(this.profileGetter.userId)
+  },
   mounted () {
     this.uploadProfile(this.nickname)
   },
   methods: {
-    ...mapActions({ uploadProfile: 'profile/uploadProfile' })
+    ...mapActions({
+      uploadProfile: 'profile/uploadProfile',
+      getUserPosts: 'posts/getUserPostsAction',
+      deleteError: 'profile/deleteError'
+    })
+  },
+  beforeRouteUpdate (to, from, next) {
+    if (to.path.startsWith('/profile')) {
+      this.uploadProfile(to.params.nickname)
+    }
+    next()
+  },
+  watch: {
+    async nickname () {
+      await this.uploadProfile(this.nickname)
+      const blocks = this.errorGetter.filter(el => el.error === "You have been blocked by this user")
+      if (blocks.length !== 0) {
+        this.blocked = true
+        this.deleteError()
+      } else {
+        this.blocked = false
+      }
+    }
   }
 }
 </script>
