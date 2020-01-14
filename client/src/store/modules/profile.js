@@ -1,19 +1,16 @@
 import {
   getProfileById,
   getProfileByNickname,
-  getProfile,
   updateProfile,
   setPreferences,
-  profileAction,
-  getSubscriptionsById
+  getSubscriptionsById,
+  profileAction
 } from '@/services/profile'
-import axios from 'axios'
 
 const getDefaultState = () => {
   return {
     myProfile: {},
     myProfileId: '',
-    message: [],
     profile: {},
     profileFollowers: [],
     profileFollowings: [],
@@ -25,7 +22,6 @@ const getDefaultState = () => {
 
 export default {
   namespaced: true,
-
   actions: {
     clear ({ commit }) {
       commit('clear')
@@ -55,18 +51,6 @@ export default {
         if (error) {
           commit('setErrors', error.response.data)
         }
-      }
-    },
-    clearSubs ({ commit }) {
-      commit('clearSubscriptions')
-    },
-    async uploadSubscriptions ({ commit }, data) {
-      try {
-        const response = await getSubscriptionsById(data.id, data.type)
-        commit('updateSubscriptions', { type: data.type, data: response.data.result.data })
-      } catch (error) {
-        commit('setErrors', error.response.data)
-        commit('updateSubscriptions', { type: data.type, data: [] })
       }
     },
     uploadProfileAction ({ commit }, data) {
@@ -101,7 +85,6 @@ export default {
       commit('deleteError')
     }
   },
-
   mutations: {
     clear (state) {
       Object.assign(state, getDefaultState())
@@ -117,6 +100,9 @@ export default {
     },
     updateProfile (state, profileData) {
       state.profile = profileData
+    },
+    setPreferences (state, data) {
+      state.myProfile.preferences = data
     },
     clearSubscriptions (state) {
       state.profileFollowers = []
@@ -139,9 +125,7 @@ export default {
       state.errors = state.errors.filter(el => el.error !== "You have been blocked by this user")
     }
   },
-
   state: getDefaultState(),
-
   getters: {
     profileGetter (state) {
       window.localStorage.setItem('lastProfileId', state.profile.userId)
