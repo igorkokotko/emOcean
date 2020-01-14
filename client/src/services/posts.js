@@ -17,26 +17,35 @@ export const editPost = (postData, postId) =>
 export const deletePost = postId =>
   axios.delete(`${apiRoute}/delete-post/${postId}`)
 
-export const getPostsByViews = index => {
-  const route = index ? `${apiRoute}/by-views?index=${index}` : `${apiRoute}/by-views`
+export const getPostsByType = (payload) => {
+  let route = `${apiRoute}/get-posts?type=${payload.type}`
+  if (payload.type === 'search') {
+    if (payload.tags) {
+      route = `${route}&tags=${payload.tags}`
+    } else {
+      route = `${route}&emoji=${payload.emoji}`
+    }
+  }
+  if (payload.index && payload.index !== 'Last index') {
+    return axios.get(route, {
+      params: {
+        index: payload.index
+      }
+    })
+  }
   return axios.get(route)
 }
 
-export const getPostsByTag = (tag, index) => {
-  const route = index ? `${apiRoute}/by-tags?tag=${tag}&index=${index}` : `${apiRoute}/by-tags?tag=${tag}`
-  return axios.get(route)
+export const getLikedList = (videoId) => {
+  axios.get(`/api/posts/get-post-likes/${videoId}`)
+    .then((response) => {
+      return response.data.result
+    })
+    .catch(error => {
+      return error.statusText
+    })
 }
 
-export const getPostsByFollowings = index => {
-  const route = index ? `${apiRoute}/by-followings?index=${index}` : `${apiRoute}/by-followings`
-  return axios.get(route)
-}
-
-export const getPostsByPreferences = index => {
-  const route = index ? `${apiRoute}/by-preferences?index=${index}` : `${apiRoute}/by-preferences`
-  return axios.get(route)
-}
-// My
 export const updateLikes = postId => {
   return axios.get(`/api/posts/like-post/${postId}`)
 }
@@ -51,9 +60,4 @@ export const getUserLikedPostsById = id => {
 
 export const getUserPostsById = id => {
   return axios.get(`/api/posts/get-user-posts?id=${id}`)
-}
-
-export const getPostsByEmoji = (emoji, index) => {
-  const route = index ? `${apiRoute}/get-post-emoji?emoji=${emoji}&index=${index}` : `${apiRoute}/get-post-emoji?emoji=${emoji}`
-  return axios.get(route)
 }
