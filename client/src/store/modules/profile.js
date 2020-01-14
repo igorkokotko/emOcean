@@ -19,7 +19,6 @@ const getDefaultState = () => {
     isLoading: false
   }
 }
-
 export default {
   namespaced: true,
   actions: {
