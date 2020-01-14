@@ -30,7 +30,7 @@ router.post("/upload-videos", protectedMiddleware, upload.array("file", 2), medi
 router.get('/get-user-liked-posts', getUserLikedPosts)
 router.get('/like-post/:postId', protectedMiddleware, updateLikes)
 router.get('/increment-views-counter/:postId', incrementViewsCounter)
-router.get('/get-post-likes', getPostLikes)
+router.get('/get-post-likes/:postId', getPostLikes)
 router.delete('/delete-post/:postId', protectedMiddleware, deletePost)
 router.put('/edit-post/:postId', protectedMiddleware, editPost)
 

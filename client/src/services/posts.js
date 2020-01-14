@@ -37,13 +37,7 @@ export const getPostsByType = (payload) => {
 }
 
 export const getLikedList = (videoId) => {
-  axios.get(`/api/posts/get-post-likes/${videoId}`)
-    .then((response) => {
-      return response.data.result
-    })
-    .catch(error => {
-      return error.statusText
-    })
+  return axios.get(`/api/posts/get-post-likes/${videoId}`)
 }
 
 export const updateLikes = postId => {

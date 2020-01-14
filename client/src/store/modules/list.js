@@ -11,8 +11,15 @@ export default {
     clear ({ commit }) {
       commit('clear')
     },
-    getLikedList (ctx, videoId) {
-      ctx.commit('updateLikedList', getLikedList(videoId))
+    async getLikedList (ctx, videoId) {
+      getLikedList(videoId)
+        .then((response) => {
+          console.log(response.data.result)
+          ctx.commit('updateLikedList', response.data.result)
+        })
+        .catch(error => {
+          return error.statusText
+        })
     }
   },
 

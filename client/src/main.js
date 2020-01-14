@@ -6,8 +6,12 @@ import './registerServiceWorker'
 import './quasar'
 import GAuth from 'vue-google-oauth2'
 import { clientId } from './config/config.js'
+import moment from 'moment'
 import VueObserveVisibility from 'vue-observe-visibility'
 Vue.use(VueObserveVisibility)
+
+Vue.prototype.$moment = moment
+
 Vue.config.productionTip = false
 
 const gauthOption = {

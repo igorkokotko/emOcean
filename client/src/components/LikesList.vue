@@ -14,8 +14,13 @@
         <q-list>
           <q-item v-for="like in getLikes" :key="like.id" class="q-my-sm" clickable>
             <q-item-section avatar @click="$router.push({ path: `/profile/${like.profile_id}` })">
-              <q-avatar color="primary" text-color="white">
-                <img :src="like.avatar_url" />
+              <q-avatar
+                color="primary"
+                text-color="white"
+                :icon="like.avatarUrl.length === 0 ? 'account_circle' : null"
+                font-size="1em"
+              >
+                <img v-if="like.avatarUrl.length > 0" :src="like.avatarUrl" />
               </q-avatar>
             </q-item-section>
 
