@@ -105,28 +105,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .wrapp {
-    min-height: calc(100vh - 260px);
-    .profile-content {
-      background: url("https://img5.goodfon.ru/wallpaper/nbig/1/ab/zima-sneg-snezhinki-fon-christmas-blue-winter-background-s-7.jpg");
-    }
+.wrapp {
+  min-height: calc(100vh - 260px);
+  .profile-content {
+    background: url("https://img5.goodfon.ru/wallpaper/nbig/1/ab/zima-sneg-snezhinki-fon-christmas-blue-winter-background-s-7.jpg");
   }
-  .profile-header {
-    background-position: center;
-    background-size: cover;
-    height: 200px;
-    position: relative;
-    .view-counter {
-      position: absolute;
-      display: flex;
-      align-items: center;
-      font-size: 13px;
-      font-weight: 500;
-      top: 25px;
-      border-radius: 20px 0 0 20px;
-      right: 0;
-      padding: 5px;
-      background-color: white;
-    }
+}
+.profile-header {
+  background-position: center;
+  background-size: cover;
+  height: 200px;
+  position: relative;
+  .view-counter {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 500;
+    top: 25px;
+    border-radius: 20px 0 0 20px;
+    right: 0;
+    padding: 5px;
+    background-color: white;
   }
+}
 </style>
