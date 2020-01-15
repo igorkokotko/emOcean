@@ -38,7 +38,7 @@ const mutations = {
     state.posts = []
   },
   clearUserPosts (state) {
-    state.posts = []
+    state.userPosts = []
   },
   setLoading (state, payload) {
     state.loading = payload
@@ -103,6 +103,18 @@ const actions = {
         commit('setLoading', false)
       })
   },
+  clearPostsAction ({ commit }) {
+    commit('clearPosts')
+  },
+  clearUserPostsAction ({ commit }) {
+    commit('clearUserPosts')
+  },
+  dislikePost ({ commit }, postId) {
+    commit('dislikePost', postId)
+  },
+  likePost ({ commit }, postId) {
+    commit('likePost', postId)
+  },
   async addPostAction ({ commit }, payload) {
     try {
       commit('setLoading', true)
@@ -131,18 +143,6 @@ const actions = {
       commit('updateErrors', error.response.data)
       commit('setLoading', false)
     }
-  },
-  clearPostsAction ({ commit }) {
-    commit('clearPosts')
-  },
-  clearUserPostsAction ({ commit }) {
-    commit('clearUserPosts')
-  },
-  dislikePost ({ commit }, postId) {
-    commit('dislikePost', postId)
-  },
-  likePost ({ commit }, postId) {
-    commit('likePost', postId)
   }
 }
 
