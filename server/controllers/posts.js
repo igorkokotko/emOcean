@@ -131,7 +131,7 @@ const incrementViewsCounter = asyncMiddleware(async (req, res) => {
 })
 
 const getPostLikes = asyncMiddleware(async (req, res, next) => {
-  const post_id = req.query.id
+  const post_id = req.params.postId
   const users_ids = await postsService.getPostLikes(post_id)
 
   const result = []

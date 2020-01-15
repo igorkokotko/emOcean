@@ -8,6 +8,7 @@ import GAuth from 'vue-google-oauth2'
 import { clientId } from './config/config.js'
 import VueObserveVisibility from 'vue-observe-visibility'
 Vue.use(VueObserveVisibility)
+
 Vue.config.productionTip = false
 
 const gauthOption = {

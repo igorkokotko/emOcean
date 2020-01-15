@@ -302,34 +302,30 @@ const updateLikes = async (postId, userId) => {
   })
 }
 
-const incrementViewsCounter = function (postId) {
+const incrementViewsCounter = async (postId) => {
   const postRef = db.collection('posts').doc(postId)
-  return db.runTransaction(t => {
-      return t.get(postRef).then(docPost => {
-        const postOwnerId = docPost.data().userId
-        const userPostsRef = db.collection('users-posts').doc(postOwnerId)
-        return t.get(userPostsRef).then(userPostsDoc => {
-          const ownerPosts = userPostsDoc.data().posts
-          let views = docPost.data().views || 0
-          views++
-          t.update(postRef, {
-            views: views
-          })
-          t.update(userPostsRef, {
-            posts: ownerPosts.map(post => {
-              if (post.postId === postId) {
-                post.views = views
-              }
-              return post
-            })
-          })
-          return views
-        })
+  return await db.runTransaction(async t => {
+    const docPost = await t.get(postRef)
+    const postOwnerId = docPost.data().userId
+    const userPostsRef = db.collection('users-posts').doc(postOwnerId)
+
+    const userPostsDoc = await t.get(userPostsRef)
+    const ownerPosts = userPostsDoc.data().posts
+    let views = docPost.data().views || 0
+    views++
+    t.update(postRef, {
+      views: views
+    })
+    t.update(userPostsRef, {
+      posts: ownerPosts.map(post => {
+        if (post.postId === postId) {
+          post.views = views
+        }
+        return post
       })
     })
-    .then(res => {
-      return res
-    })
+    return views
+  })
 }
 
 const getUserLikedPosts = async function (userId) {

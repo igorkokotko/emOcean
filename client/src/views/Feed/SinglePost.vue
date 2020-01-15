@@ -28,7 +28,9 @@
           :class="{'fas': isLiked}"
           @click="updateLikes(post)">
           </i>
-          <p class="likes">{{ this.post.likesCount }}</p>
+          <p class="likes" @click="showLikesList(post)">
+            {{ this.post.likesCount }}
+          </p>
         </div>
         <div class="comments-icon" @click="closePopup(true)">
           <i class="far fa-comment-alt fa-md"></i>
@@ -48,7 +50,7 @@
         </p>
       </div>
     </div>
-    <LikesList v-bind:info="likesInfo" v-if="likesInfo.show" />
+    <likes-list v-bind:info="likesInfo" v-if="likesInfo.show" />
     <q-dialog v-model="dialog" transition-show="slide-up" transition-hide="slide-down">
       <div class="qCard-wrapper" ref="qCard">
       <q-card id="feed-modal-video">
@@ -108,6 +110,7 @@
 
 <script>
 import PageComments from '../Comments/PageComments'
+import LikesList from '@/components/LikesList.vue'
 import Avatar from '@/components/Avatar.vue'
 import { updateLikes, incrementViewsCounter } from '../../services/posts'
 import { mapGetters, mapActions } from 'vuex'
@@ -201,7 +204,7 @@ export default {
               this.$router.push('/register')
             }
           },
-          { label: 'LAter', color: 'white', handler: () => { } }
+          { label: 'Later', color: 'white', handler: () => { } }
         ]
       })
     },
@@ -211,6 +214,28 @@ export default {
         this.$router.push(`/?tab=search&emoji=${emoji}`)
       } else {
         this.$router.push(`/?tab=search&emoji=${emoji}`)
+      }
+    },
+    showLikesList (post) {
+      if (post.likesCount === 0) {
+        this.$q.notify({
+          message: `<span style="color:#333;">There are no likes</span>`,
+          html: true,
+          color: 'secondary',
+          position: 'center',
+          actions: [
+            { label: `Like ❤`,
+              color: 'red',
+              handler: () => {
+                this.updateLikes(post)
+              }
+            },
+            { label: 'Close', color: 'dark', handler: () => { } }
+          ]
+        })
+      } else {
+        this.likesInfo.show = true
+        this.likesInfo.postId = post.postId
       }
     },
     closePopup (visibility) {
@@ -250,6 +275,7 @@ export default {
   },
   components: {
     'v-comments': PageComments,
+    'likes-list': LikesList,
     Avatar
   },
   mounted () {

@@ -84,8 +84,7 @@ export default {
       this.isSearch = true
       if (to.query.tags) {
         this.getPostsAction({ type: 'search', tags: to.query.tags })
-      }
-      if (to.query.emoji) {
+      } else if (to.query.emoji) {
         this.getPostsAction({ type: 'search', emoji: to.query.emoji })
       }
       next()
@@ -101,8 +100,7 @@ export default {
         this.isSearch = true
         if (this.$route.query.tags) {
           this.getPostsAction({ type: 'search', tags: this.$route.query.tags })
-        }
-        if (this.$route.query.emoji) {
+        } else if (this.$route.query.emoji) {
           this.getPostsAction({ type: 'search', emoji: this.$route.query.emoji })
         }
       } else {
