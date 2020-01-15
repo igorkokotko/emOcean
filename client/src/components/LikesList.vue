@@ -26,7 +26,7 @@
 
             <q-item-section @click="$router.push({ path: `/profile/${like.profile_id}` })">
               <q-item-label>{{ like.nickname }}</q-item-label>
-              <q-item-label caption lines="1">{{ $moment( parseInt(like.date) ).fromNow() }}</q-item-label>
+              <q-item-label caption lines="1">{{ like.date | dateFromNow }}</q-item-label>
             </q-item-section>
 
             <q-item-section side>
@@ -69,6 +69,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import moment from 'moment'
 
 export default {
   props: ["info"],
@@ -91,6 +92,11 @@ export default {
       } else {
         follower.followed = true
       }
+    }
+  },
+  filters: {
+    dateFromNow (date) {
+      return moment(parseInt(date)).fromNow()
     }
   }
 }
