@@ -14,7 +14,6 @@ export default {
     async getLikedList (ctx, videoId) {
       getLikedList(videoId)
         .then((response) => {
-          console.log(response.data.result)
           ctx.commit('updateLikedList', response.data.result)
         })
         .catch(error => {
