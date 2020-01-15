@@ -4,6 +4,9 @@
       <q-tab name="my-videos">
         <i class="far fa-play-circle"></i>
       </q-tab>
+      <q-tab name="liked-videos">
+        <i class="far fa-heart"></i>
+      </q-tab>
     </q-tabs>
     <q-tab-panels
       v-model="tab"
@@ -13,19 +16,26 @@
       class="text-white text-center"
     >
       <q-tab-panel name="my-videos" class="my-profile-videos">
-        <div id="switch-video-wrapper" v-if="userPosts && userPosts.length > 0 && !isLoading">
+        <div class="switch-video-wrapper" v-if="userPosts && userPosts.length > 0 && !isLoading">
           <div class="feed-post" v-for="post in userPosts" :key="post.postId">
             <one-post :post="post" />
           </div>
         </div>
-        <div v-else>This user have no posts=(</div>
+        <div v-else>This user have no posts =(</div>
+      </q-tab-panel>
+      <q-tab-panel name="liked-videos" class="my-profile-videos">
+        <div class="switch-video-wrapper" v-if="userLikedPosts && userLikedPosts.length > 0 && !isLoading">
+          <div class="feed-post" v-for="post in userLikedPosts" :key="post.postId">
+            <one-post :post="post" />
+          </div>
+        </div>
+        <div v-else>This user have no liked posts =(</div>
       </q-tab-panel>
     </q-tab-panels>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import SinglePost from '../../Feed/SinglePost'
 
 export default {
@@ -34,11 +44,17 @@ export default {
       tab: 'my-videos'
     }
   },
-  computed: {
-    ...mapGetters({ userPosts: 'posts/userPostsGetter', isLoading: 'posts/loadingGetter' })
+  props: {
+    userPosts: Array,
+    userLikedPosts: Array
   },
   components: {
     'one-post': SinglePost
+  },
+  watch: {
+    $route () {
+      this.tab = 'my-videos'
+    }
   }
 }
 </script>
@@ -57,14 +73,15 @@ export default {
     color: white;
   }
 }
-#switch-video-wrapper{
-  display: grid;
-  justify-content: center;
-    .feed-post {
-        margin-bottom: 25px;
-        position: relative;
-        width: fit-content;
-      }
-}
 
+.switch-video-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  .feed-post {
+    width: 50%;
+    @media screen and (max-width: 1023px) {
+    width: 100%;
+    }
+  }
+}
 </style>

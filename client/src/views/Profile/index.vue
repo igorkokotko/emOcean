@@ -1,17 +1,22 @@
 <template>
   <div v-if="!blocked">
-    <div class="profile-header" :style="{ backgroundImage: userBackground }"></div>
-    <div class="row wrapp">
-      <div class="col-12 col-md-3 profile-card">
-        <profile-card :profile="profileGetter" />
-      </div>
-      <div class="col-12 col-md-9 profile-content">
-        <div class="col-12">
-          <switch-video></switch-video>
+    <div v-if="profileGetter.nickname">
+      <div class="profile-header" :style="{ backgroundImage: userBackground }"></div>
+      <div class="row wrapp">
+        <div class="col-12 col-md-3 profile-card">
+          <profile-card :profile="profileGetter" />
+        </div>
+        <div class="col-12 col-md-9 profile-content">
+          <div class="col-12">
+            <switch-video :userPosts="userPosts" :userLikedPosts="userLikedPosts"></switch-video>
+          </div>
         </div>
       </div>
+      <to-top-anchor></to-top-anchor>
     </div>
-    <to-top-anchor></to-top-anchor>
+    <div v-else>
+      <error404></error404>
+    </div>
   </div>
   <div v-else>
     <q-banner class="bg-primary text-white banner">
@@ -26,12 +31,14 @@ import { mapGetters, mapActions } from 'vuex'
 import ProfileCard from './Card/index'
 import switchVideo from './Card/switchVideo'
 import toTopAnchor from '../../components/ToTopAnchor'
+import Error404 from '../Error404/Error404'
 
 export default {
   components: {
     ProfileCard,
     switchVideo,
-    toTopAnchor
+    toTopAnchor,
+    Error404
   },
   data () {
     return {
@@ -42,14 +49,25 @@ export default {
     ...mapGetters({
       profileGetter: 'profile/profileGetter',
       userPosts: 'posts/userPostsGetter',
+      userLikedPosts: 'posts/userLikedPostsGetter',
       errorGetter: 'profile/errorGetter'
     }),
     userBackground () {
-      return this.profileGetter.user_background ? 'url(' + this.profileGetter.user_background + ')' : 'url(https://i.ytimg.com/vi/DiS7ZMwTA0I/maxresdefault.jpg)'
+      return this.profileGetter.backgroundUrl
+        ? 'url(' + this.profileGetter.backgroundUrl + ')'
+        : 'url(https://i.ytimg.com/vi/DiS7ZMwTA0I/maxresdefault.jpg)'
     },
     nickname () {
       return this.$route.params.nickname
     }
+  },
+  async beforeRouteUpdate (to, from, next) {
+    if (to.path.startsWith('/profile')) {
+      await this.uploadProfile(to.params.nickname)
+      this.getUserPosts(this.profileGetter.userId)
+      this.getUserLikedPosts(this.profileGetter.userId)
+    }
+    next()
   },
   async created () {
     await this.uploadProfile(this.nickname)
@@ -61,22 +79,15 @@ export default {
       this.blocked = false
     }
     this.getUserPosts(this.profileGetter.userId)
-  },
-  mounted () {
-    this.uploadProfile(this.nickname)
+    this.getUserLikedPosts(this.profileGetter.userId)
   },
   methods: {
     ...mapActions({
       uploadProfile: 'profile/uploadProfile',
       getUserPosts: 'posts/getUserPostsAction',
+      getUserLikedPosts: 'posts/getUserLikedPostsAction',
       deleteError: 'profile/deleteError'
     })
-  },
-  beforeRouteUpdate (to, from, next) {
-    if (to.path.startsWith('/profile')) {
-      this.uploadProfile(to.params.nickname)
-    }
-    next()
   },
   watch: {
     async nickname () {
@@ -116,10 +127,6 @@ export default {
       right: 0;
       padding: 5px;
       background-color: white;
-      .fa-eye {
-        margin-right: 5px;
-        color: blue;
-      }
     }
   }
 </style>

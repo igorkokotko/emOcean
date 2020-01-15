@@ -1,7 +1,8 @@
 import {
   getPostsByType,
   savePost,
-  getUserPostsById
+  getUserPostsById,
+  getUserLikedPostsById
 } from '@/services/posts'
 
 const getDefaultState = () => {
@@ -10,6 +11,7 @@ const getDefaultState = () => {
     index: 'Last index',
     errors: [],
     userPosts: [],
+    userLikedPosts: [],
     loading: false
   }
 }
@@ -44,6 +46,9 @@ const mutations = {
   setUserPosts (state, payload) {
     state.userPosts = payload
   },
+  setUserLikedPosts (state, payload) {
+    state.userLikedPosts = payload
+  },
   dislikePost (state, postId) {
     const userId = localStorage.getItem('profileId')
     return state.posts.forEach(function (value) {
@@ -77,6 +82,20 @@ const actions = {
       .then(res => {
         commit('setLoading', false)
         commit('setUserPosts', res.data.result)
+      })
+      .catch(err => {
+        commit('updateErrors', err.response.data)
+        commit('clearUserPosts')
+        commit('setLoading', false)
+      })
+  },
+  async getUserLikedPostsAction ({ commit }, payload) {
+    commit('setLoading', true)
+    commit('clearUserPosts')
+    getUserLikedPostsById(payload)
+      .then(res => {
+        commit('setLoading', false)
+        commit('setUserLikedPosts', res.data.result)
       })
       .catch(err => {
         commit('updateErrors', err.response.data)
@@ -142,6 +161,9 @@ const getters = {
   },
   userPostsGetter: state => {
     return state.userPosts
+  },
+  userLikedPostsGetter: state => {
+    return state.userLikedPosts
   }
 }
 
