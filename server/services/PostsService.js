@@ -15,10 +15,12 @@ const searchPostsByQuery = async (paginateId, postsLimit, query) => {
     .limit(postsLimit)
   if (typeof query === 'object') {
     postsRefQuery = postsRefQuery.where('tags', 'array-contains-any', query)
-  }
-  if (typeof query === 'string') {
+  } else {
     postsRefQuery = postsRefQuery.where('emoji', '==', query)
   }
+  // if (typeof query === 'string') {
+  //   postsRefQuery = postsRefQuery.where('emoji', '==', query)
+  // }
   return await getPostsByQuery(postsRefQuery, paginateId, postsLimit)
 }
 
@@ -300,7 +302,7 @@ const updateLikes = async (postId, userId) => {
   })
 }
 
-const incrementViewsCounter = function (postId, userId) {
+const incrementViewsCounter = function (postId) {
   const postRef = db.collection('posts').doc(postId)
   return db.runTransaction(t => {
       return t.get(postRef).then(docPost => {

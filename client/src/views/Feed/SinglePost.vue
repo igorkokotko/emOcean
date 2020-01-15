@@ -3,7 +3,7 @@
     <v-comments :isModelVisible="isModelVisible" :closePopup="closePopup" :id="post.postId" />
     <div class="video-container" @click="play">
       <figure class="image is-32x32">
-        <span class="emoji video-emoji" v-html="post.emoji"/>
+        <span class="emoji video-emoji" @click="sreachByEmoji(post.emoji)" v-html="post.emoji"/>
         <router-link :to="{ path: `/profile/${post.nickname}` }">
           <div ref="avatar" class="avatar" @click="$router.replace(`profile/${post.nickname}`)">
             <avatar
@@ -146,41 +146,38 @@ export default {
     }),
     isPostLiked (post) {
       const likesArr = this.post.likes
-      if (likesArr.includes(localStorage.getItem('profileId'))) {
-        this.isLiked = true
-      } else {
-        this.isLiked = false
+      for (let el of likesArr) {
+        if (el.userId === localStorage.getItem('profileId')) {
+          this.isLiked = true
+          return
+        }
       }
     },
     incrementViewsCounter (post) {
       const postId = post.postId
       incrementViewsCounter(postId)
         .then(res => { })
-        .catch(error => {
-          console.log(error)
-        })
     },
     updateLikes (post) {
       const postId = post.postId
+      this.updateLikesInStore(postId)
       updateLikes(postId)
-        .then(response => {
-          if (response.data.result === 'dislike') {
-            this.dislikePost(postId)
-            this.isLiked = false
-          } else {
-            this.likePost(postId)
-            this.isLiked = true
-          }
-          return response.data.result
-        })
+        .then(response => { })
         .catch(error => {
           if (error.response.statusText === 'Unauthorized') {
             this.showNotif('center')
             return 'You are not authorized!!!'
-          } else {
-            console.log(error)
           }
+          this.updateLikesInStore(postId)
         })
+    },
+    updateLikesInStore (postId) {
+      this.isLiked = !this.isLiked
+      if (this.isLiked === true) {
+        this.likePost(postId)
+      } else {
+        this.dislikePost(postId)
+      }
     },
     showNotif (position) {
       this.$q.notify({
@@ -207,6 +204,14 @@ export default {
           { label: 'LAter', color: 'white', handler: () => { } }
         ]
       })
+    },
+    sreachByEmoji (emoji) {
+      if (this.$route.query.emoji === emoji) {
+        this.$router.push('')
+        this.$router.push(`/?tab=search&emoji=${emoji}`)
+      } else {
+        this.$router.push(`/?tab=search&emoji=${emoji}`)
+      }
     },
     closePopup (visibility) {
       this.isModelVisible = visibility
@@ -258,6 +263,8 @@ export default {
   position: absolute;
   top: -40px;
   left: -50px;
+  z-index: 55;
+  cursor: pointer;
   font-size: xx-large;
 }
 #qCard-width-video {

@@ -19,7 +19,7 @@
           </router-link>
         </div>
         <q-space></q-space>
-        <q-icon v-if="emojiSearch" @click="showEmoji" size="sm" name="insert_emoticon" />
+        <q-icon v-if="emojiSearch" class="cursor-pointer" @click="showEmoji" size="sm" name="insert_emoticon" />
         <q-dialog
           seamless
           v-model="showEmojisBool"
@@ -148,7 +148,12 @@ export default {
       this.searchPostByEmogi()
     },
     searchPostByEmogi () {
-      this.$router.push(`/?tab=search&emoji=${this.userInput}`)
+      if (this.$route.query.emoji === this.userInput) {
+        this.$router.push('')
+        this.$router.push(`/?tab=search&emoji=${this.userInput}`)
+      } else {
+        this.$router.push(`/?tab=search&emoji=${this.userInput}`)
+      }
       this.userInput = ''
       this.emojiSearch = false
       this.showEmojisBool = false
